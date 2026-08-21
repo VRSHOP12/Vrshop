@@ -2,123 +2,749 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VR SHOP — Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VR SHOP Admin</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f6f8;color:#111}
-header{background:#111;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
-header h1{margin:0;font-size:21px}.wrap{max-width:1100px;margin:auto;padding:20px}
-.grid{display:grid;grid-template-columns:360px 1fr;gap:20px}.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 3px 15px #00000012}
-label{display:block;font-size:13px;font-weight:bold;margin:12px 0 6px}input,select,textarea{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;font-size:15px}
-button{border:0;border-radius:9px;padding:11px 15px;font-weight:bold;cursor:pointer}.primary{background:#111;color:#fff}.danger{background:#ffe7e7;color:#b00020}.muted{background:#eee}.row{display:flex;gap:8px;flex-wrap:wrap}
-.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.product{border:1px solid #eee;border-radius:12px;overflow:hidden;background:#fff}.product img{width:100%;height:180px;object-fit:cover;background:#eee}.product .p{padding:12px}.price{font-size:18px;font-weight:bold}.old{text-decoration:line-through;color:#888;margin-left:7px;font-size:13px}
-.small{font-size:12px;color:#666}.topspace{margin-top:12px}.notice{padding:12px;border-radius:10px;background:#fff8d8;margin-bottom:15px;font-size:13px}
-@media(max-width:800px){.grid{grid-template-columns:1fr}.wrap{padding:12px}}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f5f5f5;
+  color:#111;
+}
+
+header{
+  background:#111;
+  color:white;
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+header h1{
+  font-size:24px;
+}
+
+.products-count{
+  font-size:16px;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:20px;
+  box-shadow:0 3px 15px #0001;
+}
+
+h2{
+  margin-bottom:20px;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-top:15px;
+  margin-bottom:7px;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-size:16px;
+  background:white;
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+.image-box{
+  border:2px dashed #bbb;
+  border-radius:15px;
+  padding:20px;
+  text-align:center;
+  margin-top:10px;
+}
+
+.image-box input{
+  border:0;
+  padding:10px;
+}
+
+#preview{
+  display:none;
+  width:180px;
+  height:180px;
+  object-fit:cover;
+  border-radius:15px;
+  margin:15px auto;
+}
+
+button{
+  border:0;
+  padding:13px 20px;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.add-btn{
+  width:100%;
+  background:#111;
+  color:white;
+  margin-top:20px;
+}
+
+.clear-btn{
+  background:#eee;
+  color:#111;
+  margin-top:10px;
+  width:100%;
+}
+
+.product{
+  border:1px solid #ddd;
+  border-radius:15px;
+  padding:15px;
+  margin-top:15px;
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+
+.product img{
+  width:90px;
+  height:90px;
+  object-fit:cover;
+  border-radius:12px;
+  background:#eee;
+}
+
+.product-info{
+  flex:1;
+}
+
+.product-info h3{
+  margin-bottom:6px;
+}
+
+.price{
+  font-weight:bold;
+  font-size:18px;
+}
+
+.old{
+  text-decoration:line-through;
+  color:#888;
+  margin-left:5px;
+  font-size:14px;
+}
+
+.actions{
+  margin-top:10px;
+  display:flex;
+  gap:8px;
+}
+
+.edit{
+  background:#eee;
+}
+
+.delete{
+  background:#111;
+  color:white;
+}
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:30px;
+}
+
+@media(max-width:600px){
+
+  header h1{
+    font-size:20px;
+  }
+
+  .container{
+    padding:12px;
+  }
+
+  .product{
+    align-items:flex-start;
+  }
+
+  .product img{
+    width:75px;
+    height:75px;
+  }
+}
 </style>
 </head>
-<body>
-<header><h1>🛍️ VR SHOP Admin</h1><span id="count">0 products</span></header>
-<div class="wrap">
-<div class="notice"><b>Prototype:</b> products are saved in this browser using localStorage. This is useful for testing; for a real public store, connect the panel to a database before taking live orders.</div>
-<div class="grid">
-<section class="card">
-<h2 id="formTitle">Add Product</h2>
-<input type="hidden" id="editId">
-<label>Product name</label><input id="name" placeholder="Men's T-Shirt">
-<label>Price (₹)</label><input id="price" type="number" placeholder="499">
-<label>Old price (₹)</label><input id="oldPrice" type="number" placeholder="799">
-<label>Category</label>
-<select id="category"><option>Men</option><option>Women</option><option>Kids</option><option>Shirts</option><option>T-Shirts</option><option>Pants</option><option>Other</option></select>
-<label>Size</label><input id="size" placeholder="S, M, L, XL">
-<label>Color</label><input id="color" placeholder="Black">
-<label>Stock</label><input id="stock" type="number" value="1">
-<label>Image URL</label><input id="image" placeholder="https://.../photo.jpg">
-<label>Description</label><textarea id="desc" rows="4" placeholder="Product details..."></textarea>
-<div class="row topspace">
-<button class="primary" onclick="saveProduct()">Save Product</button>
-<button class="muted" onclick="resetForm()">Clear</button>
-</div>
-</section>
-<section class="card">
-<div class="row" style="justify-content:space-between;align-items:center">
-<h2 style="margin:0">Products</h2>
-<div class="row">
-<button class="muted" onclick="exportData()">Export</button>
-<label style="margin:0"><button class="muted" onclick="document.getElementById('importFile').click()">Import</button></label>
-<input id="importFile" type="file" accept=".json" hidden onchange="importData(event)">
-</div>
-</div>
-<div id="products" class="products topspace"></div>
-</section>
-</div>
-</div>
-<script>
-const KEY="vrshop_products";
-let products=JSON.parse(localStorage.getItem(KEY)||"[]");
 
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
-function render(){
- document.getElementById("count").textContent=`${products.length} product${products.length===1?"":"s"}`;
- const box=document.getElementById("products");
- if(!products.length){box.innerHTML="<p class='small'>No products yet. Add your first product.</p>";return;}
- box.innerHTML=products.map(p=>`
- <article class="product">
-  <img src="${esc(p.image||"")}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23eee%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23888%22%3ENo Image%3C/text%3E%3C/svg%3E'">
-  <div class="p">
-   <b>${esc(p.name)}</b><div class="small">${esc(p.category)} • ${esc(p.color)} • ${esc(p.size)}</div>
-   <div class="price">₹${esc(p.price)} ${p.oldPrice?`<span class="old">₹${esc(p.oldPrice)}</span>`:""}</div>
-   <div class="small">Stock: ${esc(p.stock)}</div>
-   <div class="row topspace"><button class="muted" onclick="editProduct('${p.id}')">Edit</button><button class="danger" onclick="deleteProduct('${p.id}')">Delete</button></div>
+<body>
+
+<header>
+  <h1>🛍️ VR SHOP Admin</h1>
+  <div class="products-count">
+    <span id="count">0</span> products
   </div>
- </article>`).join("");
-}
-function save(){
- localStorage.setItem(KEY,JSON.stringify(products)); render();
-}
+</header>
+
+
+<div class="container">
+
+<div class="card">
+
+<h2 id="formTitle">➕ Add Product</h2>
+
+<label>Product Name</label>
+<input
+  type="text"
+  id="name"
+  placeholder="Men t shirt"
+>
+
+<label>Price (₹)</label>
+<input
+  type="number"
+  id="price"
+  placeholder="400"
+>
+
+<label>Old Price (₹)</label>
+<input
+  type="number"
+  id="oldPrice"
+  placeholder="699"
+>
+
+<label>Category</label>
+<select id="category">
+
+<option value="Men">Men</option>
+<option value="Women">Women</option>
+<option value="Kids">Kids</option>
+<option value="Shoes">Shoes</option>
+<option value="Accessories">Accessories</option>
+<option value="Other">Other</option>
+
+</select>
+
+<label>Size</label>
+<input
+  type="text"
+  id="size"
+  placeholder="M, L, XL"
+>
+
+<label>Color</label>
+<input
+  type="text"
+  id="color"
+  placeholder="White"
+>
+
+<label>Stock</label>
+<input
+  type="number"
+  id="stock"
+  placeholder="10"
+  value="1"
+>
+
+<label>📷 Product Image</label>
+
+<div class="image-box">
+
+<p>Gallery से product की photo चुनें</p>
+
+<input
+  type="file"
+  id="image"
+  accept="image/*"
+>
+
+<img id="preview">
+
+</div>
+
+<label>Description</label>
+
+<textarea
+  id="description"
+  placeholder="Product details..."
+></textarea>
+
+<button
+  class="add-btn"
+  onclick="saveProduct()"
+  id="saveButton"
+>
+➕ Add Product
+</button>
+
+<button
+  class="clear-btn"
+  onclick="clearForm()"
+>
+Clear Form
+</button>
+
+</div>
+
+
+<div class="card">
+
+<h2>📦 Your Products</h2>
+
+<div id="products"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let products = JSON.parse(
+  localStorage.getItem("vrshop_products") || "[]"
+);
+
+let selectedImage = "";
+
+let editingId = null;
+
+
+/* IMAGE SELECT */
+
+document
+.getElementById("image")
+.addEventListener("change", function(e){
+
+  const file = e.target.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event){
+
+    selectedImage = event.target.result;
+
+    const preview =
+      document.getElementById("preview");
+
+    preview.src = selectedImage;
+
+    preview.style.display = "block";
+
+  };
+
+  reader.readAsDataURL(file);
+
+});
+
+
+/* SAVE PRODUCT */
+
 function saveProduct(){
- const id=document.getElementById("editId").value;
- const p={
-  id:id||Date.now().toString(),
-  name:document.getElementById("name").value.trim(),
-  price:Number(document.getElementById("price").value||0),
-  oldPrice:Number(document.getElementById("oldPrice").value||0),
-  category:document.getElementById("category").value,
-  size:document.getElementById("size").value.trim(),
-  color:document.getElementById("color").value.trim(),
-  stock:Number(document.getElementById("stock").value||0),
-  image:document.getElementById("image").value.trim(),
-  desc:document.getElementById("desc").value.trim()
- };
- if(!p.name||!p.price){alert("Product name and price are required.");return;}
- const i=products.findIndex(x=>x.id===p.id);
- if(i>=0) products[i]=p; else products.unshift(p);
- save(); resetForm(); alert("Product saved.");
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const price =
+    document.getElementById("price").value;
+
+  const oldPrice =
+    document.getElementById("oldPrice").value;
+
+  const category =
+    document.getElementById("category").value;
+
+  const size =
+    document.getElementById("size").value.trim();
+
+  const color =
+    document.getElementById("color").value.trim();
+
+  const stock =
+    document.getElementById("stock").value;
+
+  const description =
+    document.getElementById("description").value.trim();
+
+
+  if(!name){
+
+    alert("Product name डालें");
+
+    return;
+  }
+
+  if(!price){
+
+    alert("Product price डालें");
+
+    return;
+  }
+
+
+  if(editingId){
+
+    const index =
+      products.findIndex(
+        p => p.id === editingId
+      );
+
+    if(index !== -1){
+
+      products[index] = {
+
+        ...products[index],
+
+        name:name,
+        price:price,
+        oldPrice:oldPrice,
+        category:category,
+        size:size,
+        color:color,
+        stock:stock,
+        description:description,
+
+        image:
+          selectedImage ||
+          products[index].image
+
+      };
+
+    }
+
+    alert("✅ Product updated");
+
+  }else{
+
+    const product = {
+
+      id:Date.now(),
+
+      name:name,
+
+      price:price,
+
+      oldPrice:oldPrice,
+
+      category:category,
+
+      size:size,
+
+      color:color,
+
+      stock:stock,
+
+      image:selectedImage,
+
+      description:description
+
+    };
+
+    products.push(product);
+
+    alert("✅ Product added");
+
+  }
+
+
+  localStorage.setItem(
+    "vrshop_products",
+    JSON.stringify(products)
+  );
+
+
+  clearForm();
+
+  showProducts();
+
 }
+
+
+/* SHOW PRODUCTS */
+
+function showProducts(){
+
+  const box =
+    document.getElementById("products");
+
+  document.getElementById("count")
+    .textContent = products.length;
+
+
+  if(products.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">अभी कोई product नहीं है</div>';
+
+    return;
+  }
+
+
+  box.innerHTML = "";
+
+
+  products
+  .slice()
+  .reverse()
+  .forEach(product => {
+
+    const div =
+      document.createElement("div");
+
+    div.className = "product";
+
+
+    const image =
+      product.image ||
+      "https://via.placeholder.com/150";
+
+
+    div.innerHTML = `
+
+      <img src="${image}">
+
+      <div class="product-info">
+
+        <h3>${escapeHtml(product.name)}</h3>
+
+        <div class="price">
+
+          ₹${product.price}
+
+          ${
+            product.oldPrice
+            ? `<span class="old">
+                ₹${product.oldPrice}
+               </span>`
+            : ""
+          }
+
+        </div>
+
+        <small>
+          ${escapeHtml(product.category)}
+          • Stock: ${product.stock}
+        </small>
+
+        <div class="actions">
+
+          <button
+            class="edit"
+            onclick="editProduct(${product.id})"
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            class="delete"
+            onclick="deleteProduct(${product.id})"
+          >
+            🗑️ Delete
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+
+    box.appendChild(div);
+
+  });
+
+}
+
+
+/* EDIT */
+
 function editProduct(id){
- const p=products.find(x=>x.id===id); if(!p)return;
- for(const [k,v] of Object.entries(p)){const el=document.getElementById(k);if(el)el.value=v;}
- document.getElementById("editId").value=p.id; document.getElementById("formTitle").textContent="Edit Product";
- scrollTo({top:0,behavior:"smooth"});
+
+  const product =
+    products.find(
+      p => p.id === id
+    );
+
+  if(!product) return;
+
+
+  editingId = id;
+
+
+  document.getElementById("name").value =
+    product.name;
+
+  document.getElementById("price").value =
+    product.price;
+
+  document.getElementById("oldPrice").value =
+    product.oldPrice || "";
+
+  document.getElementById("category").value =
+    product.category;
+
+  document.getElementById("size").value =
+    product.size || "";
+
+  document.getElementById("color").value =
+    product.color || "";
+
+  document.getElementById("stock").value =
+    product.stock;
+
+  document.getElementById("description").value =
+    product.description || "";
+
+
+  selectedImage =
+    product.image || "";
+
+
+  if(selectedImage){
+
+    document.getElementById("preview").src =
+      selectedImage;
+
+    document.getElementById("preview").style.display =
+      "block";
+
+  }
+
+
+  document.getElementById("formTitle")
+    .textContent = "✏️ Edit Product";
+
+  document.getElementById("saveButton")
+    .textContent = "💾 Update Product";
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
 }
+
+
+/* DELETE */
+
 function deleteProduct(id){
- if(!confirm("Delete this product?"))return;
- products=products.filter(x=>x.id!==id); save();
+
+  if(!confirm("क्या आप यह product delete करना चाहते हैं?")){
+
+    return;
+  }
+
+
+  products =
+    products.filter(
+      p => p.id !== id
+    );
+
+
+  localStorage.setItem(
+    "vrshop_products",
+    JSON.stringify(products)
+  );
+
+
+  showProducts();
+
 }
-function resetForm(){
- ["editId","name","price","oldPrice","size","color","image","desc"].forEach(id=>document.getElementById(id).value="");
- document.getElementById("stock").value=1; document.getElementById("category").value="Men";
- document.getElementById("formTitle").textContent="Add Product";
+
+
+/* CLEAR FORM */
+
+function clearForm(){
+
+  editingId = null;
+
+  selectedImage = "";
+
+
+  document.getElementById("name").value = "";
+
+  document.getElementById("price").value = "";
+
+  document.getElementById("oldPrice").value = "";
+
+  document.getElementById("category").value = "Men";
+
+  document.getElementById("size").value = "";
+
+  document.getElementById("color").value = "";
+
+  document.getElementById("stock").value = "1";
+
+  document.getElementById("description").value = "";
+
+  document.getElementById("image").value = "";
+
+
+  document.getElementById("preview").style.display =
+    "none";
+
+
+  document.getElementById("formTitle")
+    .textContent = "➕ Add Product";
+
+  document.getElementById("saveButton")
+    .textContent = "➕ Add Product";
+
 }
-function exportData(){
- const blob=new Blob([JSON.stringify(products,null,2)],{type:"application/json"});
- const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vrshop-products.json";a.click();
+
+
+/* SECURITY */
+
+function escapeHtml(text){
+
+  return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
 }
-function importData(e){
- const f=e.target.files[0];if(!f)return;
- const r=new FileReader();r.onload=()=>{try{products=JSON.parse(r.result);save();alert("Imported successfully.");}catch{alert("Invalid JSON file.");}};r.readAsText(f);
-}
-render();
+
+
+/* START */
+
+showProducts();
+
 </script>
+
 </body>
 </html>
