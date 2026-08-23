@@ -1,398 +1,1181 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script>
-const SUPABASE_URL = "https://dfcadaccfkyfslakbigf.supabase.co";
-const SUPABASE_KEY = "sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
+  <title>VR Shop - Admin Panel</title>
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-let products = [];
-let selectedImage = "";
-let editingId = null;
-
-
-/* PAGE LOAD होने के बाद code चलेगा */
-document.addEventListener("DOMContentLoaded", () => {
-
-  const imageInput = document.getElementById("image");
-
-  if (imageInput) {
-    imageInput.addEventListener("change", function(e) {
-
-      const file = e.target.files[0];
-
-      if (!file) return;
-
-      const reader = new FileReader();
-
-      reader.onload = function(event) {
-
-        selectedImage = event.target.result;
-
-        const preview = document.getElementById("preview");
-
-        if (preview) {
-          preview.src = selectedImage;
-          preview.style.display = "block";
-        }
-      };
-
-      reader.readAsDataURL(file);
-    });
-  }
-
-  showProducts();
-
-});
-
-
-/* SAVE PRODUCT */
-
-async function saveProduct() {
-
-  const name = document.getElementById("name").value.trim();
-  const price = document.getElementById("price").value;
-  const oldPrice = document.getElementById("oldPrice").value;
-  const category = document.getElementById("category").value;
-  const size = document.getElementById("size").value.trim();
-  const color = document.getElementById("color").value.trim();
-  const stock = document.getElementById("stock").value;
-  const description = document.getElementById("description").value.trim();
-
-  if (!name) {
-    alert("Product name डालें");
-    return;
-  }
-
-  if (!price) {
-    alert("Product price डालें");
-    return;
-  }
-
-  const productData = {
-    "Name": name,
-    "Price": Number(price),
-    "Old price": oldPrice ? Number(oldPrice) : null,
-    "category": category,
-    "Size": size,
-    "Colour": color,
-    "Stock": Number(stock || 0),
-    "Image Url": selectedImage,
-    "Description": description
-  };
-
-
-  /* EDIT */
-
-  if (editingId !== null) {
-
-    const { error } = await db
-      .from("Product")
-      .update(productData)
-      .eq("id", editingId);
-
-    if (error) {
-      console.error(error);
-      alert("❌ Update नहीं हुआ: " + error.message);
-      return;
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
     }
 
-    alert("✅ Product updated");
-
-  }
-
-  /* ADD */
-
-  else {
-
-    const { error } = await db
-      .from("Product")
-      .insert([productData]);
-
-    if (error) {
-      console.error(error);
-      alert("❌ Product add नहीं हुआ: " + error.message);
-      return;
+    body {
+      background: #f5f6f8;
+      color: #222;
     }
 
-    alert("✅ Product added");
-  }
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-  clearForm();
-  await showProducts();
-}
+    header h1 {
+      font-size: 22px;
+    }
+
+    header p {
+      margin-top: 5px;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    #formTitle {
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 15px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #2563eb;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .preview-box {
+      margin-top: 10px;
+    }
+
+    #preview {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      display: none;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      border-radius: 9px;
+      padding: 12px 18px;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #saveButton {
+      background: #2563eb;
+      color: white;
+      flex: 1;
+    }
+
+    #clearButton {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .count {
+      background: #2563eb;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+
+    #products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .product {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 13px;
+      padding: 12px;
+      display: flex;
+      gap: 13px;
+      overflow: hidden;
+    }
+
+    .product > img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #f3f4f6;
+      flex-shrink: 0;
+    }
+
+    .product-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .product-info h3 {
+      font-size: 17px;
+      margin-bottom: 7px;
+      word-break: break-word;
+    }
+
+    .price {
+      font-size: 18px;
+      font-weight: bold;
+      color: #16a34a;
+      margin-bottom: 6px;
+    }
+
+    .old {
+      color: #999;
+      text-decoration: line-through;
+      font-size: 13px;
+      margin-left: 5px;
+    }
+
+    .product-info small {
+      color: #6b7280;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 7px;
+    }
+
+    .edit {
+      background: #f59e0b;
+      color: white;
+      padding: 8px 11px;
+      font-size: 13px;
+    }
+
+    .delete {
+      background: #dc2626;
+      color: white;
+      padding: 8px 11px;
+      font-size: 13px;
+    }
+
+    .empty {
+      background: white;
+      padding: 30px;
+      text-align: center;
+      border-radius: 12px;
+      color: #6b7280;
+      grid-column: 1 / -1;
+    }
+
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      display: none;
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+
+      .container {
+        padding: 12px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      #products {
+        grid-template-columns: 1fr;
+      }
+
+      .product {
+        padding: 10px;
+      }
+
+      .product > img {
+        width: 90px;
+        height: 90px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      #clearButton {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>🛍️ VR Shop Admin</h1>
+    <p>Product Management Panel</p>
+  </header>
 
 
-/* SHOW PRODUCTS */
+  <main class="container">
 
-async function showProducts() {
+    <!-- ADD PRODUCT -->
 
-  const box = document.getElementById("products");
+    <section class="card">
 
-  if (!box) {
-    console.error("products element नहीं मिला");
-    return;
-  }
+      <h2 id="formTitle">➕ Add Product</h2>
 
-  box.innerHTML = '<div class="empty">Loading...</div>';
+      <div class="grid">
 
-  const { data, error } = await db
-    .from("Product")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-
-    console.error(error);
-
-    box.innerHTML =
-      '<div class="empty">❌ Products load नहीं हुए</div>';
-
-    alert("Database error: " + error.message);
-
-    return;
-  }
-
-  products = data || [];
-
-  const count = document.getElementById("count");
-
-  if (count) {
-    count.textContent = products.length;
-  }
-
-  if (products.length === 0) {
-
-    box.innerHTML =
-      '<div class="empty">अभी कोई product नहीं है</div>';
-
-    return;
-  }
-
-  box.innerHTML = "";
-
-  products.forEach(product => {
-
-    const div = document.createElement("div");
-
-    div.className = "product";
-
-    const image =
-      product["Image Url"] ||
-      "https://via.placeholder.com/150";
-
-    div.innerHTML = `
-      <img src="${image}" alt="Product">
-
-      <div class="product-info">
-
-        <h3>${escapeHtml(product.Name)}</h3>
-
-        <div class="price">
-          ₹${product.Price}
-
-          ${
-            product["Old price"]
-              ? `<span class="old">
-                   ₹${product["Old price"]}
-                 </span>`
-              : ""
-          }
+        <div class="field">
+          <label>Product Name *</label>
+          <input
+            type="text"
+            id="name"
+            placeholder="Product name"
+          >
         </div>
 
-        <small>
-          ${escapeHtml(product.category || "")}
-          • Stock: ${product.Stock || 0}
-        </small>
 
-        <div class="actions">
+        <div class="field">
+          <label>Price *</label>
+          <input
+            type="number"
+            id="price"
+            placeholder="₹ Price"
+          >
+        </div>
 
-          <button
-            class="edit"
-            onclick="editProduct(${product.id})">
-            ✏️ Edit
-          </button>
 
-          <button
-            class="delete"
-            onclick="deleteProduct(${product.id})">
-            🗑️ Delete
-          </button>
+        <div class="field">
+          <label>Old Price</label>
+          <input
+            type="number"
+            id="oldPrice"
+            placeholder="₹ Old Price"
+          >
+        </div>
 
+
+        <div class="field">
+          <label>Category</label>
+
+          <select id="category">
+            <option value="">Select Category</option>
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+            <option value="Kids">Kids</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Grocery">Grocery</option>
+            <option value="Vegetables">Vegetables</option>
+            <option value="Medicine">Medicine</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+
+        <div class="field">
+          <label>Size</label>
+          <input
+            type="text"
+            id="size"
+            placeholder="S, M, L, XL"
+          >
+        </div>
+
+
+        <div class="field">
+          <label>Colour</label>
+          <input
+            type="text"
+            id="color"
+            placeholder="Black, Red..."
+          >
+        </div>
+
+
+        <div class="field">
+          <label>Stock</label>
+          <input
+            type="number"
+            id="stock"
+            value="1"
+            min="0"
+          >
+        </div>
+
+
+        <div class="field">
+          <label>Product Image</label>
+
+          <input
+            type="file"
+            id="image"
+            accept="image/*"
+          >
+
+          <div class="preview-box">
+            <img id="preview" alt="Preview">
+          </div>
+        </div>
+
+
+        <div class="field full">
+          <label>Description</label>
+
+          <textarea
+            id="description"
+            placeholder="Product description..."
+          ></textarea>
         </div>
 
       </div>
-    `;
-
-    box.appendChild(div);
-
-  });
-}
 
 
-/* EDIT */
+      <div class="buttons">
 
-function editProduct(id) {
+        <button
+          id="saveButton"
+          onclick="saveProduct()"
+        >
+          ➕ Add Product
+        </button>
 
-  const product = products.find(p => p.id === id);
+        <button
+          id="clearButton"
+          onclick="clearForm()"
+        >
+          Clear
+        </button>
 
-  if (!product) return;
+      </div>
 
-  editingId = id;
+      <div id="status" class="status"></div>
 
-  document.getElementById("name").value =
-    product.Name || "";
-
-  document.getElementById("price").value =
-    product.Price || "";
-
-  document.getElementById("oldPrice").value =
-    product["Old price"] || "";
-
-  document.getElementById("category").value =
-    product.category || "";
-
-  document.getElementById("size").value =
-    product.Size || "";
-
-  document.getElementById("color").value =
-    product.Colour || "";
-
-  document.getElementById("stock").value =
-    product.Stock || 0;
-
-  document.getElementById("description").value =
-    product.Description || "";
-
-  selectedImage =
-    product["Image Url"] || "";
-
-  if (selectedImage) {
-
-    const preview =
-      document.getElementById("preview");
-
-    preview.src = selectedImage;
-    preview.style.display = "block";
-  }
-
-  const formTitle =
-    document.getElementById("formTitle");
-
-  if (formTitle) {
-    formTitle.textContent = "✏️ Edit Product";
-  }
-
-  const saveButton =
-    document.getElementById("saveButton");
-
-  if (saveButton) {
-    saveButton.textContent = "💾 Update Product";
-  }
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}
+    </section>
 
 
-/* DELETE */
+    <!-- PRODUCTS -->
 
-async function deleteProduct(id) {
+    <section class="card">
 
-  if (!confirm("क्या आप यह product delete करना चाहते हैं?")) {
-    return;
-  }
+      <div class="products-header">
 
-  const { error } = await db
-    .from("Product")
-    .delete()
-    .eq("id", id);
+        <h2>📦 Products</h2>
 
-  if (error) {
+        <span class="count">
+          Total: <span id="count">0</span>
+        </span>
 
-    console.error(error);
+      </div>
 
-    alert("❌ Delete नहीं हुआ: " + error.message);
+      <div id="products">
+        <div class="empty">
+          Loading products...
+        </div>
+      </div>
 
-    return;
-  }
+    </section>
 
-  alert("🗑️ Product deleted");
-
-  await showProducts();
-}
+  </main>
 
 
-/* CLEAR */
+  <script>
 
-function clearForm() {
+    /* ==============================
+       SUPABASE CONNECTION
+    ============================== */
 
-  editingId = null;
-  selectedImage = "";
+    const SUPABASE_URL =
+      "https://dfcadaccfkyfslakbigf.supabase.co";
 
-  document.getElementById("name").value = "";
-  document.getElementById("price").value = "";
-  document.getElementById("oldPrice").value = "";
-  document.getElementById("category").value = "";
-  document.getElementById("size").value = "";
-  document.getElementById("color").value = "";
-  document.getElementById("stock").value = "1";
-  document.getElementById("description").value = "";
-
-  const image =
-    document.getElementById("image");
-
-  if (image) {
-    image.value = "";
-  }
-
-  const preview =
-    document.getElementById("preview");
-
-  if (preview) {
-    preview.style.display = "none";
-    preview.src = "";
-  }
-
-  const formTitle =
-    document.getElementById("formTitle");
-
-  if (formTitle) {
-    formTitle.textContent = "➕ Add Product";
-  }
-
-  const saveButton =
-    document.getElementById("saveButton");
-
-  if (saveButton) {
-    saveButton.textContent = "➕ Add Product";
-  }
-}
+    const SUPABASE_KEY =
+      "sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
 
 
-/* SECURITY */
-
-function escapeHtml(text) {
-
-  return String(text || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+    const db = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
 
-/* INLINE BUTTONS के लिए */
+    /* ==============================
+       VARIABLES
+    ============================== */
 
-window.saveProduct = saveProduct;
-window.editProduct = editProduct;
-window.deleteProduct = deleteProduct;
-window.clearForm = clearForm;
+    let products = [];
 
-</script>
+    let selectedImage = "";
+
+    let editingId = null;
+
+
+    /* ==============================
+       IMAGE SELECT
+    ============================== */
+
+    document
+      .getElementById("image")
+      .addEventListener("change", function(e) {
+
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+
+        const reader = new FileReader();
+
+
+        reader.onload = function(event) {
+
+          selectedImage = event.target.result;
+
+
+          const preview =
+            document.getElementById("preview");
+
+
+          preview.src = selectedImage;
+
+          preview.style.display = "block";
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+      });
+
+
+    /* ==============================
+       SAVE PRODUCT
+    ============================== */
+
+    async function saveProduct() {
+
+      const name =
+        document
+          .getElementById("name")
+          .value
+          .trim();
+
+
+      const price =
+        document
+          .getElementById("price")
+          .value;
+
+
+      const oldPrice =
+        document
+          .getElementById("oldPrice")
+          .value;
+
+
+      const category =
+        document
+          .getElementById("category")
+          .value;
+
+
+      const size =
+        document
+          .getElementById("size")
+          .value
+          .trim();
+
+
+      const color =
+        document
+          .getElementById("color")
+          .value
+          .trim();
+
+
+      const stock =
+        document
+          .getElementById("stock")
+          .value;
+
+
+      const description =
+        document
+          .getElementById("description")
+          .value
+          .trim();
+
+
+      if (!name) {
+
+        alert("Product name डालें");
+
+        return;
+      }
+
+
+      if (!price) {
+
+        alert("Product price डालें");
+
+        return;
+      }
+
+
+      const productData = {
+
+        "Name": name,
+
+        "Price": Number(price),
+
+        "Old price":
+          oldPrice
+            ? Number(oldPrice)
+            : null,
+
+        "category": category,
+
+        "Size": size,
+
+        "Colour": color,
+
+        "Stock":
+          Number(stock || 0),
+
+        "Image Url":
+          selectedImage,
+
+        "Description":
+          description
+
+      };
+
+
+      /* UPDATE */
+
+      if (editingId !== null) {
+
+        const { error } =
+          await db
+            .from("Product")
+            .update(productData)
+            .eq("id", editingId);
+
+
+        if (error) {
+
+          console.error(error);
+
+          alert(
+            "❌ Update नहीं हुआ:\n" +
+            error.message
+          );
+
+          return;
+        }
+
+
+        alert("✅ Product updated");
+
+      }
+
+
+      /* INSERT */
+
+      else {
+
+        const { error } =
+          await db
+            .from("Product")
+            .insert([
+              productData
+            ]);
+
+
+        if (error) {
+
+          console.error(error);
+
+          alert(
+            "❌ Product add नहीं हुआ:\n" +
+            error.message
+          );
+
+          return;
+        }
+
+
+        alert("✅ Product added");
+
+      }
+
+
+      clearForm();
+
+      await showProducts();
+
+    }
+
+
+    /* ==============================
+       SHOW PRODUCTS
+    ============================== */
+
+    async function showProducts() {
+
+      const box =
+        document.getElementById("products");
+
+
+      box.innerHTML =
+        '<div class="empty">Loading...</div>';
+
+
+      const { data, error } =
+        await db
+          .from("Product")
+          .select("*")
+          .order(
+            "created_at",
+            {
+              ascending: false
+            }
+          );
+
+
+      if (error) {
+
+        console.error(error);
+
+
+        box.innerHTML =
+          `
+          <div class="empty">
+            ❌ Products load नहीं हुए
+            <br><br>
+            ${escapeHtml(error.message)}
+          </div>
+          `;
+
+        return;
+      }
+
+
+      products = data || [];
+
+
+      document
+        .getElementById("count")
+        .textContent =
+          products.length;
+
+
+      if (products.length === 0) {
+
+        box.innerHTML =
+          `
+          <div class="empty">
+            📦 अभी कोई product नहीं है
+          </div>
+          `;
+
+        return;
+      }
+
+
+      box.innerHTML = "";
+
+
+      products.forEach(product => {
+
+        const div =
+          document.createElement("div");
+
+
+        div.className =
+          "product";
+
+
+        const image =
+          product["Image Url"] ||
+          "https://via.placeholder.com/150";
+
+
+        div.innerHTML = `
+
+          <img
+            src="${escapeAttribute(image)}"
+            alt="Product"
+          >
+
+          <div class="product-info">
+
+            <h3>
+              ${escapeHtml(product.Name)}
+            </h3>
+
+            <div class="price">
+
+              ₹${product.Price || 0}
+
+              ${
+                product["Old price"]
+                ?
+                `
+                <span class="old">
+                  ₹${product["Old price"]}
+                </span>
+                `
+                :
+                ""
+              }
+
+            </div>
+
+            <small>
+
+              ${escapeHtml(
+                product.category || ""
+              )}
+
+              • Stock:
+              ${product.Stock || 0}
+
+            </small>
+
+            <div class="actions">
+
+              <button
+                class="edit"
+                onclick="editProduct(${product.id})"
+              >
+                ✏️ Edit
+              </button>
+
+              <button
+                class="delete"
+                onclick="deleteProduct(${product.id})"
+              >
+                🗑️ Delete
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+
+        box.appendChild(div);
+
+      });
+
+    }
+
+
+    /* ==============================
+       EDIT PRODUCT
+    ============================== */
+
+    function editProduct(id) {
+
+      const product =
+        products.find(
+          p => p.id === id
+        );
+
+
+      if (!product) {
+
+        alert("Product नहीं मिला");
+
+        return;
+      }
+
+
+      editingId = id;
+
+
+      document
+        .getElementById("name")
+        .value =
+          product.Name || "";
+
+
+      document
+        .getElementById("price")
+        .value =
+          product.Price || "";
+
+
+      document
+        .getElementById("oldPrice")
+        .value =
+          product["Old price"] || "";
+
+
+      document
+        .getElementById("category")
+        .value =
+          product.category || "";
+
+
+      document
+        .getElementById("size")
+        .value =
+          product.Size || "";
+
+
+      document
+        .getElementById("color")
+        .value =
+          product.Colour || "";
+
+
+      document
+        .getElementById("stock")
+        .value =
+          product.Stock || 0;
+
+
+      document
+        .getElementById("description")
+        .value =
+          product.Description || "";
+
+
+      selectedImage =
+        product["Image Url"] || "";
+
+
+      if (selectedImage) {
+
+        const preview =
+          document.getElementById("preview");
+
+
+        preview.src =
+          selectedImage;
+
+
+        preview.style.display =
+          "block";
+
+      }
+
+
+      document
+        .getElementById("formTitle")
+        .textContent =
+          "✏️ Edit Product";
+
+
+      document
+        .getElementById("saveButton")
+        .textContent =
+          "💾 Update Product";
+
+
+      window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+      });
+
+    }
+
+
+    /* ==============================
+       DELETE PRODUCT
+    ============================== */
+
+    async function deleteProduct(id) {
+
+      if (
+        !confirm(
+          "क्या आप यह product delete करना चाहते हैं?"
+        )
+      ) {
+
+        return;
+
+      }
+
+
+      const { error } =
+        await db
+          .from("Product")
+          .delete()
+          .eq("id", id);
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          "❌ Delete नहीं हुआ:\n" +
+          error.message
+        );
+
+        return;
+      }
+
+
+      alert("🗑️ Product deleted");
+
+
+      await showProducts();
+
+    }
+
+
+    /* ==============================
+       CLEAR FORM
+    ============================== */
+
+    function clearForm() {
+
+      editingId = null;
+
+      selectedImage = "";
+
+
+      document
+        .getElementById("name")
+        .value = "";
+
+
+      document
+        .getElementById("price")
+        .value = "";
+
+
+      document
+        .getElementById("oldPrice")
+        .value = "";
+
+
+      document
+        .getElementById("category")
+        .value = "";
+
+
+      document
+        .getElementById("size")
+        .value = "";
+
+
+      document
+        .getElementById("color")
+        .value = "";
+
+
+      document
+        .getElementById("stock")
+        .value = "1";
+
+
+      document
+        .getElementById("description")
+        .value = "";
+
+
+      document
+        .getElementById("image")
+        .value = "";
+
+
+      const preview =
+        document.getElementById("preview");
+
+
+      preview.src = "";
+
+      preview.style.display =
+        "none";
+
+
+      document
+        .getElementById("formTitle")
+        .textContent =
+          "➕ Add Product";
+
+
+      document
+        .getElementById("saveButton")
+        .textContent =
+          "➕ Add Product";
+
+    }
+
+
+    /* ==============================
+       SECURITY
+    ============================== */
+
+    function escapeHtml(text) {
+
+      return String(text || "")
+
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+
+        .replace(
+          /</g,
+          "&lt;"
+        )
+
+        .replace(
+          />/g,
+          "&gt;"
+        )
+
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    function escapeAttribute(text) {
+
+      return String(text || "")
+
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+
+        .replace(
+          /</g,
+          "&lt;"
+        )
+
+        .replace(
+          />/g,
+          "&gt;"
+        );
+
+    }
+
+
+    /* ==============================
+       START
+    ============================== */
+
+    showProducts();
+
+
+    /* BUTTONS */
+
+    window.saveProduct =
+      saveProduct;
+
+    window.editProduct =
+      editProduct;
+
+    window.deleteProduct =
+      deleteProduct;
+
+    window.clearForm =
+      clearForm;
+
+  </script>
+
+</body>
+</html>
