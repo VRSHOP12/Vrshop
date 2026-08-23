@@ -1,378 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>VR SHOP Admin</title>
-
-<style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  font-family:Arial,sans-serif;
-  background:#f5f5f5;
-  color:#111;
-}
-
-header{
-  background:#111;
-  color:white;
-  padding:18px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:sticky;
-  top:0;
-  z-index:100;
-}
-
-header h1{
-  font-size:24px;
-}
-
-.products-count{
-  font-size:16px;
-}
-
-.container{
-  max-width:800px;
-  margin:auto;
-  padding:20px;
-}
-
-.card{
-  background:white;
-  padding:20px;
-  border-radius:18px;
-  margin-bottom:20px;
-  box-shadow:0 3px 15px #0001;
-}
-
-h2{
-  margin-bottom:20px;
-}
-
-label{
-  display:block;
-  font-weight:bold;
-  margin-top:15px;
-  margin-bottom:7px;
-}
-
-input,
-select,
-textarea{
-  width:100%;
-  padding:14px;
-  border:1px solid #ddd;
-  border-radius:12px;
-  font-size:16px;
-  background:white;
-}
-
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-.image-box{
-  border:2px dashed #bbb;
-  border-radius:15px;
-  padding:20px;
-  text-align:center;
-  margin-top:10px;
-}
-
-.image-box input{
-  border:0;
-  padding:10px;
-}
-
-#preview{
-  display:none;
-  width:180px;
-  height:180px;
-  object-fit:cover;
-  border-radius:15px;
-  margin:15px auto;
-}
-
-button{
-  border:0;
-  padding:13px 20px;
-  border-radius:12px;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.add-btn{
-  width:100%;
-  background:#111;
-  color:white;
-  margin-top:20px;
-}
-
-.clear-btn{
-  background:#eee;
-  color:#111;
-  margin-top:10px;
-  width:100%;
-}
-
-.product{
-  border:1px solid #ddd;
-  border-radius:15px;
-  padding:15px;
-  margin-top:15px;
-  display:flex;
-  gap:15px;
-  align-items:center;
-}
-
-.product img{
-  width:90px;
-  height:90px;
-  object-fit:cover;
-  border-radius:12px;
-  background:#eee;
-}
-
-.product-info{
-  flex:1;
-}
-
-.product-info h3{
-  margin-bottom:6px;
-}
-
-.price{
-  font-weight:bold;
-  font-size:18px;
-}
-
-.old{
-  text-decoration:line-through;
-  color:#888;
-  margin-left:5px;
-  font-size:14px;
-}
-
-.actions{
-  margin-top:10px;
-  display:flex;
-  gap:8px;
-}
-
-.edit{
-  background:#eee;
-}
-
-.delete{
-  background:#111;
-  color:white;
-}
-
-.empty{
-  text-align:center;
-  color:#777;
-  padding:30px;
-}
-
-@media(max-width:600px){
-
-  header h1{
-    font-size:20px;
-  }
-
-  .container{
-    padding:12px;
-  }
-
-  .product{
-    align-items:flex-start;
-  }
-
-  .product img{
-    width:75px;
-    height:75px;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  <h1>🛍️ VR SHOP Admin</h1>
-  <div class="products-count">
-    <span id="count">0</span> products
-  </div>
-</header>
-
-
-<div class="container">
-
-<div class="card">
-
-<h2 id="formTitle">➕ Add Product</h2>
-
-<label>Product Name</label>
-<input
-  type="text"
-  id="name"
-  placeholder="Men t shirt"
->
-
-<label>Price (₹)</label>
-<input
-  type="number"
-  id="price"
-  placeholder="400"
->
-
-<label>Old Price (₹)</label>
-<input
-  type="number"
-  id="oldPrice"
-  placeholder="699"
->
-
-<label>Category</label>
-<select id="category">
-
-<option value="Men">Men</option>
-<option value="Women">Women</option>
-<option value="Kids">Kids</option>
-<option value="Shoes">Shoes</option>
-<option value="Accessories">Accessories</option>
-<option value="Other">Other</option>
-
-</select>
-
-<label>Size</label>
-<input
-  type="text"
-  id="size"
-  placeholder="M, L, XL"
->
-
-<label>Color</label>
-<input
-  type="text"
-  id="color"
-  placeholder="White"
->
-
-<label>Stock</label>
-<input
-  type="number"
-  id="stock"
-  placeholder="10"
-  value="1"
->
-
-<label>📷 Product Image</label>
-
-<div class="image-box">
-
-<p>Gallery से product की photo चुनें</p>
-
-<input
-  type="file"
-  id="image"
-  accept="image/*"
->
-
-<img id="preview">
-
-</div>
-
-<label>Description</label>
-
-<textarea
-  id="description"
-  placeholder="Product details..."
-></textarea>
-
-<button
-  class="add-btn"
-  onclick="saveProduct()"
-  id="saveButton"
->
-➕ Add Product
-</button>
-
-<button
-  class="clear-btn"
-  onclick="clearForm()"
->
-Clear Form
-</button>
-
-</div>
-
-
-<div class="card">
-
-<h2>📦 Your Products</h2>
-
-<div id="products"></div>
-
-</div>
-
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+const SUPABASE_URL =
+  "https://dfcadaccfkyfslakbigf.supabase.co";
 
-let products = JSON.parse(
-  localStorage.getItem("vrshop_products") || "[]"
+const SUPABASE_KEY =
+  "sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
+let products = [];
 let selectedImage = "";
-
 let editingId = null;
 
 
 /* IMAGE SELECT */
 
-document
-.getElementById("image")
-.addEventListener("change", function(e){
+document.getElementById("image").addEventListener("change", function(e) {
 
   const file = e.target.files[0];
 
-  if(!file) return;
+  if (!file) return;
 
   const reader = new FileReader();
 
-  reader.onload = function(event){
+  reader.onload = function(event) {
 
     selectedImage = event.target.result;
 
-    const preview =
-      document.getElementById("preview");
+    const preview = document.getElementById("preview");
 
     preview.src = selectedImage;
-
     preview.style.display = "block";
-
   };
 
   reader.readAsDataURL(file);
-
 });
 
 
 /* SAVE PRODUCT */
 
-function saveProduct(){
+async function saveProduct() {
 
   const name =
     document.getElementById("name").value.trim();
@@ -399,111 +70,130 @@ function saveProduct(){
     document.getElementById("description").value.trim();
 
 
-  if(!name){
-
+  if (!name) {
     alert("Product name डालें");
-
     return;
   }
 
-  if(!price){
-
+  if (!price) {
     alert("Product price डालें");
-
     return;
   }
 
 
-  if(editingId){
+  const productData = {
 
-    const index =
-      products.findIndex(
-        p => p.id === editingId
-      );
+    "Name": name,
 
-    if(index !== -1){
+    "Price": Number(price),
 
-      products[index] = {
+    "Old price": oldPrice
+      ? Number(oldPrice)
+      : null,
 
-        ...products[index],
+    "category": category,
 
-        name:name,
-        price:price,
-        oldPrice:oldPrice,
-        category:category,
-        size:size,
-        color:color,
-        stock:stock,
-        description:description,
+    "Size": size,
 
-        image:
-          selectedImage ||
-          products[index].image
+    "Colour": color,
 
-      };
+    "Stock": Number(stock || 0),
 
+    "Image Url": selectedImage,
+
+    "Description": description
+
+  };
+
+
+  /* UPDATE */
+
+  if (editingId) {
+
+    const { error } = await db
+      .from("Product")
+      .update(productData)
+      .eq("id", editingId);
+
+    if (error) {
+
+      console.error(error);
+
+      alert("❌ Update नहीं हुआ: " + error.message);
+
+      return;
     }
 
     alert("✅ Product updated");
 
-  }else{
-
-    const product = {
-
-      id:Date.now(),
-
-      name:name,
-
-      price:price,
-
-      oldPrice:oldPrice,
-
-      category:category,
-
-      size:size,
-
-      color:color,
-
-      stock:stock,
-
-      image:selectedImage,
-
-      description:description
-
-    };
-
-    products.push(product);
-
-    alert("✅ Product added");
-
   }
 
 
-  localStorage.setItem(
-    "vrshop_products",
-    JSON.stringify(products)
-  );
+  /* INSERT */
+
+  else {
+
+    const { error } = await db
+      .from("Product")
+      .insert([productData]);
+
+    if (error) {
+
+      console.error(error);
+
+      alert("❌ Product add नहीं हुआ: " + error.message);
+
+      return;
+    }
+
+    alert("✅ Product added");
+  }
 
 
   clearForm();
 
-  showProducts();
-
+  await showProducts();
 }
 
 
-/* SHOW PRODUCTS */
+/* GET PRODUCTS */
 
-function showProducts(){
+async function showProducts() {
 
   const box =
     document.getElementById("products");
+
+  box.innerHTML =
+    '<div class="empty">Loading...</div>';
+
+
+  const { data, error } = await db
+    .from("Product")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+
+  if (error) {
+
+    console.error(error);
+
+    box.innerHTML =
+      '<div class="empty">❌ Products load नहीं हुए</div>';
+
+    alert("Database error: " + error.message);
+
+    return;
+  }
+
+
+  products = data || [];
+
 
   document.getElementById("count")
     .textContent = products.length;
 
 
-  if(products.length === 0){
+  if (products.length === 0) {
 
     box.innerHTML =
       '<div class="empty">अभी कोई product नहीं है</div>';
@@ -515,10 +205,7 @@ function showProducts(){
   box.innerHTML = "";
 
 
-  products
-  .slice()
-  .reverse()
-  .forEach(product => {
+  products.forEach(product => {
 
     const div =
       document.createElement("div");
@@ -527,7 +214,7 @@ function showProducts(){
 
 
     const image =
-      product.image ||
+      product["Image Url"] ||
       "https://via.placeholder.com/150";
 
 
@@ -537,25 +224,25 @@ function showProducts(){
 
       <div class="product-info">
 
-        <h3>${escapeHtml(product.name)}</h3>
+        <h3>${escapeHtml(product.Name)}</h3>
 
         <div class="price">
 
-          ₹${product.price}
+          ₹${product.Price}
 
           ${
-            product.oldPrice
+            product["Old price"]
             ? `<span class="old">
-                ₹${product.oldPrice}
-               </span>`
+                ₹${product["Old price"]}
+              </span>`
             : ""
           }
 
         </div>
 
         <small>
-          ${escapeHtml(product.category)}
-          • Stock: ${product.stock}
+          ${escapeHtml(product.category || "")}
+          • Stock: ${product.Stock || 0}
         </small>
 
         <div class="actions">
@@ -577,7 +264,6 @@ function showProducts(){
         </div>
 
       </div>
-
     `;
 
 
@@ -588,51 +274,49 @@ function showProducts(){
 }
 
 
-/* EDIT */
+/* EDIT PRODUCT */
 
-function editProduct(id){
+function editProduct(id) {
 
   const product =
-    products.find(
-      p => p.id === id
-    );
+    products.find(p => p.id === id);
 
-  if(!product) return;
+  if (!product) return;
 
 
   editingId = id;
 
 
   document.getElementById("name").value =
-    product.name;
+    product.Name || "";
 
   document.getElementById("price").value =
-    product.price;
+    product.Price || "";
 
   document.getElementById("oldPrice").value =
-    product.oldPrice || "";
+    product["Old price"] || "";
 
   document.getElementById("category").value =
-    product.category;
+    product.category || "Men";
 
   document.getElementById("size").value =
-    product.size || "";
+    product.Size || "";
 
   document.getElementById("color").value =
-    product.color || "";
+    product.Colour || "";
 
   document.getElementById("stock").value =
-    product.stock;
+    product.Stock || 1;
 
   document.getElementById("description").value =
-    product.description || "";
+    product.Description || "";
 
 
   selectedImage =
-    product.image || "";
+    product["Image Url"] || "";
 
 
-  if(selectedImage){
+  if (selectedImage) {
 
     document.getElementById("preview").src =
       selectedImage;
@@ -651,43 +335,50 @@ function editProduct(id){
 
 
   window.scrollTo({
-    top:0,
-    behavior:"smooth"
+    top: 0,
+    behavior: "smooth"
   });
 
 }
 
 
-/* DELETE */
+/* DELETE PRODUCT */
 
-function deleteProduct(id){
+async function deleteProduct(id) {
 
-  if(!confirm("क्या आप यह product delete करना चाहते हैं?")){
+  if (!confirm(
+    "क्या आप यह product delete करना चाहते हैं?"
+  )) {
+    return;
+  }
+
+
+  const { error } = await db
+    .from("Product")
+    .delete()
+    .eq("id", id);
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert("❌ Delete नहीं हुआ: " + error.message);
 
     return;
   }
 
 
-  products =
-    products.filter(
-      p => p.id !== id
-    );
+  alert("🗑️ Product deleted");
 
-
-  localStorage.setItem(
-    "vrshop_products",
-    JSON.stringify(products)
-  );
-
-
-  showProducts();
+  await showProducts();
 
 }
 
 
 /* CLEAR FORM */
 
-function clearForm(){
+function clearForm() {
 
   editingId = null;
 
@@ -728,14 +419,14 @@ function clearForm(){
 
 /* SECURITY */
 
-function escapeHtml(text){
+function escapeHtml(text) {
 
-  return String(text)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
@@ -745,6 +436,3 @@ function escapeHtml(text){
 showProducts();
 
 </script>
-
-</body>
-</html>
