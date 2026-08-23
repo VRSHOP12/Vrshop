@@ -1,11 +1,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const SUPABASE_URL =
-  "https://dfcadaccfkyfslakbigf.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
+const SUPABASE_URL = "https://dfcadaccfkyfslakbigf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
 
 const db = window.supabase.createClient(
   SUPABASE_URL,
@@ -17,27 +14,38 @@ let selectedImage = "";
 let editingId = null;
 
 
-/* IMAGE SELECT */
+/* PAGE LOAD होने के बाद code चलेगा */
+document.addEventListener("DOMContentLoaded", () => {
 
-document.getElementById("image").addEventListener("change", function(e) {
+  const imageInput = document.getElementById("image");
 
-  const file = e.target.files[0];
+  if (imageInput) {
+    imageInput.addEventListener("change", function(e) {
 
-  if (!file) return;
+      const file = e.target.files[0];
 
-  const reader = new FileReader();
+      if (!file) return;
 
-  reader.onload = function(event) {
+      const reader = new FileReader();
 
-    selectedImage = event.target.result;
+      reader.onload = function(event) {
 
-    const preview = document.getElementById("preview");
+        selectedImage = event.target.result;
 
-    preview.src = selectedImage;
-    preview.style.display = "block";
-  };
+        const preview = document.getElementById("preview");
 
-  reader.readAsDataURL(file);
+        if (preview) {
+          preview.src = selectedImage;
+          preview.style.display = "block";
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  showProducts();
+
 });
 
 
@@ -45,30 +53,14 @@ document.getElementById("image").addEventListener("change", function(e) {
 
 async function saveProduct() {
 
-  const name =
-    document.getElementById("name").value.trim();
-
-  const price =
-    document.getElementById("price").value;
-
-  const oldPrice =
-    document.getElementById("oldPrice").value;
-
-  const category =
-    document.getElementById("category").value;
-
-  const size =
-    document.getElementById("size").value.trim();
-
-  const color =
-    document.getElementById("color").value.trim();
-
-  const stock =
-    document.getElementById("stock").value;
-
-  const description =
-    document.getElementById("description").value.trim();
-
+  const name = document.getElementById("name").value.trim();
+  const price = document.getElementById("price").value;
+  const oldPrice = document.getElementById("oldPrice").value;
+  const category = document.getElementById("category").value;
+  const size = document.getElementById("size").value.trim();
+  const color = document.getElementById("color").value.trim();
+  const stock = document.getElementById("stock").value;
+  const description = document.getElementById("description").value.trim();
 
   if (!name) {
     alert("Product name डालें");
@@ -80,35 +72,22 @@ async function saveProduct() {
     return;
   }
 
-
   const productData = {
-
     "Name": name,
-
     "Price": Number(price),
-
-    "Old price": oldPrice
-      ? Number(oldPrice)
-      : null,
-
+    "Old price": oldPrice ? Number(oldPrice) : null,
     "category": category,
-
     "Size": size,
-
     "Colour": color,
-
     "Stock": Number(stock || 0),
-
     "Image Url": selectedImage,
-
     "Description": description
-
   };
 
 
-  /* UPDATE */
+  /* EDIT */
 
-  if (editingId) {
+  if (editingId !== null) {
 
     const { error } = await db
       .from("Product")
@@ -116,11 +95,8 @@ async function saveProduct() {
       .eq("id", editingId);
 
     if (error) {
-
       console.error(error);
-
       alert("❌ Update नहीं हुआ: " + error.message);
-
       return;
     }
 
@@ -128,8 +104,7 @@ async function saveProduct() {
 
   }
 
-
-  /* INSERT */
+  /* ADD */
 
   else {
 
@@ -138,40 +113,36 @@ async function saveProduct() {
       .insert([productData]);
 
     if (error) {
-
       console.error(error);
-
       alert("❌ Product add नहीं हुआ: " + error.message);
-
       return;
     }
 
     alert("✅ Product added");
   }
 
-
   clearForm();
-
   await showProducts();
 }
 
 
-/* GET PRODUCTS */
+/* SHOW PRODUCTS */
 
 async function showProducts() {
 
-  const box =
-    document.getElementById("products");
+  const box = document.getElementById("products");
 
-  box.innerHTML =
-    '<div class="empty">Loading...</div>';
+  if (!box) {
+    console.error("products element नहीं मिला");
+    return;
+  }
 
+  box.innerHTML = '<div class="empty">Loading...</div>';
 
   const { data, error } = await db
     .from("Product")
     .select("*")
     .order("created_at", { ascending: false });
-
 
   if (error) {
 
@@ -185,13 +156,13 @@ async function showProducts() {
     return;
   }
 
-
   products = data || [];
 
+  const count = document.getElementById("count");
 
-  document.getElementById("count")
-    .textContent = products.length;
-
+  if (count) {
+    count.textContent = products.length;
+  }
 
   if (products.length === 0) {
 
@@ -201,43 +172,35 @@ async function showProducts() {
     return;
   }
 
-
   box.innerHTML = "";
-
 
   products.forEach(product => {
 
-    const div =
-      document.createElement("div");
+    const div = document.createElement("div");
 
     div.className = "product";
-
 
     const image =
       product["Image Url"] ||
       "https://via.placeholder.com/150";
 
-
     div.innerHTML = `
-
-      <img src="${image}">
+      <img src="${image}" alt="Product">
 
       <div class="product-info">
 
         <h3>${escapeHtml(product.Name)}</h3>
 
         <div class="price">
-
           ₹${product.Price}
 
           ${
             product["Old price"]
-            ? `<span class="old">
-                ₹${product["Old price"]}
-              </span>`
-            : ""
+              ? `<span class="old">
+                   ₹${product["Old price"]}
+                 </span>`
+              : ""
           }
-
         </div>
 
         <small>
@@ -249,15 +212,13 @@ async function showProducts() {
 
           <button
             class="edit"
-            onclick="editProduct(${product.id})"
-          >
+            onclick="editProduct(${product.id})">
             ✏️ Edit
           </button>
 
           <button
             class="delete"
-            onclick="deleteProduct(${product.id})"
-          >
+            onclick="deleteProduct(${product.id})">
             🗑️ Delete
           </button>
 
@@ -266,26 +227,21 @@ async function showProducts() {
       </div>
     `;
 
-
     box.appendChild(div);
 
   });
-
 }
 
 
-/* EDIT PRODUCT */
+/* EDIT */
 
 function editProduct(id) {
 
-  const product =
-    products.find(p => p.id === id);
+  const product = products.find(p => p.id === id);
 
   if (!product) return;
 
-
   editingId = id;
-
 
   document.getElementById("name").value =
     product.Name || "";
@@ -297,7 +253,7 @@ function editProduct(id) {
     product["Old price"] || "";
 
   document.getElementById("category").value =
-    product.category || "Men";
+    product.category || "";
 
   document.getElementById("size").value =
     product.Size || "";
@@ -306,58 +262,56 @@ function editProduct(id) {
     product.Colour || "";
 
   document.getElementById("stock").value =
-    product.Stock || 1;
+    product.Stock || 0;
 
   document.getElementById("description").value =
     product.Description || "";
 
-
   selectedImage =
     product["Image Url"] || "";
 
-
   if (selectedImage) {
 
-    document.getElementById("preview").src =
-      selectedImage;
+    const preview =
+      document.getElementById("preview");
 
-    document.getElementById("preview").style.display =
-      "block";
-
+    preview.src = selectedImage;
+    preview.style.display = "block";
   }
 
+  const formTitle =
+    document.getElementById("formTitle");
 
-  document.getElementById("formTitle")
-    .textContent = "✏️ Edit Product";
+  if (formTitle) {
+    formTitle.textContent = "✏️ Edit Product";
+  }
 
-  document.getElementById("saveButton")
-    .textContent = "💾 Update Product";
+  const saveButton =
+    document.getElementById("saveButton");
 
+  if (saveButton) {
+    saveButton.textContent = "💾 Update Product";
+  }
 
   window.scrollTo({
     top: 0,
     behavior: "smooth"
   });
-
 }
 
 
-/* DELETE PRODUCT */
+/* DELETE */
 
 async function deleteProduct(id) {
 
-  if (!confirm(
-    "क्या आप यह product delete करना चाहते हैं?"
-  )) {
+  if (!confirm("क्या आप यह product delete करना चाहते हैं?")) {
     return;
   }
-
 
   const { error } = await db
     .from("Product")
     .delete()
     .eq("id", id);
-
 
   if (error) {
 
@@ -368,52 +322,56 @@ async function deleteProduct(id) {
     return;
   }
 
-
   alert("🗑️ Product deleted");
 
   await showProducts();
-
 }
 
 
-/* CLEAR FORM */
+/* CLEAR */
 
 function clearForm() {
 
   editingId = null;
-
   selectedImage = "";
 
-
   document.getElementById("name").value = "";
-
   document.getElementById("price").value = "";
-
   document.getElementById("oldPrice").value = "";
-
-  document.getElementById("category").value = "Men";
-
+  document.getElementById("category").value = "";
   document.getElementById("size").value = "";
-
   document.getElementById("color").value = "";
-
   document.getElementById("stock").value = "1";
-
   document.getElementById("description").value = "";
 
-  document.getElementById("image").value = "";
+  const image =
+    document.getElementById("image");
 
+  if (image) {
+    image.value = "";
+  }
 
-  document.getElementById("preview").style.display =
-    "none";
+  const preview =
+    document.getElementById("preview");
 
+  if (preview) {
+    preview.style.display = "none";
+    preview.src = "";
+  }
 
-  document.getElementById("formTitle")
-    .textContent = "➕ Add Product";
+  const formTitle =
+    document.getElementById("formTitle");
 
-  document.getElementById("saveButton")
-    .textContent = "➕ Add Product";
+  if (formTitle) {
+    formTitle.textContent = "➕ Add Product";
+  }
 
+  const saveButton =
+    document.getElementById("saveButton");
+
+  if (saveButton) {
+    saveButton.textContent = "➕ Add Product";
+  }
 }
 
 
@@ -427,12 +385,14 @@ function escapeHtml(text) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-
 }
 
 
-/* START */
+/* INLINE BUTTONS के लिए */
 
-showProducts();
+window.saveProduct = saveProduct;
+window.editProduct = editProduct;
+window.deleteProduct = deleteProduct;
+window.clearForm = clearForm;
 
 </script>
