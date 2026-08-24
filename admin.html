@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VR Shop Admin</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 18px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header p {
+      margin: 5px 0 0;
+      color: #cbd5e1;
+      font-size: 13px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 15px 40px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.08);
+    }
+
+    .card h2 {
+      margin: 0 0 18px;
+      font-size: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 15px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    #preview {
+      display: none;
+      max-width: 150px;
+      max-height: 150px;
+      margin-top: 8px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #saveButton {
+      background: #2563eb;
+      color: white;
+      flex: 1;
+    }
+
+    .clear-btn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .count {
+      background: #e5e7eb;
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+
+    #products {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .product {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .product > img {
+      width: 105px;
+      height: 105px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #f3f4f6;
+      flex-shrink: 0;
+    }
+
+    .product-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .product-info h3 {
+      margin: 0 0 7px;
+      font-size: 17px;
+      word-break: break-word;
+    }
+
+    .price {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .old {
+      color: #888;
+      text-decoration: line-through;
+      font-size: 14px;
+      margin-left: 6px;
+      font-weight: 400;
+    }
+
+    .product-info small {
+      color: #555;
+    }
+
+    .actions {
+      display: flex;
+      gap: 7px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    .edit {
+      background: #f59e0b;
+      color: white;
+    }
+
+    .delete {
+      background: #dc2626;
+      color: white;
+    }
+
+    .empty {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+      color: #666;
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 650px) {
+      .grid, #products {
+        grid-template-columns: 1fr;
+      }
+
+      .product {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛍️ VR Shop Admin</h1>
+  <p>Product Management Panel</p>
+</header>
+
+<main class="container">
+
+  <section class="card">
+    <h2 id="formTitle">➕ Add Product</h2>
+
+    <div class="grid">
+
+      <div class="field">
+        <label for="name">Product Name *</label>
+        <input id="name" type="text" placeholder="T shirt">
+      </div>
+
+      <div class="field">
+        <label for="price">Price *</label>
+        <input id="price" type="number" min="0" placeholder="400">
+      </div>
+
+      <div class="field">
+        <label for="oldPrice">Old Price</label>
+        <input id="oldPrice" type="number" min="0" placeholder="500">
+      </div>
+
+      <div class="field">
+        <label for="category">Category *</label>
+        <select id="category">
+          <option value="">Select Category</option>
+          <option value="Men">Men</option>
+          <option value="Women">Women</option>
+          <option value="Kids">Kids</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Grocery">Grocery</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="size">Size</label>
+        <input id="size" type="text" placeholder="M">
+      </div>
+
+      <div class="field">
+        <label for="color">Colour</label>
+        <input id="color" type="text" placeholder="Black">
+      </div>
+
+      <div class="field">
+        <label for="stock">Stock</label>
+        <input id="stock" type="number" min="0" value="1">
+      </div>
+
+      <div class="field">
+        <label for="image">Product Image</label>
+        <input id="image" type="file" accept="image/*">
+        <img id="preview" alt="Image preview">
+      </div>
+
+      <div class="field full">
+        <label for="description">Description</label>
+        <textarea id="description" placeholder="Product description..."></textarea>
+      </div>
+
+    </div>
+
+    <div class="buttons">
+      <button id="saveButton" type="button" onclick="saveProduct()">➕ Add Product</button>
+      <button class="clear-btn" type="button" onclick="clearForm()">Clear</button>
+    </div>
+  </section>
+
+
+  <section class="card">
+    <div class="top-row">
+      <h2 style="margin:0">📦 Products</h2>
+      <span class="count">Count: <span id="count">0</span></span>
+    </div>
+
+    <div id="products">
+      <div class="empty">Loading...</div>
+    </div>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://dfcadaccfkyfslakbigf.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let products = [];
+let selectedImage = "";
+let editingId = null;
+
+
+/* =========================
+   PAGE LOAD
+========================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  const imageInput = document.getElementById("image");
+
+  if (imageInput) {
+
+    imageInput.addEventListener("change", function (e) {
+
+      const file = e.target.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+
+        selectedImage = event.target.result;
+
+        const preview =
+          document.getElementById("preview");
+
+        if (preview) {
+          preview.src = selectedImage;
+          preview.style.display = "block";
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  showProducts();
+});
+
+
+/* =========================
+   SAVE PRODUCT
+========================= */
+
+async function saveProduct() {
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const price =
+    document.getElementById("price").value;
+
+  const oldPrice =
+    document.getElementById("oldPrice").value;
+
+  const category =
+    document.getElementById("category").value;
+
+  const size =
+    document.getElementById("size").value.trim();
+
+  const color =
+    document.getElementById("color").value.trim();
+
+  const stock =
+    document.getElementById("stock").value;
+
+  const description =
+    document.getElementById("description").value.trim();
+
+
+  if (!name) {
+    alert("❌ Product name डालें");
+    return;
+  }
+
+  if (!price) {
+    alert("❌ Product price डालें");
+    return;
+  }
+
+  if (!category) {
+    alert("❌ Category select करें");
+    return;
+  }
+
+
+  /* CURRENT SUPABASE TABLE COLUMNS */
+
+  const productData = {
+
+    name: name,
+
+    price: Number(price),
+
+    old_price:
+      oldPrice ? Number(oldPrice) : null,
+
+    category: category,
+
+    size: size || null,
+
+    colour: color || null,
+
+    stock: Number(stock || 0),
+
+    image_url: selectedImage || null,
+
+    description: description || null
+  };
+
+
+  /* =========================
+     EDIT
+  ========================= */
+
+  if (editingId !== null) {
+
+    const { error } = await db
+      .from("Product")
+      .update(productData)
+      .eq("id", editingId);
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "❌ Product update नहीं हुआ:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    alert("✅ Product updated successfully");
+  }
+
+
+  /* =========================
+     ADD
+  ========================= */
+
+  else {
+
+    const { data, error } = await db
+      .from("Product")
+      .insert([productData])
+      .select();
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "❌ Product add नहीं हुआ:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    console.log("Product added:", data);
+
+    alert("✅ Product successfully added");
+  }
+
+
+  clearForm();
+
+  await showProducts();
+}
+
+
+/* =========================
+   SHOW PRODUCTS
+========================= */
+
+async function showProducts() {
+
+  const box =
+    document.getElementById("products");
+
+  if (!box) {
+    console.error("products element नहीं मिला");
+    return;
+  }
+
+  box.innerHTML =
+    '<div class="empty">Loading...</div>';
+
+
+  const { data, error } = await db
+    .from("Product")
+    .select("*")
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  if (error) {
+
+    console.error(error);
+
+    box.innerHTML =
+      '<div class="empty">❌ Products load नहीं हुए</div>';
+
+    alert(
+      "Database error:\n" +
+      error.message
+    );
+
+    return;
+  }
+
+
+  products = data || [];
+
+
+  const count =
+    document.getElementById("count");
+
+  if (count) {
+    count.textContent = products.length;
+  }
+
+
+  if (products.length === 0) {
+
+    box.innerHTML =
+      '<div class="empty">📦 अभी कोई product नहीं है</div>';
+
+    return;
+  }
+
+
+  box.innerHTML = "";
+
+
+  products.forEach(function (product) {
+
+    const div =
+      document.createElement("div");
+
+    div.className = "product";
+
+
+    const image =
+      product.image_url ||
+      "https://via.placeholder.com/150";
+
+
+    div.innerHTML = `
+
+      <img
+        src="${image}"
+        alt="Product"
+      >
+
+      <div class="product-info">
+
+        <h3>
+          ${escapeHtml(product.name)}
+        </h3>
+
+        <div class="price">
+
+          ₹${product.price}
+
+          ${
+            product.old_price
+              ? `
+                <span class="old">
+                  ₹${product.old_price}
+                </span>
+              `
+              : ""
+          }
+
+        </div>
+
+        <small>
+
+          ${escapeHtml(
+            product.category || ""
+          )}
+
+          • Stock:
+          ${product.stock || 0}
+
+        </small>
+
+        <div class="actions">
+
+          <button
+            class="edit"
+            onclick="editProduct(${product.id})"
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            class="delete"
+            onclick="deleteProduct(${product.id})"
+          >
+            🗑️ Delete
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+    box.appendChild(div);
+
+  });
+}
+
+
+/* =========================
+   EDIT PRODUCT
+========================= */
+
+function editProduct(id) {
+
+  const product =
+    products.find(function (p) {
+      return p.id === id;
+    });
+
+  if (!product) return;
+
+  editingId = id;
+
+
+  document.getElementById("name").value =
+    product.name || "";
+
+  document.getElementById("price").value =
+    product.price || "";
+
+  document.getElementById("oldPrice").value =
+    product.old_price || "";
+
+  document.getElementById("category").value =
+    product.category || "";
+
+  document.getElementById("size").value =
+    product.size || "";
+
+  document.getElementById("color").value =
+    product.colour || "";
+
+  document.getElementById("stock").value =
+    product.stock || 0;
+
+  document.getElementById("description").value =
+    product.description || "";
+
+
+  selectedImage =
+    product.image_url || "";
+
+
+  if (selectedImage) {
+
+    const preview =
+      document.getElementById("preview");
+
+    if (preview) {
+
+      preview.src = selectedImage;
+
+      preview.style.display = "block";
+    }
+  }
+
+
+  const formTitle =
+    document.getElementById("formTitle");
+
+  if (formTitle) {
+    formTitle.textContent =
+      "✏️ Edit Product";
+  }
+
+
+  const saveButton =
+    document.getElementById("saveButton");
+
+  if (saveButton) {
+    saveButton.textContent =
+      "💾 Update Product";
+  }
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+/* =========================
+   DELETE PRODUCT
+========================= */
+
+async function deleteProduct(id) {
+
+  if (
+    !confirm(
+      "क्या आप यह product delete करना चाहते हैं?"
+    )
+  ) {
+    return;
+  }
+
+
+  const { error } = await db
+    .from("Product")
+    .delete()
+    .eq("id", id);
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ Delete नहीं हुआ:\n" +
+      error.message
+    );
+
+    return;
+  }
+
+
+  alert("🗑️ Product deleted");
+
+  await showProducts();
+}
+
+
+/* =========================
+   CLEAR FORM
+========================= */
+
+function clearForm() {
+
+  editingId = null;
+
+  selectedImage = "";
+
+
+  document.getElementById("name").value = "";
+
+  document.getElementById("price").value = "";
+
+  document.getElementById("oldPrice").value = "";
+
+  document.getElementById("category").value = "";
+
+  document.getElementById("size").value = "";
+
+  document.getElementById("color").value = "";
+
+  document.getElementById("stock").value = "1";
+
+  document.getElementById("description").value = "";
+
+
+  const image =
+    document.getElementById("image");
+
+  if (image) {
+    image.value = "";
+  }
+
+
+  const preview =
+    document.getElementById("preview");
+
+  if (preview) {
+
+    preview.style.display = "none";
+
+    preview.src = "";
+  }
+
+
+  const formTitle =
+    document.getElementById("formTitle");
+
+  if (formTitle) {
+    formTitle.textContent =
+      "➕ Add Product";
+  }
+
+
+  const saveButton =
+    document.getElementById("saveButton");
+
+  if (saveButton) {
+    saveButton.textContent =
+      "➕ Add Product";
+  }
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHtml(text) {
+
+  return String(text || "")
+
+    .replace(/&/g, "&amp;")
+
+    .replace(/</g, "&lt;")
+
+    .replace(/>/g, "&gt;")
+
+    .replace(/"/g, "&quot;")
+
+    .replace(/'/g, "&#039;");
+}
+
+
+/* =========================
+   BUTTON FUNCTIONS
+========================= */
+
+window.saveProduct =
+  saveProduct;
+
+window.editProduct =
+  editProduct;
+
+window.deleteProduct =
+  deleteProduct;
+
+window.clearForm =
+  clearForm;
+
+</script>
+
+</body>
+</html>
