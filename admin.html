@@ -8,8 +8,8 @@ const SUPABASE_KEY =
 "sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
 
 const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
 
@@ -24,41 +24,48 @@ let editingId = null;
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  const imageInput = document.getElementById("image");
+    const imageInput =
+        document.getElementById("image");
 
-  if (imageInput) {
+    if (imageInput) {
 
-    imageInput.addEventListener("change", function (e) {
+        imageInput.addEventListener(
+            "change",
+            function (e) {
 
-      const file = e.target.files[0];
+                const file = e.target.files[0];
 
-      if (!file) return;
+                if (!file) return;
 
-      const reader = new FileReader();
+                const reader = new FileReader();
 
-      reader.onload = function (event) {
+                reader.onload = function (event) {
 
-        selectedImage = event.target.result;
+                    selectedImage =
+                        event.target.result;
 
-        const preview =
-          document.getElementById("preview");
+                    const preview =
+                        document.getElementById("preview");
 
-        if (preview) {
+                    if (preview) {
 
-          preview.src = selectedImage;
+                        preview.src =
+                            selectedImage;
 
-          preview.style.display = "block";
-        }
+                        preview.style.display =
+                            "block";
+                    }
 
-      };
+                };
 
-      reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
 
-    });
+            }
+        );
 
-  }
+    }
 
-  showProducts();
+    showProducts();
 
 });
 
@@ -69,152 +76,166 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function saveProduct() {
 
-  const name =
-    document.getElementById("name").value.trim();
+    const name =
+        document.getElementById("name").value.trim();
 
-  const price =
-    document.getElementById("price").value;
+    const price =
+        document.getElementById("price").value;
 
-  const oldPrice =
-    document.getElementById("oldPrice").value;
+    const oldPrice =
+        document.getElementById("oldPrice").value;
 
-  const category =
-    document.getElementById("category").value;
+    const category =
+        document.getElementById("category").value;
 
-  const size =
-    document.getElementById("size").value.trim();
+    const size =
+        document.getElementById("size").value.trim();
 
-  const color =
-    document.getElementById("color").value.trim();
+    const color =
+        document.getElementById("color").value.trim();
 
-  const stock =
-    document.getElementById("stock").value;
+    const stock =
+        document.getElementById("stock").value;
 
-  const description =
-    document.getElementById("description").value.trim();
-
-
-  /* VALIDATION */
-
-  if (!name) {
-
-    alert("❌ Product name डालें");
-
-    return;
-  }
+    const description =
+        document.getElementById("description").value.trim();
 
 
-  if (!price) {
+    /* VALIDATION */
 
-    alert("❌ Product price डालें");
+    if (!name) {
 
-    return;
-  }
+        alert("❌ Product name डालें");
 
-
-  if (!category) {
-
-    alert("❌ Category select करें");
-
-    return;
-  }
-
-
-  /*
-    IMPORTANT:
-    Supabase table के actual column names
-    lowercase वाले इस्तेमाल कर रहे हैं
-  */
-
-  const productData = {
-
-    name: name,
-
-    price: Number(price),
-
-    "old price":
-      oldPrice ? Number(oldPrice) : null,
-
-    category: category,
-
-    size: size,
-
-    colour: color,
-
-    Stock: Number(stock || 0),
-
-    "Image Url": selectedImage,
-
-    description: description
-
-  };
-
-
-  /* =========================
-     EDIT PRODUCT
-  ========================= */
-
-  if (editingId !== null) {
-
-    const { error } = await db
-      .from("Product")
-      .update(productData)
-      .eq("id", editingId);
-
-
-    if (error) {
-
-      console.error(error);
-
-      alert(
-        "❌ Product update नहीं हुआ:\n" +
-        error.message
-      );
-
-      return;
+        return;
     }
 
 
-    alert("✅ Product updated");
+    if (!price) {
 
-  }
+        alert("❌ Product price डालें");
 
-
-  /* =========================
-     ADD PRODUCT
-  ========================= */
-
-  else {
-
-    const { data, error } = await db
-      .from("Product")
-      .insert([productData])
-      .select();
-
-
-    if (error) {
-
-      console.error(error);
-
-      alert(
-        "❌ Product add नहीं हुआ:\n" +
-        error.message
-      );
-
-      return;
+        return;
     }
 
 
-    console.log("Product added:", data);
+    if (!category) {
 
-    alert("✅ Product successfully added");
+        alert("❌ Category select करें");
 
-  }
+        return;
+    }
 
 
-  clearForm();
+    /* =========================
+       DATABASE DATA
+    ========================= */
 
-  await showProducts();
+    const productData = {
+
+        name: name,
+
+        price: Number(price),
+
+        old_price:
+            oldPrice
+                ? Number(oldPrice)
+                : null,
+
+        category: category,
+
+        size: size,
+
+        colour: color,
+
+        stock:
+            Number(stock || 0),
+
+        image_url:
+            selectedImage || null,
+
+        description:
+            description || null
+
+    };
+
+
+    /* =========================
+       EDIT PRODUCT
+    ========================= */
+
+    if (editingId !== null) {
+
+        const { error } = await db
+
+            .from("Product")
+
+            .update(productData)
+
+            .eq("id", editingId);
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "❌ Product update नहीं हुआ:\n" +
+                error.message
+            );
+
+            return;
+        }
+
+
+        alert("✅ Product updated successfully");
+
+    }
+
+
+    /* =========================
+       ADD PRODUCT
+    ========================= */
+
+    else {
+
+        const { data, error } = await db
+
+            .from("Product")
+
+            .insert([productData])
+
+            .select();
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "❌ Product add नहीं हुआ:\n" +
+                error.message
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "Product added:",
+            data
+        );
+
+        alert(
+            "✅ Product successfully added"
+        );
+
+    }
+
+
+    clearForm();
+
+    await showProducts();
 
 }
 
@@ -225,163 +246,171 @@ async function saveProduct() {
 
 async function showProducts() {
 
-  const box =
-    document.getElementById("products");
+    const box =
+        document.getElementById("products");
 
 
-  if (!box) {
+    if (!box) {
 
-    console.error(
-      "products element नहीं मिला"
-    );
+        console.error(
+            "products element नहीं मिला"
+        );
 
-    return;
-  }
+        return;
+    }
 
-
-  box.innerHTML =
-    '<div class="empty">Loading...</div>';
-
-
-  const { data, error } = await db
-
-    .from("Product")
-
-    .select("*")
-
-    .order(
-      "created_at",
-      { ascending: false }
-    );
-
-
-  if (error) {
-
-    console.error(error);
 
     box.innerHTML =
-      '<div class="empty">❌ Products load नहीं हुए</div>';
+        '<div class="empty">Loading...</div>';
 
-    alert(
-      "Database error:\n" +
-      error.message
+
+    const { data, error } = await db
+
+        .from("Product")
+
+        .select("*")
+
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        box.innerHTML =
+            '<div class="empty">❌ Products load नहीं हुए</div>';
+
+        alert(
+            "Database error:\n" +
+            error.message
+        );
+
+        return;
+    }
+
+
+    products =
+        data || [];
+
+
+    const count =
+        document.getElementById("count");
+
+
+    if (count) {
+
+        count.textContent =
+            products.length;
+
+    }
+
+
+    if (products.length === 0) {
+
+        box.innerHTML =
+            '<div class="empty">📦 अभी कोई product नहीं है</div>';
+
+        return;
+    }
+
+
+    box.innerHTML = "";
+
+
+    products.forEach(
+        function (product) {
+
+            const div =
+                document.createElement("div");
+
+
+            div.className =
+                "product";
+
+
+            const image =
+                product.image_url ||
+                "https://via.placeholder.com/150";
+
+
+            div.innerHTML = `
+
+                <img
+                    src="${image}"
+                    alt="Product"
+                >
+
+                <div class="product-info">
+
+                    <h3>
+                        ${escapeHtml(
+                            product.name
+                        )}
+                    </h3>
+
+
+                    <div class="price">
+
+                        ₹${product.price}
+
+                        ${
+                            product.old_price
+                                ? `
+                                    <span class="old">
+                                        ₹${product.old_price}
+                                    </span>
+                                  `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <small>
+
+                        ${escapeHtml(
+                            product.category || ""
+                        )}
+
+                        • Stock:
+                        ${product.stock || 0}
+
+                    </small>
+
+
+                    <div class="actions">
+
+                        <button
+                            class="edit"
+                            onclick="editProduct(${product.id})"
+                        >
+                            ✏️ Edit
+                        </button>
+
+
+                        <button
+                            class="delete"
+                            onclick="deleteProduct(${product.id})"
+                        >
+                            🗑️ Delete
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            box.appendChild(div);
+
+        }
     );
-
-    return;
-  }
-
-
-  products = data || [];
-
-
-  const count =
-    document.getElementById("count");
-
-
-  if (count) {
-
-    count.textContent =
-      products.length;
-
-  }
-
-
-  if (products.length === 0) {
-
-    box.innerHTML =
-      '<div class="empty">📦 अभी कोई product नहीं है</div>';
-
-    return;
-  }
-
-
-  box.innerHTML = "";
-
-
-  products.forEach(function (product) {
-
-    const div =
-      document.createElement("div");
-
-
-    div.className = "product";
-
-
-    const image =
-      product["Image Url"] ||
-      "https://via.placeholder.com/150";
-
-
-    div.innerHTML = `
-
-      <img
-        src="${image}"
-        alt="Product"
-      >
-
-      <div class="product-info">
-
-        <h3>
-          ${escapeHtml(product.name)}
-        </h3>
-
-
-        <div class="price">
-
-          ₹${product.price}
-
-          ${
-            product["old price"]
-              ? `
-                <span class="old">
-                  ₹${product["old price"]}
-                </span>
-              `
-              : ""
-          }
-
-        </div>
-
-
-        <small>
-
-          ${escapeHtml(
-            product.category || ""
-          )}
-
-          • Stock:
-          ${product.Stock || 0}
-
-        </small>
-
-
-        <div class="actions">
-
-          <button
-            class="edit"
-            onclick="editProduct(${product.id})"
-          >
-            ✏️ Edit
-          </button>
-
-
-          <button
-            class="delete"
-            onclick="deleteProduct(${product.id})"
-          >
-            🗑️ Delete
-          </button>
-
-        </div>
-
-      </div>
-
-    `;
-
-
-    box.appendChild(div);
-
-  });
 
 }
 
@@ -392,106 +421,108 @@ async function showProducts() {
 
 function editProduct(id) {
 
-  const product =
-    products.find(function (p) {
+    const product =
+        products.find(
+            function (p) {
 
-      return p.id === id;
+                return p.id === id;
 
-    });
-
-
-  if (!product) return;
-
-
-  editingId = id;
+            }
+        );
 
 
-  document.getElementById("name").value =
-    product.name || "";
+    if (!product) return;
 
 
-  document.getElementById("price").value =
-    product.price || "";
+    editingId = id;
 
 
-  document.getElementById("oldPrice").value =
-    product["old price"] || "";
+    document.getElementById("name").value =
+        product.name || "";
 
 
-  document.getElementById("category").value =
-    product.category || "";
+    document.getElementById("price").value =
+        product.price || "";
 
 
-  document.getElementById("size").value =
-    product.size || "";
+    document.getElementById("oldPrice").value =
+        product.old_price || "";
 
 
-  document.getElementById("color").value =
-    product.colour || "";
+    document.getElementById("category").value =
+        product.category || "";
 
 
-  document.getElementById("stock").value =
-    product.Stock || 0;
+    document.getElementById("size").value =
+        product.size || "";
 
 
-  document.getElementById("description").value =
-    product.description || "";
+    document.getElementById("color").value =
+        product.colour || "";
 
 
-  selectedImage =
-    product["Image Url"] || "";
+    document.getElementById("stock").value =
+        product.stock || 0;
 
 
-  if (selectedImage) {
-
-    const preview =
-      document.getElementById("preview");
+    document.getElementById("description").value =
+        product.description || "";
 
 
-    if (preview) {
+    selectedImage =
+        product.image_url || "";
 
-      preview.src =
-        selectedImage;
 
-      preview.style.display =
-        "block";
+    if (selectedImage) {
+
+        const preview =
+            document.getElementById("preview");
+
+
+        if (preview) {
+
+            preview.src =
+                selectedImage;
+
+            preview.style.display =
+                "block";
+
+        }
 
     }
 
-  }
+
+    const formTitle =
+        document.getElementById("formTitle");
 
 
-  const formTitle =
-    document.getElementById("formTitle");
+    if (formTitle) {
+
+        formTitle.textContent =
+            "✏️ Edit Product";
+
+    }
 
 
-  if (formTitle) {
-
-    formTitle.textContent =
-      "✏️ Edit Product";
-
-  }
+    const saveButton =
+        document.getElementById("saveButton");
 
 
-  const saveButton =
-    document.getElementById("saveButton");
+    if (saveButton) {
+
+        saveButton.textContent =
+            "💾 Update Product";
+
+    }
 
 
-  if (saveButton) {
+    window.scrollTo({
 
-    saveButton.textContent =
-      "💾 Update Product";
+        top: 0,
 
-  }
+        behavior: "smooth"
 
-
-  window.scrollTo({
-
-    top: 0,
-
-    behavior: "smooth"
-
-  });
+    });
 
 }
 
@@ -502,44 +533,46 @@ function editProduct(id) {
 
 async function deleteProduct(id) {
 
-  if (
-    !confirm(
-      "क्या आप यह product delete करना चाहते हैं?"
-    )
-  ) {
+    if (
+        !confirm(
+            "क्या आप यह product delete करना चाहते हैं?"
+        )
+    ) {
 
-    return;
+        return;
 
-  }
-
-
-  const { error } = await db
-
-    .from("Product")
-
-    .delete()
-
-    .eq("id", id);
+    }
 
 
-  if (error) {
+    const { error } = await db
 
-    console.error(error);
+        .from("Product")
+
+        .delete()
+
+        .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        alert(
+            "❌ Delete नहीं हुआ:\n" +
+            error.message
+        );
+
+        return;
+
+    }
+
 
     alert(
-      "❌ Delete नहीं हुआ:\n" +
-      error.message
+        "🗑️ Product deleted"
     );
 
-    return;
 
-  }
-
-
-  alert("🗑️ Product deleted");
-
-
-  await showProducts();
+    await showProducts();
 
 }
 
@@ -550,83 +583,91 @@ async function deleteProduct(id) {
 
 function clearForm() {
 
-  editingId = null;
+    editingId = null;
 
-  selectedImage = "";
-
-
-  document.getElementById("name").value =
-    "";
-
-  document.getElementById("price").value =
-    "";
-
-  document.getElementById("oldPrice").value =
-    "";
-
-  document.getElementById("category").value =
-    "";
-
-  document.getElementById("size").value =
-    "";
-
-  document.getElementById("color").value =
-    "";
-
-  document.getElementById("stock").value =
-    "1";
-
-  document.getElementById("description").value =
-    "";
+    selectedImage = "";
 
 
-  const image =
-    document.getElementById("image");
+    document.getElementById("name").value =
+        "";
 
 
-  if (image) {
-
-    image.value = "";
-
-  }
+    document.getElementById("price").value =
+        "";
 
 
-  const preview =
-    document.getElementById("preview");
+    document.getElementById("oldPrice").value =
+        "";
 
 
-  if (preview) {
-
-    preview.style.display =
-      "none";
-
-    preview.src = "";
-
-  }
+    document.getElementById("category").value =
+        "";
 
 
-  const formTitle =
-    document.getElementById("formTitle");
+    document.getElementById("size").value =
+        "";
 
 
-  if (formTitle) {
-
-    formTitle.textContent =
-      "➕ Add Product";
-
-  }
+    document.getElementById("color").value =
+        "";
 
 
-  const saveButton =
-    document.getElementById("saveButton");
+    document.getElementById("stock").value =
+        "1";
 
 
-  if (saveButton) {
+    document.getElementById("description").value =
+        "";
 
-    saveButton.textContent =
-      "➕ Add Product";
 
-  }
+    const image =
+        document.getElementById("image");
+
+
+    if (image) {
+
+        image.value = "";
+
+    }
+
+
+    const preview =
+        document.getElementById("preview");
+
+
+    if (preview) {
+
+        preview.style.display =
+            "none";
+
+        preview.src =
+            "";
+
+    }
+
+
+    const formTitle =
+        document.getElementById("formTitle");
+
+
+    if (formTitle) {
+
+        formTitle.textContent =
+            "➕ Add Product";
+
+    }
+
+
+    const saveButton =
+        document.getElementById("saveButton");
+
+
+    if (saveButton) {
+
+        saveButton.textContent =
+            "➕ Add Product";
+
+    }
 
 }
 
@@ -637,17 +678,32 @@ function clearForm() {
 
 function escapeHtml(text) {
 
-  return String(text || "")
+    return String(text || "")
 
-    .replace(/&/g, "&amp;")
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-    .replace(/</g, "&lt;")
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
-    .replace(/>/g, "&gt;")
+        .replace(
+            />/g,
+            "&gt;"
+        )
 
-    .replace(/"/g, "&quot;")
+        .replace(
+            /"/g,
+            "&quot;"
+        )
 
-    .replace(/'/g, "&#039;");
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
@@ -657,15 +713,18 @@ function escapeHtml(text) {
 ========================= */
 
 window.saveProduct =
-  saveProduct;
+    saveProduct;
+
 
 window.editProduct =
-  editProduct;
+    editProduct;
+
 
 window.deleteProduct =
-  deleteProduct;
+    deleteProduct;
+
 
 window.clearForm =
-  clearForm;
+    clearForm;
 
-</script>
+              </script>
