@@ -11,7 +11,16 @@
 <meta name="google-site-verification" content="hMBWFJzV99LEfmYQXigYxbgNdVQE-wnqQkmdLVsV7Ks" />
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
+</style>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => console.log("Service Worker registered"))
+      .catch((error) => console.error("Service Worker error:", error));
+  });
+}
+</script>
 body{
   font-family:Arial,sans-serif;
   background:#f5f5f5;
