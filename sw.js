@@ -1,12 +1,12 @@
-const CACHE_NAME = "vr-shop-v1";
+const CACHE_NAME = "vr-shop-v2";
 
 const FILES_TO_CACHE = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/logo.png",
-  "/icon-192.png",
-  "/icon-512.png"
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./logo.png",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", event => {
@@ -15,6 +15,8 @@ self.addEventListener("install", event => {
       return cache.addAll(FILES_TO_CACHE);
     })
   );
+
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
