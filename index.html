@@ -3,29 +3,28 @@
 
 <head>
 
+  <link rel="manifest" href="manifest.json">
+
+  <meta name="theme-color" content="#000000">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <link rel="icon" type="image/png" href="logo.png">
+
   <meta charset="UTF-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>VR SHOP | Fashion Store</title>
 
-  <meta name="theme-color" content="#000000">
-
-  <meta name="mobile-web-app-capable" content="yes">
-
-  <meta name="apple-mobile-web-app-capable" content="yes">
-
   <meta name="google-site-verification"
         content="hMBWFJzV99LEfmYQXigYxbgNdVQE-wnqQkmdLVsV7Ks">
 
-  <link rel="manifest" href="manifest.json">
-
-  <link rel="icon" type="image/png" href="logo.png">
-
 
   <!-- =========================
-       CSS START
-  ========================== -->
+       ALL CSS
+       ========================= -->
 
   <style>
 
@@ -130,6 +129,7 @@
     .shop {
       border: 0;
       background: white;
+      color: #111;
       padding: 14px 25px;
       border-radius: 30px;
       font-weight: bold;
@@ -210,6 +210,7 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+      display: block;
     }
 
     .info {
@@ -283,7 +284,7 @@
       width: 95%;
       max-width: 600px;
       max-height: 90vh;
-      overflow: auto;
+      overflow-y: auto;
       margin: 4vh auto;
       padding: 25px;
       border-radius: 20px;
@@ -341,31 +342,38 @@
       cursor: pointer;
     }
 
-    .order:hover {
-      background: #333;
-    }
-
     .total {
       font-size: 22px;
       font-weight: bold;
       margin: 18px 0;
     }
 
+    .remove-btn {
+      padding: 7px 12px;
+      border: 0;
+      background: #eee;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
     @media (max-width: 650px) {
 
       .nav {
         flex-wrap: wrap;
-        padding: 10px;
-      }
-
-      .logo img {
-        width: 60px;
-        height: 60px;
       }
 
       .search {
         order: 3;
         flex-basis: 100%;
+      }
+
+      .logo img {
+        width: 55px;
+        height: 55px;
+      }
+
+      .cart {
+        padding: 10px 14px;
       }
 
       .hero {
@@ -377,40 +385,8 @@
         font-size: 36px;
       }
 
-      .hero p {
-        font-size: 15px;
-      }
-
       .hero-icon {
         font-size: 70px;
-      }
-
-      .container {
-        padding: 12px;
-      }
-
-      .products {
-        grid-template-columns: repeat(
-          2,
-          minmax(0, 1fr)
-        );
-        gap: 12px;
-      }
-
-      .product-img {
-        height: 200px;
-      }
-
-      .info {
-        padding: 12px;
-      }
-
-      .info h3 {
-        font-size: 15px;
-      }
-
-      .price {
-        font-size: 18px;
       }
 
       .row {
@@ -421,12 +397,10 @@
 
   </style>
 
+
   <!-- =========================
-       CSS END
-  ========================== -->
-
-
-  <!-- SERVICE WORKER -->
+       SERVICE WORKER
+       ========================= -->
 
   <script>
 
@@ -437,13 +411,17 @@
         navigator.serviceWorker
           .register("./sw.js")
           .then(function () {
+
             console.log("Service Worker registered");
+
           })
           .catch(function (error) {
+
             console.error(
               "Service Worker error:",
               error
             );
+
           });
 
       });
@@ -475,8 +453,7 @@
 
         <img
           src="logo.png"
-          alt="VR SHOP Logo"
-        >
+          alt="VR SHOP Logo">
 
       </div>
 
@@ -485,18 +462,16 @@
 
         <input
           id="search"
-          type="text"
+          type="search"
           placeholder="Search clothes..."
-          oninput="showProducts()"
-        >
+          oninput="showProducts()">
 
       </div>
 
 
       <button
         class="cart"
-        onclick="openCart()"
-      >
+        onclick="openCart()">
 
         🛒 Cart
         (<span id="cartCount">0</span>)
@@ -524,14 +499,7 @@
 
       <button
         class="shop"
-        onclick="
-          document
-          .getElementById('shop')
-          .scrollIntoView({
-            behavior:'smooth'
-          })
-        "
-      >
+        onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">
 
         Shop Now
 
@@ -551,8 +519,7 @@
 
   <main
     class="container"
-    id="shop"
-  >
+    id="shop">
 
 
     <!-- CATEGORIES -->
@@ -560,26 +527,22 @@
     <div class="categories">
 
       <button
-        onclick="selectCategory('All')"
-      >
+        onclick="selectCategory('All')">
         All
       </button>
 
       <button
-        onclick="selectCategory('Men')"
-      >
+        onclick="selectCategory('Men')">
         Men
       </button>
 
       <button
-        onclick="selectCategory('Women')"
-      >
+        onclick="selectCategory('Women')">
         Women
       </button>
 
       <button
-        onclick="selectCategory('Kids')"
-      >
+        onclick="selectCategory('Kids')">
         Kids
       </button>
 
@@ -592,8 +555,7 @@
 
       <select
         id="category"
-        onchange="showProducts()"
-      >
+        onchange="showProducts()">
 
         <option value="All">
           All Categories
@@ -641,8 +603,12 @@
 
     <div
       class="products"
-      id="products"
-    >
+      id="products">
+
+      <p style="padding:20px">
+        Loading products...
+      </p>
+
     </div>
 
 
@@ -680,19 +646,17 @@
 
   <!-- =========================
        CART POPUP
-  ========================== -->
+       ========================= -->
 
   <div
     class="overlay"
-    id="cartPopup"
-  >
+    id="cartPopup">
 
     <div class="modal">
 
       <button
         class="close"
-        onclick="closeCart()"
-      >
+        onclick="closeCart()">
         ×
       </button>
 
@@ -702,19 +666,16 @@
 
       <br>
 
-      <div id="cartItems">
-      </div>
+      <div id="cartItems"></div>
 
       <div
         class="total"
-        id="cartTotal"
-      >
+        id="cartTotal">
       </div>
 
       <button
         class="order"
-        onclick="openOrder()"
-      >
+        onclick="openOrder()">
 
         Proceed to Order
 
@@ -727,19 +688,17 @@
 
   <!-- =========================
        ORDER POPUP
-  ========================== -->
+       ========================= -->
 
   <div
     class="overlay"
-    id="orderPopup"
-  >
+    id="orderPopup">
 
     <div class="modal">
 
       <button
         class="close"
-        onclick="closeOrder()"
-      >
+        onclick="closeOrder()">
         ×
       </button>
 
@@ -749,23 +708,17 @@
 
       <br>
 
-      <div id="orderSummary">
-      </div>
+      <div id="orderSummary"></div>
 
-
-      <!-- NAME -->
 
       <div class="field">
 
         <input
           id="customerName"
-          placeholder="Full Name"
-        >
+          placeholder="Full Name">
 
       </div>
 
-
-      <!-- PHONE + PIN -->
 
       <div class="row">
 
@@ -774,9 +727,7 @@
           <input
             id="customerPhone"
             placeholder="10 Digit Mobile Number"
-            inputmode="numeric"
-            maxlength="10"
-          >
+            inputmode="numeric">
 
         </div>
 
@@ -786,29 +737,22 @@
           <input
             id="customerPin"
             placeholder="Pincode"
-            inputmode="numeric"
-            maxlength="6"
-          >
+            inputmode="numeric">
 
         </div>
 
       </div>
 
 
-      <!-- ADDRESS -->
-
       <div class="field">
 
         <textarea
           id="customerAddress"
           rows="3"
-          placeholder="Complete Delivery Address"
-        ></textarea>
+          placeholder="Complete Delivery Address"></textarea>
 
       </div>
 
-
-      <!-- DISTANCE -->
 
       <div class="field">
 
@@ -835,12 +779,9 @@
       </div>
 
 
-      <!-- LOCATION -->
-
       <button
         class="order"
-        onclick="getLocation()"
-      >
+        onclick="getLocation()">
 
         📍 Share Current Location
 
@@ -849,20 +790,16 @@
 
       <div
         class="location"
-        id="locationStatus"
-      >
+        id="locationStatus">
 
         Location not shared yet.
 
       </div>
 
 
-      <!-- WHATSAPP -->
-
       <button
         class="order"
-        onclick="sendWhatsAppOrder()"
-      >
+        onclick="sendWhatsAppOrder()">
 
         💬 Send Order on WhatsApp
 
@@ -880,9 +817,9 @@
 
   <script>
 
-    /* =========================
+    /* ==========================================
        SUPABASE
-    ========================== */
+       ========================================== */
 
     const SUPABASE_URL =
       "https://dfcadaccfkyfslakbigf.supabase.co";
@@ -897,9 +834,9 @@
       );
 
 
-    /* =========================
+    /* ==========================================
        OWNER SETTINGS
-    ========================== */
+       ========================================== */
 
     const OWNER_SETTINGS = {
 
@@ -912,37 +849,41 @@
     };
 
 
-    /* =========================
-       PRODUCTS
-    ========================== */
+    /* ==========================================
+       VARIABLES
+       ========================================== */
 
     let products = [];
 
+    let cart = [];
+
+    let customerLocation = null;
+
+
+    /* ==========================================
+       LOAD PRODUCTS FROM SUPABASE
+       ========================================== */
 
     async function loadProductsFromSupabase() {
 
       const container =
         document.getElementById("products");
 
-
-      if (container) {
-
-        container.innerHTML =
-          "<p style='padding:20px'>Loading products...</p>";
-
-      }
+      container.innerHTML =
+        "<p style='padding:20px'>Loading products...</p>";
 
 
-      const { data, error } =
-        await db
-          .from("Product")
-          .select("*")
-          .order(
-            "created_at",
-            {
-              ascending: false
-            }
-          );
+      const result = await db
+        .from("Product")
+        .select("*")
+        .order("created_at", {
+          ascending: false
+        });
+
+
+      const data = result.data;
+
+      const error = result.error;
 
 
       if (error) {
@@ -952,15 +893,10 @@
           error
         );
 
-
-        if (container) {
-
-          container.innerHTML =
-            "<p style='padding:20px;color:#c00'>" +
-            "Products load नहीं हुए. Please refresh." +
-            "</p>";
-
-        }
+        container.innerHTML =
+          "<p style='padding:20px;color:#c00'>" +
+          "Products load नहीं हुए. Please refresh." +
+          "</p>";
 
         return;
 
@@ -1007,25 +943,16 @@
     }
 
 
-    /* =========================
-       CART
-    ========================== */
-
-    let cart = [];
-
-    let customerLocation = null;
-
-
-    /* =========================
+    /* ==========================================
        SHOW PRODUCTS
-    ========================== */
+       ========================================== */
 
     function showProducts() {
 
-      const searchInput =
+      const searchElement =
         document.getElementById("search");
 
-      const categoryInput =
+      const categoryElement =
         document.getElementById("category");
 
       const container =
@@ -1033,21 +960,22 @@
 
 
       const search =
-        searchInput
-          ? searchInput.value
-              .toLowerCase()
-              .trim()
-          : "";
+        (searchElement.value || "")
+        .toLowerCase()
+        .trim();
 
 
       const category =
-        categoryInput
-          ? categoryInput.value
-          : "All";
+        categoryElement.value;
 
 
       const filtered =
         products.filter(function (product) {
+
+          const productName =
+            String(product.name || "")
+            .toLowerCase();
+
 
           return (
 
@@ -1058,9 +986,7 @@
 
             &&
 
-            product.name
-              .toLowerCase()
-              .includes(search)
+            productName.includes(search)
 
           );
 
@@ -1084,28 +1010,28 @@
 
       filtered.forEach(function (product) {
 
+        const imageHTML =
+          product.image_url
+
+          ?
+
+          `<img
+            src="${escapeHTML(product.image_url)}"
+            alt="${escapeHTML(product.name)}"
+            loading="lazy">`
+
+          :
+
+          product.icon;
+
+
         container.innerHTML += `
 
           <div class="product">
 
             <div class="product-img">
 
-              ${
-                product.image_url
-
-                ?
-
-                `
-                <img
-                  src="${product.image_url}"
-                  alt="${product.name}"
-                >
-                `
-
-                :
-
-                product.icon
-              }
+              ${imageHTML}
 
             </div>
 
@@ -1113,12 +1039,12 @@
             <div class="info">
 
               <h3>
-                ${product.name}
+                ${escapeHTML(product.name)}
               </h3>
 
 
               <div class="category">
-                ${product.category}
+                ${escapeHTML(product.category)}
               </div>
 
 
@@ -1131,11 +1057,9 @@
 
                   ?
 
-                  `
-                  <span class="old">
+                  `<span class="old">
                     ₹${product.oldPrice}
-                  </span>
-                  `
+                  </span>`
 
                   :
 
@@ -1147,8 +1071,7 @@
 
               <button
                 class="add"
-                onclick="addToCart(${product.id})"
-              >
+                onclick="addToCart(${JSON.stringify(product.id)})">
 
                 Add to Cart
 
@@ -1165,9 +1088,25 @@
     }
 
 
-    /* =========================
+    /* ==========================================
+       BASIC HTML ESCAPE
+       ========================================== */
+
+    function escapeHTML(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* ==========================================
        CATEGORY
-    ========================== */
+       ========================================== */
 
     function selectCategory(category) {
 
@@ -1175,14 +1114,15 @@
         "category"
       ).value = category;
 
+
       showProducts();
 
     }
 
 
-    /* =========================
+    /* ==========================================
        ADD TO CART
-    ========================== */
+       ========================================== */
 
     function addToCart(id) {
 
@@ -1221,9 +1161,9 @@
     }
 
 
-    /* =========================
+    /* ==========================================
        CART COUNT
-    ========================== */
+       ========================================== */
 
     function updateCartCount() {
 
@@ -1231,8 +1171,7 @@
         cart.reduce(
           function (total, item) {
 
-            return total +
-              item.quantity;
+            return total + item.quantity;
 
           },
           0
@@ -1246,9 +1185,9 @@
     }
 
 
-    /* =========================
+    /* ==========================================
        OPEN CART
-    ========================== */
+       ========================================== */
 
     function openCart() {
 
@@ -1262,6 +1201,10 @@
     }
 
 
+    /* ==========================================
+       CLOSE CART
+       ========================================== */
+
     function closeCart() {
 
       document.getElementById(
@@ -1271,9 +1214,9 @@
     }
 
 
-    /* =========================
+    /* ==========================================
        SHOW CART
-    ========================== */
+       ========================================== */
 
     function showCart() {
 
@@ -1315,7 +1258,9 @@
           });
 
 
-        if (!product) return;
+        if (!product) {
+          return;
+        }
 
 
         const itemTotal =
@@ -1332,11 +1277,10 @@
             style="
               padding:12px 0;
               border-bottom:1px solid #ddd;
-            "
-          >
+            ">
 
             <b>
-              ${product.name}
+              ${escapeHTML(product.name)}
             </b>
 
             <br>
@@ -1350,9 +1294,11 @@
             <br><br>
 
             <button
-              onclick="removeFromCart(${product.id})"
-            >
+              class="remove-btn"
+              onclick="removeFromCart(${JSON.stringify(product.id)})">
+
               Remove
+
             </button>
 
           </div>
@@ -1370,9 +1316,9 @@
     }
 
 
-    /* =========================
-       REMOVE
-    ========================== */
+    /* ==========================================
+       REMOVE FROM CART
+       ========================================== */
 
     function removeFromCart(id) {
 
@@ -1391,9 +1337,9 @@
     }
 
 
-    /* =========================
+    /* ==========================================
        OPEN ORDER
-    ========================== */
+       ========================================== */
 
     function openOrder() {
 
@@ -1419,6 +1365,7 @@
       document.getElementById(
         "customerDistance"
       ).value =
+
         document.getElementById(
           "deliveryRadius"
         ).value;
@@ -1437,7 +1384,9 @@
           });
 
 
-        if (!product) return;
+        if (!product) {
+          return;
+        }
 
 
         total +=
@@ -1450,12 +1399,17 @@
       document.getElementById(
         "orderSummary"
       ).innerHTML =
+
         "<b>Order Total: ₹" +
         total +
         "</b>";
 
     }
 
+
+    /* ==========================================
+       CLOSE ORDER
+       ========================================== */
 
     function closeOrder() {
 
@@ -1466,9 +1420,9 @@
     }
 
 
-    /* =========================
+    /* ==========================================
        LOCATION
-    ========================== */
+       ========================================== */
 
     function getLocation() {
 
@@ -1512,14 +1466,14 @@
 
             "Latitude: " +
 
-            customerLocation
-              .latitude
+            customerLocation.latitude
               .toFixed(6) +
 
-            "<br>Longitude: " +
+            "<br>" +
 
-            customerLocation
-              .longitude
+            "Longitude: " +
+
+            customerLocation.longitude
               .toFixed(6);
 
         },
@@ -1537,7 +1491,11 @@
 
         {
 
-          enableHighAccuracy: true
+          enableHighAccuracy: true,
+
+          timeout: 10000,
+
+          maximumAge: 0
 
         }
 
@@ -1546,9 +1504,9 @@
     }
 
 
-    /* =========================
+    /* ==========================================
        WHATSAPP ORDER
-    ========================== */
+       ========================================== */
 
     function sendWhatsAppOrder() {
 
@@ -1611,19 +1569,6 @@
       }
 
 
-      if (
-        !/^[0-9]{6}$/.test(pin)
-      ) {
-
-        alert(
-          "Please enter valid 6 digit pincode."
-        );
-
-        return;
-
-      }
-
-
       if (!customerLocation) {
 
         alert(
@@ -1650,7 +1595,9 @@
           });
 
 
-        if (!product) return;
+        if (!product) {
+          return;
+        }
 
 
         const itemTotal =
@@ -1664,15 +1611,10 @@
         items +=
 
           product.name +
-
           " × " +
-
           item.quantity +
-
           " = ₹" +
-
           itemTotal +
-
           "\n";
 
       });
@@ -1751,9 +1693,9 @@ ${mapLink}
     }
 
 
-    /* =========================
+    /* ==========================================
        START
-    ========================== */
+       ========================================== */
 
     loadProductsFromSupabase();
 
