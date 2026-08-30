@@ -1,25 +1,27 @@
 {
-  "name": "VR Shop",
-  "short_name": "VR Shop",
-  "description": "VR Shop - Buy and sell products near you.",
+  "name": "VR SHOP",
+  "short_name": "VR SHOP",
+  "description": "VR SHOP - Shop smart and live better.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "lang": "en-IN",
+  "dir": "ltr",
   "icons": [
     {
       "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
