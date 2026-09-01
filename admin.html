@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VR Shop Admin</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f6f8;
+  color:#222;
+}
+
+header{
+  background:#111827;
+  color:white;
+  padding:18px 20px;
+}
+
+header h1{
+  margin:0;
+  font-size:22px;
+}
+
+header p{
+  margin:5px 0 0;
+  color:#cbd5e1;
+  font-size:13px;
+}
+
+.container{
+  max-width:1000px;
+  margin:20px auto;
+  padding:0 15px 40px;
+}
+
+.card{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:20px;
+  box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+  margin:0 0 18px;
+  font-size:20px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+label{
+  font-weight:600;
+  font-size:14px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d1d5db;
+  border-radius:9px;
+  font-size:15px;
+  background:white;
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+#adminLogin{
+  position:fixed;
+  inset:0;
+  background:#f4f6f8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+}
+
+.login-card{
+  width:min(420px,100%);
+  background:white;
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 8px 30px rgba(0,0,0,.15);
+}
+
+.login-card h2{
+  margin:0 0 8px;
+}
+
+.login-card p{
+  color:#666;
+  font-size:14px;
+}
+
+.login-card button{
+  width:100%;
+  background:#2563eb;
+  color:white;
+  margin-top:8px;
+}
+
+#loginMessage{
+  min-height:20px;
+  color:#dc2626;
+  font-size:14px;
+  margin-top:12px;
+}
+
+#adminContent{
+  display:none;
+}
+
+.header-actions{
+  margin-top:12px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+#logoutButton{
+  background:#dc2626;
+  color:white;
+  padding:8px 12px;
+  font-size:13px;
+}
+
+.buttons{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:0;
+  border-radius:9px;
+  padding:12px 18px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+#saveButton{
+  background:#2563eb;
+  color:white;
+  flex:1;
+}
+
+.clear-btn{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+.top-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.count{
+  background:#e5e7eb;
+  padding:7px 12px;
+  border-radius:20px;
+  font-weight:700;
+}
+
+#products{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+}
+
+.product{
+  background:white;
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:12px;
+  display:flex;
+  gap:12px;
+}
+
+.product>img{
+  width:105px;
+  height:105px;
+  object-fit:cover;
+  border-radius:10px;
+  background:#f3f4f6;
+  flex-shrink:0;
+}
+
+.product-info{
+  min-width:0;
+  flex:1;
+}
+
+.product-info h3{
+  margin:0 0 7px;
+  font-size:17px;
+  word-break:break-word;
+}
+
+.price{
+  font-size:17px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.old{
+  color:#888;
+  text-decoration:line-through;
+  font-size:14px;
+  margin-left:6px;
+  font-weight:400;
+}
+
+.product-info small{
+  color:#555;
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+
+.actions button{
+  padding:8px 10px;
+  font-size:13px;
+}
+
+.edit{
+  background:#f59e0b;
+  color:white;
+}
+
+.delete{
+  background:#dc2626;
+  color:white;
+}
+
+.empty{
+  background:white;
+  border-radius:12px;
+  padding:25px;
+  text-align:center;
+  color:#666;
+  grid-column:1/-1;
+}
+
+/* IMAGE PREVIEW */
+
+.image-preview-title{
+  margin-top:8px;
+  font-size:13px;
+  font-weight:bold;
+}
+
+.preview-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+.preview-item{
+  position:relative;
+  aspect-ratio:1;
+  border:1px solid #ddd;
+  border-radius:10px;
+  overflow:hidden;
+  background:#f3f4f6;
+}
+
+.preview-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.preview-main{
+  position:absolute;
+  left:4px;
+  bottom:4px;
+  background:#111;
+  color:white;
+  font-size:10px;
+  padding:4px 6px;
+  border-radius:5px;
+}
+
+.remove-image{
+  position:absolute;
+  right:4px;
+  top:4px;
+  width:25px;
+  height:25px;
+  padding:0;
+  border-radius:50%;
+  background:#dc2626;
+  color:white;
+  font-size:14px;
+}
+
+.note{
+  background:#eff6ff;
+  color:#1e40af;
+  padding:10px;
+  border-radius:9px;
+  font-size:13px;
+  margin-top:8px;
+}
+
+@media(max-width:650px){
+
+  .grid,#products{
+    grid-template-columns:1fr;
+  }
+
+  .product{
+    align-items:flex-start;
+  }
+
+  .preview-grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛍️ VR Shop Admin</h1>
+  <p>Product Management Panel</p>
+
+  <div class="header-actions">
+    <button id="logoutButton" type="button" onclick="adminLogout()">
+      🚪 Logout
+    </button>
+  </div>
+</header>
+
+<div id="adminLogin">
+
+  <div class="login-card">
+
+    <h2>🔐 VR Shop Admin Login</h2>
+
+    <p>
+      केवल authorized admin account से login करें।
+    </p>
+
+    <div class="field">
+
+      <label for="adminEmail">
+        Admin Email
+      </label>
+
+      <input
+        id="adminEmail"
+        type="email"
+        autocomplete="username"
+        placeholder="Admin email">
+
+    </div>
+
+    <div
+      class="field"
+      style="margin-top:12px;">
+
+      <label for="adminPassword">
+        Password
+      </label>
+
+      <input
+        id="adminPassword"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Password">
+
+    </div>
+
+    <button
+      id="loginButton"
+      type="button"
+      onclick="adminLogin()">
+
+      🔐 Login
+
+    </button>
+
+    <div id="loginMessage"></div>
+
+  </div>
+
+</div>
+
+<main id="adminContent" class="container">
+
+<section class="card">
+
+<h2 id="formTitle">
+  ➕ Add Product
+</h2>
+
+<div class="grid">
+
+<div class="field">
+
+<label for="name">
+Product Name *
+</label>
+
+<input
+id="name"
+type="text"
+placeholder="T shirt">
+
+</div>
+
+<div class="field">
+
+<label for="price">
+Price *
+</label>
+
+<input
+id="price"
+type="number"
+min="0"
+placeholder="400">
+
+</div>
+
+<div class="field">
+
+<label for="oldPrice">
+Old Price
+</label>
+
+<input
+id="oldPrice"
+type="number"
+min="0"
+placeholder="500">
+
+</div>
+
+<div class="field">
+
+<label for="category">
+Category *
+</label>
+
+<select id="category">
+
+<option value="">
+Select Category
+</option>
+
+<option value="Men">
+Men
+</option>
+
+<option value="Women">
+Women
+</option>
+
+<option value="Kids">
+Kids
+</option>
+
+<option value="Electronics">
+Electronics
+</option>
+
+<option value="Grocery">
+Grocery
+</option>
+
+<option value="Other">
+Other
+</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label for="size">
+Size
+</label>
+
+<input
+id="size"
+type="text"
+placeholder="M">
+
+</div>
+
+<div class="field">
+
+<label for="color">
+Colour
+</label>
+
+<input
+id="color"
+type="text"
+placeholder="Black">
+
+</div>
+
+<div class="field">
+
+<label for="stock">
+Stock
+</label>
+
+<input
+id="stock"
+type="number"
+min="0"
+value="1">
+
+</div>
+
+<div class="field full">
+
+<label for="image">
+Product Photos
+</label>
+
+<input
+id="image"
+type="file"
+accept="image/*"
+multiple>
+
+<div class="note">
+पहली photo को Main Product Photo माना जाएगा।
+बाकी photos Product Details में दिखाई जाएँगी। अधिकतम 8 photos रखें।
+</div>
+
+<div
+class="image-preview-title"
+id="previewTitle"
+style="display:none">
+
+Selected Photos
+
+</div>
+
+<div
+id="previewGrid"
+class="preview-grid">
+
+</div>
+
+</div>
+
+<div class="field full">
+
+<label for="description">
+Description
+</label>
+
+<textarea
+id="description"
+placeholder="Product description..."></textarea>
+
+</div>
+
+</div>
+
+<div class="buttons">
+
+<button
+id="saveButton"
+type="button"
+onclick="saveProduct()">
+
+➕ Add Product
+
+</button>
+
+<button
+class="clear-btn"
+type="button"
+onclick="clearForm()">
+
+Clear
+
+</button>
+
+</div>
+
+</section>
+
+<section class="card">
+
+<div class="top-row">
+
+<h2 style="margin:0">
+📦 Products
+</h2>
+
+<span class="count">
+
+Count:
+<span id="count">0</span>
+
+</span>
+
+</div>
+
+<div id="products">
+
+<div class="empty">
+Loading...
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+/* =========================
+   SUPABASE
+========================= */
+
+const SUPABASE_URL =
+"https://dfcadaccfkyfslakbigf.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
+
+const db =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+/* =========================
+   ADMIN
+========================= */
+
+const ADMIN_UID =
+"a8e19c3d-016e-438e-810e-fd96f03b0493";
+
+
+/* =========================
+   VARIABLES
+========================= */
+
+let products = [];
+
+let selectedImages = [];
+
+let editingId = null;
+
+
+/* =========================
+   PAGE LOAD
+========================= */
+
+document.addEventListener(
+"DOMContentLoaded",
+async function(){
+
+  const imageInput =
+    document.getElementById("image");
+
+  imageInput.addEventListener(
+    "change",
+    handleImageSelection
+  );
+
+  await checkAdminLogin();
+
+});
+
+
+/* =========================
+   IMAGE SELECTION
+========================= */
+
+function handleImageSelection(event){
+
+  const files =
+    Array.from(event.target.files || []);
+
+  if(!files.length){
+    return;
+  }
+
+  if(selectedImages.length >= 8){
+    alert("Maximum 8 product photos allowed.");
+    return;
+  }
+
+  const remaining = 8 - selectedImages.length;
+  const filesToRead = files.slice(0, remaining);
+
+  if(files.length > remaining){
+    alert("Only first " + remaining + " new photo(s) added. Maximum 8 photos allowed.");
+  }
+
+  /* New photos को existing photos के साथ जोड़ें।
+     Edit करते समय पुरानी photos delete नहीं होंगी। */
+  if(editingId === null){
+    selectedImages = [];
+  }
+
+  let completed = 0;
+
+  filesToRead.forEach(function(file){
+
+    if(!file.type.startsWith("image/")){
+      completed++;
+      return;
+    }
+
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      function(e){
+
+        selectedImages.push({
+          data:e.target.result,
+          name:file.name
+        });
+
+        completed++;
+
+        if(completed === filesToRead.length){
+          renderImagePreviews();
+        }
+
+      };
+
+    reader.readAsDataURL(file);
+
+  });
+
+}
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+function renderImagePreviews(){
+
+  const grid =
+    document.getElementById(
+      "previewGrid"
+    );
+
+  const title =
+    document.getElementById(
+      "previewTitle"
+    );
+
+  grid.innerHTML = "";
+
+  if(!selectedImages.length){
+
+    title.style.display = "none";
+
+    return;
+  }
+
+  title.style.display = "block";
+
+  selectedImages.forEach(
+    function(image,index){
+
+      const item =
+        document.createElement("div");
+
+      item.className =
+        "preview-item";
+
+      item.innerHTML = `
+
+        <img
+          src="${image.data}"
+          alt="Product photo">
+
+        ${
+          index === 0
+          ?
+          '<span class="preview-main">MAIN</span>'
+          :
+          ''
+        }
+
+        <button
+          type="button"
+          class="remove-image"
+          onclick="removeSelectedImage(${index})">
+
+          ×
+
+        </button>
+
+      `;
+
+      grid.appendChild(item);
+
+    }
+  );
+
+}
+
+
+/* =========================
+   REMOVE IMAGE
+========================= */
+
+function removeSelectedImage(index){
+
+  selectedImages.splice(index,1);
+
+  renderImagePreviews();
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+async function adminLogin(){
+
+  const email =
+    document.getElementById(
+      "adminEmail"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "adminPassword"
+    ).value;
+
+  const message =
+    document.getElementById(
+      "loginMessage"
+    );
+
+  const button =
+    document.getElementById(
+      "loginButton"
+    );
+
+  message.textContent = "";
+
+  if(!email || !password){
+
+    message.textContent =
+      "❌ Email और Password दोनों डालें।";
+
+    return;
+  }
+
+  button.disabled = true;
+
+  button.textContent =
+    "⏳ Logging in...";
+
+  const {data,error} =
+    await db.auth.signInWithPassword({
+      email:email,
+      password:password
+    });
+
+  button.disabled = false;
+
+  button.textContent =
+    "🔐 Login";
+
+  if(error){
+
+    console.error(error);
+
+    message.textContent =
+      "❌ Login failed: " +
+      error.message;
+
+    return;
+  }
+
+  await handleSignedIn(
+    data.session
+  );
+
+}
+
+
+/* =========================
+   CHECK SESSION
+========================= */
+
+async function checkAdminLogin(){
+
+  const {data,error} =
+    await db.auth.getSession();
+
+  if(error){
+
+    console.error(error);
+
+    showLogin(
+      "❌ Session check failed."
+    );
+
+    return;
+  }
+
+  if(data.session){
+
+    await handleSignedIn(
+      data.session
+    );
+
+  }else{
+
+    showLogin();
+
+  }
+
+}
+
+
+/* =========================
+   HANDLE LOGIN
+========================= */
+
+async function handleSignedIn(session){
+
+  if(
+    !session ||
+    !session.user
+  ){
+
+    showLogin(
+      "❌ Admin session नहीं मिली।"
+    );
+
+    return;
+  }
+
+  if(
+    session.user.id !== ADMIN_UID
+  ){
+
+    await db.auth.signOut();
+
+    showLogin(
+      "❌ यह account authorized admin नहीं है।"
+    );
+
+    return;
+  }
+
+  document.getElementById(
+    "adminLogin"
+  ).style.display = "none";
+
+  document.getElementById(
+    "adminContent"
+  ).style.display = "block";
+
+  await showProducts();
+
+}
+
+
+/* =========================
+   SHOW LOGIN
+========================= */
+
+function showLogin(message=""){
+
+  document.getElementById(
+    "adminLogin"
+  ).style.display = "flex";
+
+  document.getElementById(
+    "adminContent"
+  ).style.display = "none";
+
+  document.getElementById(
+    "loginMessage"
+  ).textContent = message;
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function adminLogout(){
+
+  await db.auth.signOut();
+
+  location.reload();
+
+}
+
+
+/* =========================
+   REQUIRE ADMIN
+========================= */
+
+async function requireAdminSession(){
+
+  const {data} =
+    await db.auth.getSession();
+
+  if(
+    !data.session ||
+    data.session.user.id !== ADMIN_UID
+  ){
+
+    showLogin(
+      "❌ Admin login required."
+    );
+
+    return false;
+  }
+
+  return true;
+
+}
+
+
+/* =========================
+   SAVE PRODUCT
+========================= */
+
+async function saveProduct(){
+
+  if(
+    !(await requireAdminSession())
+  ){
+    return;
+  }
+
+  const name =
+    document.getElementById(
+      "name"
+    ).value.trim();
+
+  const price =
+    document.getElementById(
+      "price"
+    ).value;
+
+  const oldPrice =
+    document.getElementById(
+      "oldPrice"
+    ).value;
+
+  const category =
+    document.getElementById(
+      "category"
+    ).value;
+
+  const size =
+    document.getElementById(
+      "size"
+    ).value.trim();
+
+  const color =
+    document.getElementById(
+      "color"
+    ).value.trim();
+
+  const stock =
+    document.getElementById(
+      "stock"
+    ).value;
+
+  const description =
+    document.getElementById(
+      "description"
+    ).value.trim();
+
+
+  if(!name){
+
+    alert(
+      "❌ Product name डालें"
+    );
+
+    return;
+  }
+
+  if(!price){
+
+    alert(
+      "❌ Product price डालें"
+    );
+
+    return;
+  }
+
+  if(!category){
+
+    alert(
+      "❌ Category select करें"
+    );
+
+    return;
+  }
+
+
+  /*
+    Main image = selectedImages[0]
+
+    All images = image_urls
+  */
+
+  const mainImage =
+    selectedImages.length
+    ? selectedImages[0].data
+    : null;
+
+  const allImages =
+    selectedImages.map(
+      function(image){
+        return image.data;
+      }
+    );
+
+
+  const productData = {
+
+    name:name,
+
+    price:Number(price),
+
+    old_price:
+      oldPrice
+      ? Number(oldPrice)
+      : null,
+
+    category:category,
+
+    size:size || null,
+
+    colour:color || null,
+
+    stock:Number(stock || 0),
+
+    image_url:
+      mainImage,
+
+    image_urls:
+      allImages,
+
+    description:
+      description || null
+
+  };
+
+
+  const saveButton =
+    document.getElementById(
+      "saveButton"
+    );
+
+  saveButton.disabled = true;
+
+
+  /* =========================
+     EDIT
+  ========================= */
+
+  if(editingId !== null){
+
+    const {error} =
+      await db
+        .from("Product")
+        .update(productData)
+        .eq("id",editingId);
+
+    saveButton.disabled = false;
+
+    if(error){
+
+      console.error(error);
+
+      alert(
+        "❌ Product update नहीं हुआ:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    alert(
+      "✅ Product updated successfully"
+    );
+
+  }
+
+
+  /* =========================
+     ADD
+  ========================= */
+
+  else{
+
+    const {data,error} =
+      await db
+        .from("Product")
+        .insert([productData])
+        .select();
+
+    saveButton.disabled = false;
+
+    if(error){
+
+      console.error(error);
+
+      alert(
+        "❌ Product add नहीं हुआ:\n" +
+        error.message
+      );
+
+      return;
+    }
+
+    console.log(
+      "Product added:",
+      data
+    );
+
+    alert(
+      "✅ Product successfully added"
+    );
+
+  }
+
+
+  clearForm();
+
+  await showProducts();
+
+}
+
+
+/* =========================
+   SHOW PRODUCTS
+========================= */
+
+async function showProducts(){
+
+  if(
+    !(await requireAdminSession())
+  ){
+    return;
+  }
+
+  const box =
+    document.getElementById(
+      "products"
+    );
+
+  box.innerHTML =
+    '<div class="empty">Loading...</div>';
+
+
+  const {data,error} =
+    await db
+      .from("Product")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+
+  if(error){
+
+    console.error(error);
+
+    box.innerHTML =
+      '<div class="empty">❌ Products load नहीं हुए</div>';
+
+    return;
+  }
+
+
+  products =
+    data || [];
+
+
+  document.getElementById(
+    "count"
+  ).textContent =
+    products.length;
+
+
+  if(!products.length){
+
+    box.innerHTML =
+      '<div class="empty">📦 अभी कोई product नहीं है</div>';
+
+    return;
+  }
+
+
+  box.innerHTML = "";
+
+
+  products.forEach(
+    function(product){
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "product";
+
+
+      const image =
+        product.image_url ||
+        (
+          Array.isArray(
+            product.image_urls
+          )
+          ?
+          product.image_urls[0]
+          :
+          ""
+        ) ||
+        "https://via.placeholder.com/150";
+
+
+      div.innerHTML = `
+
+        <img
+          src="${escapeHtml(image)}"
+          alt="Product">
+
+        <div class="product-info">
+
+          <h3>
+            ${escapeHtml(
+              product.name
+            )}
+          </h3>
+
+          <div class="price">
+
+            ₹${product.price}
+
+            ${
+              product.old_price
+              ?
+              `
+              <span class="old">
+                ₹${product.old_price}
+              </span>
+              `
+              :
+              ""
+            }
+
+          </div>
+
+          <small>
+
+            ${escapeHtml(
+              product.category || ""
+            )}
+
+            • Stock:
+            ${product.stock || 0}
+
+            ${
+              Array.isArray(
+                product.image_urls
+              )
+              ?
+              ` • Photos: ${product.image_urls.length}`
+              :
+              ""
+            }
+
+          </small>
+
+          <div class="actions">
+
+            <button
+              class="edit"
+              onclick="editProduct('${String(product.id).replace(/'/g,"\\'")}')">
+
+              ✏️ Edit
+
+            </button>
+
+            <button
+              class="delete"
+              onclick="deleteProduct('${String(product.id).replace(/'/g,"\\'")}')">
+
+              🗑️ Delete
+
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+      box.appendChild(div);
+
+    }
+  );
+
+}
+
+
+/* =========================
+   EDIT
+========================= */
+
+function editProduct(id){
+
+  const product =
+    products.find(
+      function(p){
+        return String(p.id) ===
+               String(id);
+      }
+    );
+
+  if(!product){
+    return;
+  }
+
+
+  editingId = id;
+
+
+  document.getElementById(
+    "name"
+  ).value =
+    product.name || "";
+
+
+  document.getElementById(
+    "price"
+  ).value =
+    product.price || "";
+
+
+  document.getElementById(
+    "oldPrice"
+  ).value =
+    product.old_price || "";
+
+
+  document.getElementById(
+    "category"
+  ).value =
+    product.category || "";
+
+
+  document.getElementById(
+    "size"
+  ).value =
+    product.size || "";
+
+
+  document.getElementById(
+    "color"
+  ).value =
+    product.colour || "";
+
+
+  document.getElementById(
+    "stock"
+  ).value =
+    product.stock || 0;
+
+
+  document.getElementById(
+    "description"
+  ).value =
+    product.description || "";
+
+
+  let imageList = [];
+
+
+  if(
+    Array.isArray(
+      product.image_urls
+    ) &&
+    product.image_urls.length
+  ){
+
+    imageList =
+      product.image_urls;
+
+  }else if(
+    product.image_url
+  ){
+
+    imageList =
+      [product.image_url];
+
+  }
+
+
+  selectedImages =
+    imageList.map(
+      function(image,index){
+
+        return {
+          data:image,
+          name:
+            "Saved photo " +
+            (index + 1)
+        };
+
+      }
+    );
+
+
+  renderImagePreviews();
+
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "✏️ Edit Product";
+
+
+  document.getElementById(
+    "saveButton"
+  ).textContent =
+    "💾 Update Product";
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* =========================
+   DELETE
+========================= */
+
+async function deleteProduct(id){
+
+  if(
+    !(await requireAdminSession())
+  ){
+    return;
+  }
+
+
+  if(
+    !confirm(
+      "क्या आप यह product delete करना चाहते हैं?"
+    )
+  ){
+    return;
+  }
+
+
+  const {error} =
+    await db
+      .from("Product")
+      .delete()
+      .eq("id",id);
+
+
+  if(error){
+
+    console.error(error);
+
+    alert(
+      "❌ Delete नहीं हुआ:\n" +
+      error.message
+    );
+
+    return;
+  }
+
+
+  alert(
+    "🗑️ Product deleted"
+  );
+
+
+  await showProducts();
+
+}
+
+
+/* =========================
+   CLEAR FORM
+========================= */
+
+function clearForm(){
+
+  editingId = null;
+
+  selectedImages = [];
+
+
+  document.getElementById(
+    "name"
+  ).value = "";
+
+
+  document.getElementById(
+    "price"
+  ).value = "";
+
+
+  document.getElementById(
+    "oldPrice"
+  ).value = "";
+
+
+  document.getElementById(
+    "category"
+  ).value = "";
+
+
+  document.getElementById(
+    "size"
+  ).value = "";
+
+
+  document.getElementById(
+    "color"
+  ).value = "";
+
+
+  document.getElementById(
+    "stock"
+  ).value = "1";
+
+
+  document.getElementById(
+    "description"
+  ).value = "";
+
+
+  document.getElementById(
+    "image"
+  ).value = "";
+
+
+  renderImagePreviews();
+
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "➕ Add Product";
+
+
+  document.getElementById(
+    "saveButton"
+  ).textContent =
+    "➕ Add Product";
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHtml(text){
+
+  return String(text || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   GLOBAL FUNCTIONS
+========================= */
+
+window.adminLogin =
+  adminLogin;
+
+window.adminLogout =
+  adminLogout;
+
+window.saveProduct =
+  saveProduct;
+
+window.showProducts =
+  showProducts;
+
+window.editProduct =
+  editProduct;
+
+window.deleteProduct =
+  deleteProduct;
+
+window.clearForm =
+  clearForm;
+
+window.removeSelectedImage =
+  removeSelectedImage;
+
+</script>
+
+</body>
+</html>
