@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#2563eb">
+<title>VR SHOP Seller</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:#2563eb;color:#fff;padding:16px;position:sticky;top:0;z-index:5}
+.wrap{max-width:1050px;margin:auto;padding:16px}.head{display:flex;justify-content:space-between;align-items:center}
+h1,h2{margin:0 0 8px}button{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}
+.primary{background:#2563eb;color:#fff}.danger{background:#dc2626;color:#fff}.warning{background:#f59e0b;color:#fff}.light{background:#e8eef8}
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 3px 15px #00000012}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:6px}label{font-weight:700;font-size:14px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d5dbe5;border-radius:10px;font-size:15px}textarea{min-height:90px}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}.loginbox{width:min(440px,100%);background:white;padding:24px;border-radius:18px;box-shadow:0 8px 30px #0002}
+.tabs{display:flex;gap:8px;margin:15px 0}.tabs button{flex:1}.active{background:#2563eb;color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.stat{background:#eff6ff;padding:15px;border-radius:14px}.stat b{font-size:25px;color:#2563eb;display:block}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.product{border:1px solid #e2e7ef;border-radius:13px;padding:12px;display:flex;gap:12px}.product img{width:95px;height:95px;object-fit:cover;border-radius:10px}.info{flex:1}.muted{font-size:13px;color:#64748b}.actions{display:flex;gap:7px;margin-top:8px}
+.preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.preview img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px}
+.note{background:#eff6ff;color:#1e40af;padding:10px;border-radius:9px;font-size:13px;margin-top:8px}.msg{margin-top:9px;font-size:14px}
+#app{display:none}.orders{background:#f8fafc;padding:16px;border:1px dashed #cbd5e1;border-radius:12px}
+@media(max-width:700px){.grid,.products,.stats{grid-template-columns:1fr}.preview{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<div id="loginPage" class="login">
+<div class="loginbox">
+<h2>🏪 VR SHOP Seller</h2><p class="muted">Apni shop aur products VR SHOP app ke andar manage karein.</p>
+<div class="tabs"><button id="lt" class="active" onclick="mode('login')">Login</button><button id="st" onclick="mode('signup')">Create Account</button></div>
+<div id="signup" style="display:none">
+<div class="field"><label>Full Name *</label><input id="name" placeholder="Your name"></div><br>
+<div class="field"><label>Shop Name *</label><input id="shop" placeholder="My Shop"></div><br>
+</div>
+<div class="field"><label>Email *</label><input id="email" type="email" placeholder="seller@example.com"></div><br>
+<div class="field"><label>Password *</label><input id="pass" type="password" placeholder="Password"></div>
+<button id="authBtn" class="primary" style="width:100%;margin-top:15px" onclick="auth()">🔐 Login</button>
+<div id="authMsg" class="msg"></div>
+</div></div>
+
+<div id="app">
+<header><div class="wrap head"><div><h1>🏪 VR SHOP Seller</h1><div id="headShop">My Shop</div></div><button onclick="logout()">🚪 Logout</button></div></header>
+<main class="wrap">
+
+<div class="stats"><div class="stat"><b id="pc">0</b>Products</div><div class="stat"><b id="sc">0</b>Total Stock</div><div class="stat"><b id="rc">0 KM</b>Radius</div></div>
+
+<section class="card"><h2>🏪 My Shop</h2>
+<div class="grid">
+<div class="field"><label>Owner Name *</label><input id="owner"></div>
+<div class="field"><label>Shop Name *</label><input id="shop2"></div>
+<div class="field"><label>Mobile</label><input id="phone" maxlength="10"></div>
+<div class="field"><label>Pincode</label><input id="pin" maxlength="6"></div>
+<div class="field full"><label>Address</label><textarea id="address"></textarea></div>
+<div class="field"><label>Selling / Delivery Radius</label><select id="radius"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>20</option><option>50</option></select></div>
+<div class="field"><label>Shop Status</label><select id="active"><option value="true">🟢 Open</option><option value="false">🔴 Closed</option></select></div>
+</div>
+<button class="primary" style="margin-top:14px" onclick="saveShop()">💾 Save Shop</button><div id="shopMsg" class="msg"></div>
+</section>
+
+<section class="card"><h2 id="formTitle">➕ Add Product</h2>
+<div class="grid">
+<div class="field"><label>Product Name *</label><input id="pn"></div>
+<div class="field"><label>Price *</label><input id="price" type="number" min="0"></div>
+<div class="field"><label>Old Price</label><input id="old" type="number" min="0"></div>
+<div class="field"><label>Category *</label><select id="cat"><option value="">Select</option><option>Men</option><option>Women</option><option>Kids</option><option>Electronics</option><option>Grocery</option><option>Other</option></select></div>
+<div class="field"><label>Size</label><input id="size"></div>
+<div class="field"><label>Colour</label><input id="colour"></div>
+<div class="field"><label>Stock</label><input id="stock" type="number" min="0" value="1"></div>
+<div class="field"><label>Photos (max 8)</label><input id="photos" type="file" accept="image/*" multiple onchange="photosRead()"></div>
+<div class="field full"><label>Description</label><textarea id="desc"></textarea></div>
+</div>
+<div class="note">पहली photo main photo होगी. बाकी photos product details में दिखाई जाएँगी.</div>
+<div id="preview" class="preview"></div>
+<button id="saveBtn" class="primary" style="width:100%;margin-top:14px" onclick="saveProduct()">➕ Add Product</button>
+<div id="productMsg" class="msg"></div>
+</section>
+
+<section class="card"><h2>📦 My Products</h2><div id="products" class="products"><div>Loading...</div></div></section>
+
+<section class="card"><h2>🛍️ Orders</h2><div class="orders"><b>Order management next connection</b><p class="muted">Abhi customer checkout WhatsApp par order bhejta hai. Seller ke Orders ko database me track karne ke liye customer checkout ko Orders table se connect karna hoga.</p></div></section>
+
+</main></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const URL="https://dfcadaccfkyfslakbigf.supabase.co";
+const KEY="sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
+const db=supabase.createClient(URL,KEY);
+let user=null, seller=null, products=[], imgs=[], editing=null;
+
+function mode(x){
+  const s=x==="signup"; document.getElementById("signup").style.display=s?"block":"none";
+  document.getElementById("lt").classList.toggle("active",!s);document.getElementById("st").classList.toggle("active",s);
+  document.getElementById("authBtn").textContent=s?"📝 Create Seller Account":"🔐 Login";document.getElementById("authMsg").textContent="";
+}
+async function auth(){
+  const email=document.getElementById("email").value.trim(), pass=document.getElementById("pass").value, m=document.getElementById("authMsg");
+  const signup=document.getElementById("signup").style.display!=="none";
+  if(!email||!pass){m.textContent="❌ Email aur password डालें.";return}
+  if(signup){
+    const n=document.getElementById("name").value.trim(), sh=document.getElementById("shop").value.trim();
+    if(!n||!sh){m.textContent="❌ Name aur Shop Name डालें.";return}
+    const r=await db.auth.signUp({email,password:pass}); if(r.error){m.textContent="❌ "+r.error.message;return}
+    if(!r.data.user){m.textContent="❌ Account create नहीं हुआ.";return}
+    const p=await db.from("seller_profiles").insert({user_id:r.data.user.id,owner_name:n,shop_name:sh});
+    if(p.error){m.textContent="⚠️ Account बना लेकिन profile save नहीं हुआ: "+p.error.message;return}
+    m.style.color="#15803d";m.textContent="✅ Seller account created. Email verification required हो सकती है.";mode("login");return;
+  }
+  const r=await db.auth.signInWithPassword({email,password:pass});if(r.error){m.textContent="❌ "+r.error.message;return}
+  start(r.data.user);
+}
+async function start(u){
+  user=u; const r=await db.from("seller_profiles").select("*").eq("user_id",u.id).maybeSingle();
+  if(r.error||!r.data){document.getElementById("authMsg").textContent="❌ Seller profile नहीं मिला.";await db.auth.signOut();return}
+  seller=r.data;document.getElementById("loginPage").style.display="none";document.getElementById("app").style.display="block";fill();loadProducts();
+}
+function fill(){
+  owner.value=seller.owner_name||"";shop2.value=seller.shop_name||"";phone.value=seller.phone||"";pin.value=seller.pincode||"";address.value=seller.address||"";
+  radius.value=String(seller.delivery_radius||5);active.value=String(seller.is_active!==false);headShop.textContent=seller.shop_name||"My Shop";rc.textContent=(seller.delivery_radius||5)+" KM";
+}
+async function saveShop(){
+  const p={owner_name:owner.value.trim(),shop_name:shop2.value.trim(),phone:phone.value.trim(),pincode:pin.value.trim(),address:address.value.trim(),delivery_radius:Number(radius.value),is_active:active.value==="true"};
+  if(!p.owner_name||!p.shop_name){shopMsg.textContent="❌ Owner aur Shop Name जरूरी है.";return}
+  const r=await db.from("seller_profiles").update(p).eq("user_id",user.id).select().single();if(r.error){shopMsg.textContent="❌ "+r.error.message;return}
+  seller=r.data;fill();shopMsg.style.color="#15803d";shopMsg.textContent="✅ Shop saved.";
+}
+function photosRead(){
+  imgs=[];const fs=Array.from(photos.files||[]).slice(0,8);let done=0;if(!fs.length){preview.innerHTML="";return}
+  fs.forEach(f=>{const r=new FileReader();r.onload=e=>{imgs.push(e.target.result);if(++done===fs.length)render()};r.readAsDataURL(f)})
+}
+function render(){preview.innerHTML=imgs.map(x=>`<img src="${x}">`).join("")}
+function allImages(p){
+  let a=Array.isArray(p.image_urls)?p.image_urls:[];if(typeof p.image_urls==="string"){try{a=JSON.parse(p.image_urls)||[]}catch{}}
+  if(p.image_url&&!a.includes(p.image_url))a.unshift(p.image_url);return a;
+}
+async function saveProduct(){
+  const name=pn.value.trim(), pr=Number(price.value), category=cat.value;if(!name||!pr||!category){productMsg.textContent="❌ Name, price aur category जरूरी हैं.";return}
+  const p={name,price:pr,old_price:old.value?Number(old.value):null,category,size:size.value.trim()||null,colour:colour.value.trim()||null,stock:Number(stock.value||0),description:desc.value.trim()||null,seller_id:user.id};
+  if(imgs.length){p.image_url=imgs[0];p.image_urls=imgs}
+  const r=editing===null?await db.from("Product").insert([p]):await db.from("Product").update(p).eq("id",editing).eq("seller_id",user.id);
+  if(r.error){productMsg.textContent="❌ "+r.error.message;return}
+  productMsg.style.color="#15803d";productMsg.textContent=editing===null?"✅ Product added.":"✅ Product updated.";clearForm();loadProducts();
+}
+function clearForm(){editing=null;formTitle.textContent="➕ Add Product";saveBtn.textContent="➕ Add Product";pn.value=price.value=old.value=size.value=colour.value=desc.value="";cat.value="";stock.value=1;photos.value="";imgs=[];preview.innerHTML=""}
+function editProduct(id){
+  const p=products.find(x=>x.id===id);if(!p)return;editing=id;formTitle.textContent="✏️ Edit Product";saveBtn.textContent="💾 Update Product";
+  pn.value=p.name||"";price.value=p.price||"";old.value=p.old_price||"";cat.value=p.category||"";size.value=p.size||"";colour.value=p.colour||"";stock.value=p.stock||0;desc.value=p.description||"";imgs=allImages(p);render();scrollTo({top:document.body.scrollHeight/2,behavior:"smooth"});
+}
+async function delProduct(id){if(!confirm("Product delete करें?"))return;const r=await db.from("Product").delete().eq("id",id).eq("seller_id",user.id);if(r.error){alert(r.error.message);return}loadProducts()}
+async function loadProducts(){
+  const r=await db.from("Product").select("*").eq("seller_id",user.id).order("created_at",{ascending:false});if(r.error){products.innerHTML="<div>❌ "+esc(r.error.message)+"</div>";return}
+  products=r.data||[];pc.textContent=products.length;sc.textContent=products.reduce((a,p)=>a+Number(p.stock||0),0);
+  if(!products.length){products.innerHTML="<div>📦 अभी कोई product नहीं है.</div>";return}
+  products.innerHTML=products.map(p=>{const im=allImages(p)[0];return `<div class="product">${im?`<img src="${im}">`:"<div style='width:95px;height:95px;background:#eef2f7;border-radius:10px;display:grid;place-items:center'>🛍️</div>"}<div class="info"><h3>${esc(p.name)}</h3><b>₹${Number(p.price||0)}</b><div class="muted">${esc(p.category||"")} · Stock ${Number(p.stock||0)}</div><div class="actions"><button class="warning" onclick="editProduct(${p.id})">✏️ Edit</button><button class="danger" onclick="delProduct(${p.id})">🗑️ Delete</button></div></div></div>`}).join("")
+}
+function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+async function logout(){await db.auth.signOut();location.reload()}
+(async()=>{const r=await db.auth.getSession();if(r.data.session)start(r.data.session.user)})();
+</script>
+</body>
+</html>
