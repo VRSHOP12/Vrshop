@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#2563eb">
+<title>MRT PLACE Seller</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:#2563eb;color:#fff;padding:16px;position:sticky;top:0;z-index:5}
+.wrap{max-width:1050px;margin:auto;padding:16px}.head{display:flex;justify-content:space-between;align-items:center}
+h1,h2{margin:0 0 8px}button{border:0;border-radius:10px;padding:11px 15px;font-weight:700;cursor:pointer}
+.primary{background:#2563eb;color:#fff}.danger{background:#dc2626;color:#fff}.warning{background:#f59e0b;color:#fff}.light{background:#e8eef8}
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:16px;box-shadow:0 3px 15px #00000012}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:6px}label{font-weight:700;font-size:14px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d5dbe5;border-radius:10px;font-size:15px}textarea{min-height:90px}
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}.loginbox{width:min(440px,100%);background:white;padding:24px;border-radius:18px;box-shadow:0 8px 30px #0002}
+.tabs{display:flex;gap:8px;margin:15px 0}.tabs button{flex:1}.active{background:#2563eb;color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.stat{background:#eff6ff;padding:15px;border-radius:14px}.stat b{font-size:25px;color:#2563eb;display:block}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.product{border:1px solid #e2e7ef;border-radius:13px;padding:12px;display:flex;gap:12px}.product img{width:95px;height:95px;object-fit:cover;border-radius:10px}.info{flex:1}.muted{font-size:13px;color:#64748b}.actions{display:flex;gap:7px;margin-top:8px}
+.preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.preview img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px}
+.crop-overlay{display:none;position:fixed;inset:0;background:#000b;z-index:100;align-items:center;justify-content:center;padding:14px}.crop-box{width:min(520px,100%);background:#fff;border-radius:18px;padding:14px}.crop-stage{position:relative;width:100%;aspect-ratio:1;background:#111;border-radius:14px;overflow:hidden;touch-action:none}.crop-stage img{position:absolute;max-width:none;user-select:none;pointer-events:none}.crop-controls{display:flex;gap:10px;align-items:center;margin-top:12px}.crop-controls input{flex:1}.crop-actions{display:flex;gap:8px;margin-top:12px}.crop-actions button{flex:1}
+.note{background:#eff6ff;color:#1e40af;padding:10px;border-radius:9px;font-size:13px;margin-top:8px}.msg{margin-top:9px;font-size:14px}
+#app{display:none}.orders{background:#f8fafc;padding:16px;border:1px dashed #cbd5e1;border-radius:12px}
+@media(max-width:700px){.grid,.products,.stats{grid-template-columns:1fr}.preview{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<div id="loginPage" class="login">
+<div class="loginbox">
+<h2>🏪 MRT PLACE Seller</h2><p class="muted">Apni shop aur products MRT PLACE app ke andar manage karein.</p>
+<div class="tabs"><button id="lt" class="active" onclick="mode('login')">Login</button><button id="st" onclick="mode('signup')">Create Account</button></div>
+<div id="signup" style="display:none">
+<div class="field"><label>Full Name *</label><input id="name" placeholder="Your name"></div><br>
+<div class="field"><label>Shop Name *</label><input id="shop" placeholder="My Shop"></div><br>
+</div>
+<div class="field"><label>Email *</label><input id="email" type="email" placeholder="seller@example.com"></div><br>
+<div class="field"><label>Password *</label><input id="pass" type="password" placeholder="Password"></div>
+<button id="authBtn" class="primary" style="width:100%;margin-top:15px" onclick="auth()">🔐 Login</button>
+<div id="authMsg" class="msg"></div>
+</div></div>
+
+<div id="app">
+<header><div class="wrap head"><div><h1>🏪 MRT PLACE Seller</h1><div id="headShop">My Shop</div></div><button onclick="logout()">🚪 Logout</button></div></header>
+<main class="wrap">
+
+<div class="stats"><div class="stat"><b id="pc">0</b>Products</div><div class="stat"><b id="sc">0</b>Total Stock</div><div class="stat"><b id="rc">0 KM</b>Radius</div></div>
+
+<section class="card"><h2>🏪 My Shop</h2>
+<div class="grid">
+<div class="field"><label>Owner Name *</label><input id="owner"></div>
+<div class="field"><label>Shop Name *</label><input id="shop2"></div>
+<div class="field"><label>Mobile</label><input id="phone" maxlength="10"></div>
+<div class="field"><label>Pincode</label><input id="pin" maxlength="6"></div>
+<div class="field full"><label>Address</label><textarea id="address"></textarea></div>
+<div class="field"><label>Selling / Delivery Radius</label><select id="radius"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>20</option><option>50</option></select></div>
+<div class="field"><label>Shop Status</label><select id="active"><option value="true">🟢 Open</option><option value="false">🔴 Closed</option></select></div>
+</div>
+<button class="primary" style="margin-top:14px" onclick="saveShop()">💾 Save Shop</button><div id="shopMsg" class="msg"></div>
+</section>
+
+<section class="card"><h2 id="formTitle">➕ Add Product</h2>
+<div class="grid">
+<div class="field"><label>Product Name *</label><input id="pn"></div>
+<div class="field"><label>Price *</label><input id="price" type="number" min="0"></div>
+<div class="field"><label>Old Price</label><input id="old" type="number" min="0"></div>
+<div class="field"><label>Category *</label><select id="cat"><option value="">Select</option><option>Men</option><option>Women</option><option>Kids</option><option>Electronics</option><option>Grocery</option><option>Other</option></select></div>
+<div class="field"><label>Size</label><input id="size"></div>
+<div class="field"><label>Colour</label><input id="colour"></div>
+<div class="field"><label>Stock</label><input id="stock" type="number" min="0" value="1"></div>
+<div class="field"><label>Photos (max 8)</label><input id="photos" type="file" accept="image/*" multiple onchange="photosRead()"></div>
+<div class="field full"><label>Description</label><textarea id="desc"></textarea></div>
+</div>
+<div class="note">पहली photo main photo होगी. बाकी photos product details में दिखाई जाएँगी.</div>
+<div id="preview" class="preview"></div>
+<button id="saveBtn" class="primary" style="width:100%;margin-top:14px" onclick="saveProduct()">➕ Add Product</button>
+<div id="productMsg" class="msg"></div>
+</section>
+
+<section class="card"><h2>📦 My Products</h2><div id="products" class="products"><div>Loading...</div></div></section>
+
+<section class="card"><h2>🛍️ Orders</h2><div id="orders" class="orders">Loading orders...</div></section>
+
+</main></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  "use strict";
+
+  const SUPABASE_URL = "https://dfcadaccfkyfslakbigf.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_UMa2mZ1Ftz9fPEAQx_b_mQ_jdWtpaLi";
+
+  const $ = (id) => document.getElementById(id);
+  const msg = $("authMsg");
+
+  if (!window.supabase || typeof window.supabase.createClient !== "function") {
+    if (msg) msg.textContent = "❌ Supabase library load नहीं हुई. Internet connection check करें.";
+    return;
+  }
+
+  // Unique global name: no `client` variable collision.
+  const VRSHOP_DB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  });
+  window.VRSHOP_DB = VRSHOP_DB;
+
+  let user = null;
+  let seller = null;
+  let products = [];
+  let imgs = [];
+  let editing = null;
+
+  function setMessage(text, color = "#dc2626") {
+    if (!msg) return;
+    msg.style.color = color;
+    msg.textContent = text || "";
+  }
+
+  window.mode = function(modeName) {
+    const isSignup = modeName === "signup";
+    $("signup").style.display = isSignup ? "block" : "none";
+    $("lt").classList.toggle("active", !isSignup);
+    $("st").classList.toggle("active", isSignup);
+    $("authBtn").textContent = isSignup ? "📝 Create Seller Account" : "🔐 Login";
+    setMessage("");
+  };
+
+  async function createSellerProfile(userId, ownerName, shopName) {
+    return await VRSHOP_DB
+      .from("seller_profiles")
+      .upsert({
+        user_id: userId,
+        owner_name: ownerName,
+        shop_name: shopName
+      }, { onConflict: "user_id" });
+  }
+
+  async function ensureSellerProfile(currentUser) {
+    let result = await VRSHOP_DB
+      .from("seller_profiles")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+
+    if (result.error) return result;
+    if (result.data) return result;
+
+    const meta = currentUser.user_metadata || {};
+    const ownerName = String(meta.owner_name || "").trim();
+    const shopName = String(meta.shop_name || "").trim();
+
+    if (!ownerName || !shopName) {
+      return { data: null, error: new Error("Seller profile नहीं मिली. पहले Create Account से registration करें.") };
+    }
+
+    const profileResult = await createSellerProfile(currentUser.id, ownerName, shopName);
+    if (profileResult.error) return profileResult;
+
+    return await VRSHOP_DB
+      .from("seller_profiles")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .maybeSingle();
+  }
+
+  window.auth = async function() {
+    const email = $("email").value.trim();
+    const pass = $("pass").value;
+    const signupMode = $("signup").style.display !== "none";
+    const button = $("authBtn");
+
+    setMessage("");
+
+    if (!email || !pass) {
+      setMessage("❌ Email aur password डालें.");
+      return;
+    }
+    if (pass.length < 6) {
+      setMessage("❌ Password कम से कम 6 characters का होना चाहिए.");
+      return;
+    }
+
+    button.disabled = true;
+    button.style.opacity = ".7";
+
+    try {
+      if (signupMode) {
+        const name = $("name").value.trim();
+        const shop = $("shop").value.trim();
+
+        if (!name || !shop) {
+          setMessage("❌ Name aur Shop Name डालें.");
+          return;
+        }
+
+        setMessage("⏳ Account create हो रहा है...", "#2563eb");
+
+        const result = await VRSHOP_DB.auth.signUp({
+          email,
+          password: pass,
+          options: {
+            data: {
+              owner_name: name,
+              shop_name: shop
+            }
+          }
+        });
+
+        if (result.error) {
+          setMessage("❌ " + result.error.message);
+          return;
+        }
+
+        if (!result.data || !result.data.user) {
+          setMessage("❌ Account create नहीं हुआ.");
+          return;
+        }
+
+        if (result.data.session) {
+          const profile = await createSellerProfile(result.data.user.id, name, shop);
+          if (profile.error) {
+            setMessage("⚠️ Account बन गया, लेकिन seller profile save नहीं हुई: " + profile.error.message);
+            return;
+          }
+          setMessage("✅ Seller account created!", "#15803d");
+          await startSeller(result.data.user);
+          return;
+        }
+
+        setMessage(
+          "✅ Account बन गया! अगर email verification माँगे तो email verify करें, फिर इसी email/password से Login करें.",
+          "#15803d"
+        );
+        window.mode("login");
+        return;
+      }
+
+      setMessage("⏳ Login हो रहा है...", "#2563eb");
+
+      const loginResult = await VRSHOP_DB.auth.signInWithPassword({
+        email,
+        password: pass
+      });
+
+      if (loginResult.error) {
+        setMessage("❌ " + loginResult.error.message);
+        return;
+      }
+
+      await startSeller(loginResult.data.user);
+    } catch (error) {
+      console.error("MRT PLACE Seller auth error:", error);
+      setMessage("❌ " + (error?.message || "Registration/Login failed."));
+    } finally {
+      button.disabled = false;
+      button.style.opacity = "1";
+    }
+  };
+
+  async function startSeller(currentUser) {
+    user = currentUser;
+    setMessage("⏳ Seller profile load हो रही है...", "#2563eb");
+
+    const profile = await ensureSellerProfile(currentUser);
+
+    if (profile.error || !profile.data) {
+      console.error("Seller profile error:", profile.error);
+      setMessage("❌ Seller profile create/load नहीं हुई: " + (profile.error?.message || "Unknown error"));
+      await VRSHOP_DB.auth.signOut();
+      return;
+    }
+
+    seller = profile.data;
+    $("loginPage").style.display = "none";
+    $("app").style.display = "block";
+    fillShop();
+    await loadProducts();
+    await loadOrders();
+  }
+
+  function fillShop() {
+    $("owner").value = seller.owner_name || "";
+    $("shop2").value = seller.shop_name || "";
+    $("phone").value = seller.phone || "";
+    $("pin").value = seller.pincode || "";
+    $("address").value = seller.address || "";
+    $("radius").value = String(seller.delivery_radius || 5);
+    $("active").value = String(seller.is_active !== false);
+    $("headShop").textContent = seller.shop_name || "My Shop";
+    $("rc").textContent = (seller.delivery_radius || 5) + " KM";
+  }
+
+  window.saveShop = async function() {
+    if (!user) return;
+
+    const payload = {
+      owner_name: $("owner").value.trim(),
+      shop_name: $("shop2").value.trim(),
+      phone: $("phone").value.trim(),
+      pincode: $("pin").value.trim(),
+      address: $("address").value.trim(),
+      delivery_radius: Number($("radius").value),
+      is_active: $("active").value === "true"
+    };
+
+    if (!payload.owner_name || !payload.shop_name) {
+      $("shopMsg").textContent = "❌ Owner aur Shop Name जरूरी है.";
+      return;
+    }
+
+    const result = await VRSHOP_DB
+      .from("seller_profiles")
+      .update(payload)
+      .eq("user_id", user.id)
+      .select()
+      .single();
+
+    if (result.error) {
+      $("shopMsg").style.color = "#dc2626";
+      $("shopMsg").textContent = "❌ " + result.error.message;
+      return;
+    }
+
+    seller = result.data;
+    fillShop();
+    $("shopMsg").style.color = "#15803d";
+    $("shopMsg").textContent = "✅ Shop saved.";
+  };
+
+  let cropQueue = [];
+  let cropIndex = 0;
+  let cropImage = null;
+  let cropScale = 1;
+  let cropZoom = 1;
+  let cropX = 0;
+  let cropY = 0;
+  let dragStart = null;
+
+  window.photosRead = function() {
+    const files = Array.from($("photos").files || []).slice(0, 8);
+    if (!files.length) return;
+    cropQueue = files.filter(file => file.type.startsWith("image/"));
+    imgs = [];
+    $("preview").innerHTML = "";
+    cropIndex = 0;
+    openNextCrop();
+  };
+
+  function openNextCrop() {
+    if (cropIndex >= cropQueue.length) { renderPreview(); return; }
+    const file = cropQueue[cropIndex];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      cropImage = new Image();
+      cropImage.onload = () => {
+        const stage = $("cropStage");
+        const s = stage.clientWidth || 400;
+        cropScale = Math.max(s / cropImage.naturalWidth, s / cropImage.naturalHeight);
+        cropZoom = 1; cropX = 0; cropY = 0;
+        $("cropZoom").value = "1";
+        $("cropOverlay").style.display = "flex";
+        updateCropImage();
+        $("cropHint").textContent = `Photo ${cropIndex + 1} of ${cropQueue.length}: finger se move karein.`;
+      };
+      cropImage.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateCropImage() {
+    if (!cropImage) return;
+    const stage = $("cropStage");
+    const s = stage.clientWidth || 400;
+    const scale = cropScale * cropZoom;
+    const w = cropImage.naturalWidth * scale;
+    const h = cropImage.naturalHeight * scale;
+    const maxX = Math.max(0, (w - s) / 2);
+    const maxY = Math.max(0, (h - s) / 2);
+    cropX = Math.max(-maxX, Math.min(maxX, cropX));
+    cropY = Math.max(-maxY, Math.min(maxY, cropY));
+    $("cropImg").src = cropImage.src;
+    $("cropImg").style.width = w + "px";
+    $("cropImg").style.height = h + "px";
+    $("cropImg").style.left = ((s - w) / 2 + cropX) + "px";
+    $("cropImg").style.top = ((s - h) / 2 + cropY) + "px";
+  }
+
+  $("cropZoom").addEventListener("input", function(){ cropZoom = Number(this.value); updateCropImage(); });
+  $("cropStage").addEventListener("pointerdown", function(e){ dragStart={x:e.clientX,y:e.clientY,ox:cropX,oy:cropY}; this.setPointerCapture(e.pointerId); });
+  $("cropStage").addEventListener("pointermove", function(e){ if(!dragStart) return; cropX=dragStart.ox+(e.clientX-dragStart.x); cropY=dragStart.oy+(e.clientY-dragStart.y); updateCropImage(); });
+  $("cropStage").addEventListener("pointerup", function(){ dragStart=null; });
+  $("cropStage").addEventListener("pointercancel", function(){ dragStart=null; });
+
+  window.cancelCrop = function(){
+    $("cropOverlay").style.display="none"; cropImage=null; cropQueue=[]; cropIndex=0;
+    $("photos").value=""; imgs=[]; $("preview").innerHTML="";
+  };
+
+  window.applyCrop = function(){
+    if (!cropImage) return;
+    const stage=$("cropStage"), s=stage.clientWidth || 400, out=800;
+    const scale=cropScale*cropZoom;
+    const w=cropImage.naturalWidth*scale, h=cropImage.naturalHeight*scale;
+    const left=(s-w)/2+cropX, top=(s-h)/2+cropY;
+    const sx=Math.max(0, Math.min(cropImage.naturalWidth, (-left)/scale));
+    const sy=Math.max(0, Math.min(cropImage.naturalHeight, (-top)/scale));
+    const sw=Math.min(cropImage.naturalWidth-sx, s/scale);
+    const sh=Math.min(cropImage.naturalHeight-sy, s/scale);
+    const canvas=document.createElement("canvas"); canvas.width=out; canvas.height=out;
+    const ctx=canvas.getContext("2d"); ctx.imageSmoothingQuality="high";
+    ctx.drawImage(cropImage,sx,sy,sw,sh,0,0,out,out);
+    imgs.push(canvas.toDataURL("image/jpeg",0.88));
+    $("cropOverlay").style.display="none"; cropImage=null; cropIndex++; openNextCrop();
+  };
+
+  function renderPreview() {
+    $("preview").innerHTML = imgs.map((src,index)=>`<div style="position:relative"><img src="${escapeHtml(src)}" alt="Product photo ${index+1}"><small style="display:block;text-align:center;color:#64748b">${index===0?'Main photo':'Photo '+(index+1)}</small></div>`).join("");
+  }
+
+  function allImages(product) {
+    let list = [];
+    if (Array.isArray(product.image_urls)) {
+      list = product.image_urls.slice();
+    } else if (typeof product.image_urls === "string") {
+      try { list = JSON.parse(product.image_urls) || []; } catch (_) { list = []; }
+    }
+    if (product.image_url && !list.includes(product.image_url)) list.unshift(product.image_url);
+    return list.filter(Boolean);
+  }
+
+  window.saveProduct = async function() {
+    if (!user) {
+      setMessage("❌ पहले Seller login करें.");
+      return;
+    }
+
+    const name = $("pn").value.trim();
+    const price = Number($("price").value);
+    const category = $("cat").value;
+
+    if (!name || !price || !category) {
+      $("productMsg").style.color = "#dc2626";
+      $("productMsg").textContent = "❌ Name, price aur category जरूरी हैं.";
+      return;
+    }
+
+    const payload = {
+      name,
+      price,
+      old_price: $("old").value ? Number($("old").value) : null,
+      category,
+      size: $("size").value.trim() || null,
+      colour: $("colour").value.trim() || null,
+      stock: Number($("stock").value || 0),
+      description: $("desc").value.trim() || null,
+      seller_id: user.id
+    };
+
+    if (imgs.length) {
+      payload.image_url = imgs[0];
+      payload.image_urls = imgs;
+    }
+
+    let result;
+    if (editing === null) {
+      result = await VRSHOP_DB.from("Product").insert([payload]);
+    } else {
+      result = await VRSHOP_DB
+        .from("Product")
+        .update(payload)
+        .eq("id", editing)
+        .eq("seller_id", user.id);
+    }
+
+    if (result.error) {
+      $("productMsg").style.color = "#dc2626";
+      $("productMsg").textContent = "❌ " + result.error.message;
+      return;
+    }
+
+    $("productMsg").style.color = "#15803d";
+    $("productMsg").textContent = editing === null ? "✅ Product added." : "✅ Product updated.";
+    window.clearForm();
+    await loadProducts();
+    await loadOrders();
+  };
+
+  window.clearForm = function() {
+    editing = null;
+    $("formTitle").textContent = "➕ Add Product";
+    $("saveBtn").textContent = "➕ Add Product";
+    $("pn").value = "";
+    $("price").value = "";
+    $("old").value = "";
+    $("size").value = "";
+    $("colour").value = "";
+    $("desc").value = "";
+    $("cat").value = "";
+    $("stock").value = "1";
+    $("photos").value = "";
+    imgs = [];
+    $("preview").innerHTML = "";
+    $("productMsg").textContent = "";
+  };
+
+  window.editProduct = function(id) {
+    const product = products.find((item) => String(item.id) === String(id));
+    if (!product) return;
+
+    editing = id;
+    $("formTitle").textContent = "✏️ Edit Product";
+    $("saveBtn").textContent = "💾 Update Product";
+    $("pn").value = product.name || "";
+    $("price").value = product.price || "";
+    $("old").value = product.old_price || "";
+    $("cat").value = product.category || "";
+    $("size").value = product.size || "";
+    $("colour").value = product.colour || "";
+    $("stock").value = product.stock || 0;
+    $("desc").value = product.description || "";
+    imgs = allImages(product);
+    renderPreview();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  window.delProduct = async function(id) {
+    if (!user) return;
+    if (!confirm("Product delete करें?")) return;
+
+    const result = await VRSHOP_DB
+      .from("Product")
+      .delete()
+      .eq("id", id)
+      .eq("seller_id", user.id);
+
+    if (result.error) {
+      alert("❌ " + result.error.message);
+      return;
+    }
+
+    await loadProducts();
+    await loadOrders();
+  };
+
+  async function loadProducts() {
+    if (!user) return;
+
+    const result = await VRSHOP_DB
+      .from("Product")
+      .select("*")
+      .eq("seller_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (result.error) {
+      $("products").innerHTML = `<div>❌ ${escapeHtml(result.error.message)}</div>`;
+      return;
+    }
+
+    products = result.data || [];
+    $("pc").textContent = products.length;
+    $("sc").textContent = products.reduce((sum, item) => sum + Number(item.stock || 0), 0);
+
+    if (!products.length) {
+      $("products").innerHTML = "<div>📦 अभी कोई product नहीं है.</div>";
+      return;
+    }
+
+    $("products").innerHTML = products.map((product) => {
+      const image = allImages(product)[0];
+      return `
+        <div class="product">
+          ${image
+            ? `<img src="${escapeHtml(image)}" alt="Product">`
+            : `<div style="width:95px;height:95px;background:#eef2f7;border-radius:10px;display:grid;place-items:center">🛍️</div>`}
+          <div class="info">
+            <h3>${escapeHtml(product.name)}</h3>
+            <b>₹${Number(product.price || 0)}</b>
+            <div class="muted">${escapeHtml(product.category || "")} · Stock ${Number(product.stock || 0)}</div>
+            <div class="actions">
+              <button class="warning" onclick="editProduct('${escapeHtml(String(product.id))}')">✏️ Edit</button>
+              <button class="danger" onclick="delProduct('${escapeHtml(String(product.id))}')">🗑️ Delete</button>
+            </div>
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      "\"": "&quot;",
+      "'": "&#039;"
+    }[char]));
+  }
+
+  const ORDER_STATUSES = ["received","confirmed","preparing","out_for_delivery","delivered","cancelled"];
+  const ORDER_LABELS = {received:"📥 Received",confirmed:"✅ Confirmed",preparing:"👨‍🍳 Preparing",out_for_delivery:"🚚 Out for Delivery",delivered:"📦 Delivered",cancelled:"❌ Cancelled"};
+
+  async function loadOrders(){
+    if(!user) return;
+    const box=$("orders");
+    box.innerHTML="Loading orders...";
+    try{
+      const result=await VRSHOP_DB.from("orders")
+        .select("*")
+        .eq("seller_id", user.id)
+        .order("created_at", {ascending:false});
+      if(result.error){
+        box.innerHTML=`<div>❌ Orders load nahi hue.<br><small>${escapeHtml(result.error.message)}</small></div>`;
+        return;
+      }
+      const rows=result.data||[];
+      if(!rows.length){
+        box.innerHTML="<div>📭 Abhi koi order nahi hai.</div>";
+        return;
+      }
+      box.innerHTML=rows.map(o=>{
+        const items=Array.isArray(o.items)?o.items:[];
+        const status=o.status||"received";
+        return `<div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin-bottom:10px">
+          <b>📦 Order ${escapeHtml(o.tracking_code||String(o.id).slice(0,8))}</b>
+          <div class="muted">${new Date(o.created_at).toLocaleString()}</div>
+          <div style="margin-top:7px"><b>${escapeHtml(o.customer_name||"")}</b> · ${escapeHtml(o.customer_phone||"")}<br>${escapeHtml(o.customer_address||"")}</div>
+          <div style="margin-top:7px">${items.map(i=>`${escapeHtml(i.name||"")} × ${Number(i.quantity||0)}`).join("<br>")}<br><b>Total: ₹${Number(o.total_amount||0)}</b></div>
+          <div style="margin-top:8px;font-weight:700">Current: ${ORDER_LABELS[status]||status}</div>
+          <select data-order-id="${escapeHtml(String(o.id))}" style="margin-top:9px;width:100%;padding:10px;border-radius:9px;border:1px solid #cbd5e1">${ORDER_STATUSES.map(st=>`<option value="${st}" ${status===st?"selected":""}>${ORDER_LABELS[st]}</option>`).join("")}</select>
+        </div>`;
+      }).join("");
+
+      box.querySelectorAll("select[data-order-id]").forEach(sel=>sel.addEventListener("change",async function(){
+        const selected=this;
+        selected.disabled=true;
+        try{
+          const r=await VRSHOP_DB.from("orders")
+            .update({status:selected.value,updated_at:new Date().toISOString()})
+            .eq("id",selected.dataset.orderId)
+            .eq("seller_id",user.id);
+          if(r.error){
+            alert("❌ Status update nahi hua: "+r.error.message);
+          }else{
+            await loadOrders();
+          }
+        }catch(e){
+          alert("❌ Status update error: "+(e?.message||e));
+        }finally{
+          selected.disabled=false;
+        }
+      }));
+    }catch(e){
+      box.innerHTML=`<div>❌ Orders load nahi hue.<br><small>${escapeHtml(e?.message||e)}</small></div>`;
+    }
+  }
+
+  window.logout = async function() {
+    await VRSHOP_DB.auth.signOut();
+    location.reload();
+  };
+
+  VRSHOP_DB.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT") {
+      user = null;
+      seller = null;
+      $("loginPage").style.display = "grid";
+      $("app").style.display = "none";
+    }
+  });
+
+  (async () => {
+    try {
+      const sessionResult = await VRSHOP_DB.auth.getSession();
+      if (sessionResult.error) {
+        setMessage("❌ Session check failed: " + sessionResult.error.message);
+        return;
+      }
+      if (sessionResult.data.session) {
+        await startSeller(sessionResult.data.session.user);
+      }
+    } catch (error) {
+      console.error("Startup error:", error);
+      setMessage("❌ " + (error?.message || "Seller page start नहीं हो पाया."));
+    }
+  })();
+})();
+</script>
+
+<div id="cropOverlay" class="crop-overlay">
+  <div class="crop-box">
+    <h2 style="margin:0 0 10px">✂️ Crop Product Photo</h2>
+    <div id="cropStage" class="crop-stage"><img id="cropImg" alt="Crop"></div>
+    <div class="crop-controls"><span>🔍</span><input id="cropZoom" type="range" min="1" max="3" step="0.01" value="1"></div>
+    <div class="crop-actions"><button class="light" type="button" onclick="cancelCrop()">Cancel</button><button class="primary" type="button" onclick="applyCrop()">✂️ Crop & Use</button></div>
+    <div id="cropHint" class="muted" style="margin-top:8px">Photo ko finger se move karein aur zoom set karein.</div>
+  </div>
+</div>
+</body>
+</html>
