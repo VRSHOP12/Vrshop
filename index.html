@@ -436,7 +436,8 @@ header{
 .product-img img{
   width:100%;
   height:100%;
-  object-fit:contain;
+  object-fit:cover;
+  object-position:center;
 }
 
 .info{
@@ -731,6 +732,21 @@ footer{
    PRODUCT DETAILS MODAL
 ========================= */
 .option-box{margin-top:14px;padding:14px;background:#f8fbff;border:1px solid #dce8f8;border-radius:14px}.option-title{font-weight:800;font-size:15px;margin-bottom:8px}.option-buttons{display:flex;flex-wrap:wrap;gap:8px}.option-btn{border:1px solid #cbd5e1;background:#fff;color:#1f2937;border-radius:10px;padding:9px 13px;font-weight:700;cursor:pointer}.option-btn.active{background:#1463ff;color:#fff;border-color:#1463ff}.qty-row{display:flex;align-items:center;gap:12px;margin-top:14px}.qty-btn{width:42px;height:42px;border:0;border-radius:10px;background:#e8eef8;font-size:22px;font-weight:800;cursor:pointer}.qty-value{min-width:34px;text-align:center;font-size:18px;font-weight:800}.buy-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.buy-now{background:#ff9f00;color:#111}.cart-now{background:#1463ff;color:#fff} .product-action-note{font-size:12px;color:#64748b;text-align:center;margin-top:8px}.buy-row button{min-height:48px;font-size:16px}@media(max-width:650px){.buy-row{grid-template-columns:1fr}.option-btn{padding:8px 11px}}#productDetailsPopup{z-index:9999;padding:10px;}
+/* MRT PLACE product-card mobile fix */
+@media(max-width:650px){
+  .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+  .product-img{height:250px;min-height:250px;}
+  .product-img img{object-fit:cover;width:100%;height:100%;display:block;}
+  .info{padding:11px;}
+  .info h3{font-size:16px;line-height:1.25;}
+  .product .add{position:relative;z-index:5;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+}
+
+/* Make detail action buttons reliably tappable on Android */
+.product-actions-pro{position:sticky;bottom:0;z-index:9999;pointer-events:auto;}
+.product-actions-pro button{position:relative;z-index:10000;pointer-events:auto;-webkit-tap-highlight-color:transparent;user-select:none;}
+.product-detail-close{z-index:10001;pointer-events:auto;}
+
 #productDetailsPopup .modal{max-width:720px;width:min(96vw,720px);max-height:94vh;padding:0;overflow:hidden;border-radius:22px;background:#fff;}
 .product-details-pro{height:94vh;max-height:94vh;display:flex;flex-direction:column;overflow:hidden;}
 .product-details-head-pro{position:relative;flex:0 0 auto;background:#f4f7fb;}
@@ -1884,6 +1900,10 @@ const OWNER_SETTINGS = {
 let products = [];
 
 let cart = [];
+try{
+  const savedCart=JSON.parse(localStorage.getItem("mrt_cart")||"[]");
+  if(Array.isArray(savedCart)) cart=savedCart;
+}catch(e){cart=[];}
 
 let customerLocation = null;
 
@@ -2195,8 +2215,8 @@ function openProductDetails(id){
 
         ${(sizes.length||colours.length)?`<div class="selection-card">
           <div class="selection-heading">🛍️ Select your options</div>
-          ${sizes.length?`<div class="selection-label">📏 Size <small>Required</small></div><div class="option-buttons-pro" id="sizeOptions">${sizes.map(s=>`<button type="button" class="option-btn-pro" data-value="${escapeHtmlAttr(s)}" onclick="selectOrderOption(this,'sizeOptions')">${escapeHtml(s)}</button>`).join("")}</div>`:""}
-          ${colours.length?`<div class="selection-label colour-label">🎨 Colour <small>Required</small></div><div class="option-buttons-pro" id="colourOptions">${colours.map(c=>`<button type="button" class="option-btn-pro" data-value="${escapeHtmlAttr(c)}" onclick="selectOrderOption(this,'colourOptions')">${escapeHtml(c)}</button>`).join("")}</div>`:""}
+          ${sizes.length?`<div class="selection-label">📏 Size <small>Required</small></div><div class="option-buttons-pro" id="sizeOptions">${sizes.map(s=>`<button type="button" class="option-btn-pro" data-value="${escapeHtmlAttr(s)}">${escapeHtml(s)}</button>`).join("")}</div>`:""}
+          ${colours.length?`<div class="selection-label colour-label">🎨 Colour <small>Required</small></div><div class="option-buttons-pro" id="colourOptions">${colours.map(c=>`<button type="button" class="option-btn-pro" data-value="${escapeHtmlAttr(c)}">${escapeHtml(c)}</button>`).join("")}</div>`:""}
         </div>`:""}
 
         <div class="quantity-card">
@@ -2208,14 +2228,47 @@ function openProductDetails(id){
       </div>
 
       <div class="product-actions-pro">
-        <button type="button" class="buy-now-pro" onclick="buyNowFromDetails(${JSON.stringify(String(product.id))})">⚡ Buy Now</button>
-        <button type="button" class="cart-now-pro" onclick="addSelectedToCart(${JSON.stringify(String(product.id))})">🛒 Add to Cart</button>
+        <button id="detailBuyNowBtn" type="button" class="buy-now-pro">⚡ Buy Now</button>
+        <button id="detailAddCartBtn" type="button" class="cart-now-pro">🛒 Add to Cart</button>
       </div>
     </div>`;
 
   window._detailQty=stock>0?1:0;
   window._detailStock=stock;
   const q=document.getElementById("detailQty"); if(q) q.textContent=window._detailQty;
+
+  // Auto-select a single available option so Buy Now/Add to Cart do not get blocked.
+  ["sizeOptions","colourOptions"].forEach(function(groupId){
+    const group=document.getElementById(groupId);
+    if(!group) return;
+    const buttons=group.querySelectorAll(".option-btn-pro");
+    if(buttons.length===1) buttons[0].classList.add("active");
+    buttons.forEach(function(btn){
+      btn.addEventListener("click",function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        selectOrderOption(btn,groupId);
+      },{passive:false});
+    });
+  });
+
+  const buyBtn=document.getElementById("detailBuyNowBtn");
+  const cartBtn=document.getElementById("detailAddCartBtn");
+  if(buyBtn){
+    buyBtn.addEventListener("click",function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      window.buyNowFromDetails(String(product.id));
+    },{passive:false});
+  }
+  if(cartBtn){
+    cartBtn.addEventListener("click",function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      window.addSelectedToCart(String(product.id));
+    },{passive:false});
+  }
+
   popup.style.display="block";
   document.body.style.overflow="hidden";
 }
@@ -2258,6 +2311,7 @@ window.buyNowFromDetails=function(id){
   const p=products.find(x=>String(x.id)===String(id)); if(!p){alert("Product not found. Please refresh the page.");return;}
   const s=getDetailSelection(p); if(!s)return;
   cart=[{id:String(id),quantity:s.quantity,size:s.size,colour:s.colour}];
+  try{localStorage.setItem("mrt_cart",JSON.stringify(cart));}catch(e){}
   updateCartCount();
   closeProductDetails();
   openOrder();
@@ -2265,7 +2319,7 @@ window.buyNowFromDetails=function(id){
 function selectProductPhoto(url,button){
   const image=document.getElementById("productMainImage");
   if(image) image.src=url;
-  document.querySelectorAll(".product-thumb").forEach(function(item){item.classList.remove("active");});
+  document.querySelectorAll(".product-thumb-pro").forEach(function(item){item.classList.remove("active");});
   if(button) button.classList.add("active");
 }
 
@@ -2379,6 +2433,7 @@ function addToCart(id,selection){
   const qty=Math.max(1,Number(selection?.quantity||1)), size=selection?.size||"", colour=selection?.colour||"", stock=Math.max(1,Number(product.stock||1));
   const existing=cart.find(item=>String(item.id)===String(id)&&item.size===size&&item.colour===colour);
   if(existing) existing.quantity=Math.min(stock,existing.quantity+qty); else cart.push({id,quantity:Math.min(stock,qty),size,colour});
+  try{localStorage.setItem("mrt_cart",JSON.stringify(cart));}catch(e){}
   updateCartCount();
 }
 function updateCartCount(){
@@ -2448,7 +2503,7 @@ function showCart(){
  cart.forEach(function(item,index){const p=products.find(x=>String(x.id)===String(item.id));if(!p)return;const t=Number(p.price||0)*Number(item.quantity||1);total+=t;container.innerHTML+=`<div style="padding:14px 0;border-bottom:1px solid #e2e8f0"><div style="display:flex;justify-content:space-between;gap:10px"><b>${escapeHtml(p.name)}</b><b>₹${t}</b></div>${item.size?`<div>📏 Size: <b>${escapeHtml(item.size)}</b></div>`:""}${item.colour?`<div>🎨 Colour: <b>${escapeHtml(item.colour)}</b></div>`:""}<div>Quantity: <b>${Number(item.quantity||1)}</b></div><button type="button" onclick="removeFromCart(${index})" style="margin-top:8px;border:0;background:#fee2e2;color:#dc2626;padding:7px 12px;border-radius:7px">Remove</button></div>`;});
  document.getElementById("cartTotal").innerText="Total: ₹"+total;
 }
-function removeFromCart(index){cart.splice(Number(index),1);updateCartCount();showCart();}
+function removeFromCart(index){cart.splice(Number(index),1);try{localStorage.setItem("mrt_cart",JSON.stringify(cart));}catch(e){}updateCartCount();showCart();}
 /* =========================
    OPEN ORDER
 ========================= */
@@ -2593,6 +2648,8 @@ function escapeHtml(text){
 
 }
 
+
+updateCartCount();
 
 /* =========================
    SERVICE WORKER
