@@ -1184,819 +1184,217 @@ footer{
 
 
 /* =========================================================
-   MRT PLACE — PROFESSIONAL HOMEPAGE UI UPGRADE
-   UI/CSS ONLY — existing HTML + JavaScript functionality preserved
+   MRT PLACE — AMAZON / FLIPKART STYLE ORDER HISTORY
+   UI only; order/Supabase logic remains intact.
    ========================================================= */
-
-/* Premium base */
-:root{
-  --mrt-blue:#1463ff;
-  --mrt-blue-dark:#0757e8;
-  --mrt-ink:#0f172a;
-  --mrt-muted:#64748b;
-  --mrt-line:#e2e8f0;
-  --mrt-bg:#f4f7fc;
+#trackingPagePopup{
+  position:fixed!important;
+  inset:0!important;
+  z-index:999999!important;
+  padding:0!important;
+  background:rgba(7,18,35,.78)!important;
+  backdrop-filter:blur(4px);
+  overflow:hidden!important;
 }
-
-body{
-  background:
-    radial-gradient(circle at 8% 8%, rgba(20,99,255,.055), transparent 26%),
-    linear-gradient(180deg,#f8faff 0%,#f3f6fb 100%);
-  color:var(--mrt-ink);
+#trackingPagePopup .order-history-pro{
+  width:min(100%,760px);
+  height:100dvh;
+  margin:0 auto;
+  background:#f4f7fb;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
 }
-
-/* Top announcement bar */
-.topbar{
-  background:linear-gradient(90deg,#064dd2,#1463ff,#0f8bff);
-  padding:10px 12px;
-  font-size:13px;
-  letter-spacing:.15px;
-  box-shadow:0 2px 10px rgba(7,87,232,.18);
-}
-
-/* Header */
-header{
-  background:rgba(255,255,255,.96);
-  box-shadow:0 4px 22px rgba(15,23,42,.07);
-  backdrop-filter:blur(12px);
-}
-
-.header-main{
-  padding:12px 18px;
-  gap:12px;
-}
-
-.logo{
+.oh-topbar{
+  flex:0 0 auto;
+  min-height:92px;
+  padding:16px 20px;
+  background:#fff;
+  border-bottom:1px solid #e4eaf2;
   display:flex;
   align-items:center;
-  justify-content:center;
-  min-width:70px;
+  justify-content:space-between;
+  gap:15px;
+  box-shadow:0 2px 12px rgba(15,23,42,.06);
 }
-
-.logo img{
-  width:66px;
-  height:66px;
-  padding:3px;
-  border-radius:16px;
-  background:#fff;
-  box-shadow:0 5px 18px rgba(15,23,42,.10);
-}
-
-.search-box{
-  height:50px;
-}
-
-.search-box input{
-  border:1px solid #d8e1ee;
-  border-right:0;
-  background:#f8faff;
-  border-radius:14px 0 0 14px;
-  font-size:15px;
-  transition:.2s ease;
-}
-
-.search-box input:focus{
-  background:#fff;
-  box-shadow:0 0 0 3px rgba(20,99,255,.10);
-}
-
-.search-box button{
-  width:92px;
-  border-radius:0 14px 14px 0;
-  background:linear-gradient(135deg,#1463ff,#0757e8);
-  font-size:14px;
-  box-shadow:inset 0 -1px 0 rgba(0,0,0,.08);
-}
-
-.header-btn{
-  border:1px solid #e1e8f2;
-  background:#f7f9fd;
-  border-radius:14px;
-  padding:11px 14px;
-  font-size:13px;
-  box-shadow:0 2px 8px rgba(15,23,42,.04);
-  transition:.18s ease;
-}
-
-.header-btn:hover{
-  transform:translateY(-1px);
-  border-color:#c9d8ee;
-  background:#fff;
-}
-
-.cart-btn{
-  background:linear-gradient(135deg,#1463ff,#0757e8);
-  border-color:transparent;
-  box-shadow:0 5px 14px rgba(20,99,255,.22);
-}
-
-.seller-btn{
-  background:linear-gradient(135deg,#10a7ff,#087bea);
-  border-color:transparent;
-  box-shadow:0 5px 14px rgba(15,139,255,.20);
-}
-
-/* Category navigation */
-.category-nav{
-  border-top:1px solid #edf1f7;
-  border-bottom:1px solid #e7edf5;
-  box-shadow:0 2px 8px rgba(15,23,42,.025);
-}
-
-.category-nav-inner{
-  gap:5px;
-  padding:8px 18px;
-}
-
-.category-nav button{
-  border-radius:999px;
-  padding:9px 14px;
-  font-weight:600;
-  transition:.18s ease;
-}
-
-.category-nav button:hover{
-  background:#edf4ff;
-  color:var(--mrt-blue-dark);
-}
-
-/* Hero */
-.hero{
-  position:relative;
-  isolation:isolate;
-  margin:22px auto;
-  min-height:300px;
-  padding:46px 58px;
-  border-radius:28px;
-  background:
-    radial-gradient(circle at 86% 22%, rgba(255,255,255,.20), transparent 18%),
-    radial-gradient(circle at 78% 90%, rgba(255,255,255,.12), transparent 24%),
-    linear-gradient(120deg,#064fd9 0%,#1463ff 48%,#3d91ff 100%);
-  box-shadow:0 18px 45px rgba(20,99,255,.18);
-}
-
-.hero:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:-1;
-  opacity:.16;
-  background-image:
-    linear-gradient(rgba(255,255,255,.25) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.25) 1px,transparent 1px);
-  background-size:34px 34px;
-  mask-image:linear-gradient(90deg,#000,transparent 82%);
-}
-
-.hero:after{
-  content:"";
-  position:absolute;
-  width:250px;
-  height:250px;
-  right:-70px;
-  top:-90px;
-  border:1px solid rgba(255,255,255,.20);
-  border-radius:50%;
-  box-shadow:0 0 0 35px rgba(255,255,255,.045),
-             0 0 0 70px rgba(255,255,255,.025);
-  z-index:-1;
-}
-
-.hero-content{
-  max-width:650px;
-}
-
-.hero-small{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  margin-bottom:14px;
-  padding:7px 12px;
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:999px;
-  background:rgba(255,255,255,.12);
-  font-size:12px;
-  letter-spacing:.8px;
-  text-transform:uppercase;
-}
-
-.hero h1{
-  font-size:48px;
-  line-height:1.04;
-  letter-spacing:-1.3px;
-  margin-bottom:14px;
-}
-
-.hero p{
-  font-size:17px;
-  line-height:1.55;
-  max-width:540px;
-  margin-bottom:25px;
-  color:#f3f7ff;
-}
-
-.hero-buttons{
-  gap:12px;
-}
-
-.hero-btn{
-  min-height:48px;
-  padding:13px 22px;
-  border-radius:13px;
-  font-size:14px;
-  transition:.18s ease;
-}
-
-.hero-btn:hover{
-  transform:translateY(-2px);
-}
-
-.hero-btn.primary{
-  box-shadow:0 8px 20px rgba(0,0,0,.14);
-}
-
-.hero-btn.secondary{
-  background:rgba(255,255,255,.07);
-  border-color:rgba(255,255,255,.72);
-}
-
-.hero-art{
-  position:relative;
-  font-size:115px;
-  min-width:235px;
-  filter:drop-shadow(0 15px 18px rgba(0,0,0,.16));
-  transform:rotate(-2deg);
-  animation:mrtFloat 4s ease-in-out infinite;
-}
-
-@keyframes mrtFloat{
-  0%,100%{transform:translateY(0) rotate(-2deg)}
-  50%{transform:translateY(-7px) rotate(1deg)}
-}
-
-/* Service strip */
-.services{
-  margin-bottom:28px;
-  padding:14px;
-  border:1px solid #e3eaf4;
-  border-radius:20px;
-  box-shadow:0 8px 25px rgba(15,23,42,.055);
-}
-
-.service{
-  padding:12px 14px;
-  border-radius:14px;
-  transition:.18s ease;
-}
-
-.service:hover{
-  background:#f7faff;
-}
-
-.service-icon{
-  width:46px;
-  height:46px;
-  background:#edf4ff;
-  box-shadow:inset 0 0 0 1px #e0ebfb;
-}
-
-/* Sections */
-.section-title{
-  margin:32px 0 16px;
-}
-
-.section-title h2{
-  font-size:24px;
-  letter-spacing:-.3px;
-}
-
-.view-all{
-  padding:7px 11px;
-  border-radius:999px;
-  background:#edf4ff;
-  color:#0757e8;
-}
-
-/* Category cards */
-.top-categories{
-  gap:14px;
-}
-
-.category-card{
-  border:1px solid #e1e8f2;
-  border-radius:18px;
-  padding:20px 9px;
-  box-shadow:0 4px 14px rgba(15,23,42,.035);
-  transition:.2s ease;
-}
-
-.category-card:hover{
-  transform:translateY(-4px);
-  border-color:#c9dcff;
-  box-shadow:0 12px 25px rgba(20,99,255,.12);
-}
-
-.category-icon{
-  width:58px;
-  height:58px;
-  margin:0 auto 10px;
-  display:grid;
-  place-items:center;
-  border-radius:17px;
-  background:#f1f6ff;
-  font-size:34px;
-}
-
-.category-card b{
-  font-size:13px;
-}
-
-/* Filters */
-.filters{
-  margin:25px 0 16px;
-}
-
-.filters select{
-  min-width:165px;
-  border:1px solid #dce5f0;
-  border-radius:12px;
-  background:#fff;
-  box-shadow:0 3px 10px rgba(15,23,42,.035);
-}
-
-/* Products */
-.products{
-  gap:18px;
-}
-
-.product{
-  border-radius:20px;
-  border:1px solid #e1e8f2;
-  box-shadow:0 5px 18px rgba(15,23,42,.06);
-}
-
-.product:hover{
-  transform:translateY(-5px);
-  box-shadow:0 16px 30px rgba(20,99,255,.13);
-}
-
-.product-img{
-  height:265px;
-  background:linear-gradient(145deg,#f8fafc,#edf4ff);
-}
-
-.info{
-  padding:14px 14px 15px;
-}
-
-.info h3{
-  font-size:16px;
-}
-
-.price{
-  font-size:22px;
-}
-
-.add{
-  min-height:45px;
-  border-radius:12px;
-  background:linear-gradient(135deg,#1463ff,#0757e8);
-}
-
-/* Deals */
-.deal{
-  position:relative;
+.oh-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.oh-brand-icon{
+  width:58px;height:58px;border-radius:16px;
+  background:linear-gradient(135deg,#0b5cff,#2b87ff);
+  display:grid;place-items:center;
+  box-shadow:0 7px 18px rgba(20,99,255,.20);
   overflow:hidden;
-  margin:0 0 30px;
-  padding:30px;
-  border:1px solid #dbe7fb;
-  background:
-    radial-gradient(circle at 90% 10%,rgba(20,99,255,.10),transparent 28%),
-    linear-gradient(135deg,#fff,#f2f7ff);
-  box-shadow:0 8px 24px rgba(15,23,42,.05);
 }
-
-.deal:after{
-  content:"🔥";
-  position:absolute;
-  right:25px;
-  bottom:-12px;
-  font-size:82px;
-  opacity:.10;
-  transform:rotate(-12deg);
-}
-
-.deal h2{
-  font-size:25px;
-}
-
-/* Coming soon */
-.coming-grid{
-  gap:18px;
-}
-
-.coming-card{
-  position:relative;
-  overflow:hidden;
-  border:1px solid #d9e6fa;
-  border-radius:20px;
-  padding:25px;
-  background:linear-gradient(135deg,#f5f9ff,#eaf3ff);
-  box-shadow:0 7px 22px rgba(15,23,42,.045);
-  transition:.2s ease;
-}
-
-.coming-card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 13px 26px rgba(20,99,255,.10);
-}
-
-.coming-card h3{
-  font-size:22px;
-}
-
-/* Trust */
-.trust{
-  margin-top:30px;
-  border-radius:20px;
-  border:1px solid #e1e8f2;
-  box-shadow:0 7px 22px rgba(15,23,42,.045);
-}
-
-.trust-item{
-  padding:8px;
-}
-
-/* Footer */
-footer{
-  margin-top:42px;
-  padding:38px 15px;
-  background:
-    radial-gradient(circle at 50% 0%,rgba(20,99,255,.18),transparent 30%),
-    #071224;
-  border-top:1px solid rgba(255,255,255,.06);
-}
-
-/* Bottom navigation */
-.bottom-nav{
-  height:70px;
-  border-top:1px solid #dbe3ee;
-  box-shadow:0 -8px 25px rgba(15,23,42,.09);
-  backdrop-filter:blur(12px);
-}
-
-.bottom-nav button{
-  min-width:58px;
-  font-weight:600;
-  transition:.15s ease;
-}
-
-.bottom-nav button:active{
-  transform:scale(.94);
-}
-
-.bottom-icon{
-  font-size:22px;
-}
-
-/* Mobile professional layout */
-@media(max-width:650px){
-  .topbar{
-    padding:9px 8px;
-    font-size:11px;
-  }
-
-  .header-main{
-    padding:9px 10px 11px;
-    gap:8px;
-  }
-
-  .logo{
-    min-width:58px;
-  }
-
-  .logo img{
-    width:56px;
-    height:56px;
-    border-radius:14px;
-  }
-
-  .header-btn{
-    padding:10px 10px;
-    border-radius:13px;
-    font-size:12px;
-  }
-
-  .search-box{
-    height:48px;
-  }
-
-  .search-box input{
-    font-size:14px;
-    padding:0 13px;
-  }
-
-  .search-box button{
-    width:74px;
-  }
-
-  .category-nav-inner{
-    padding:8px 10px;
-  }
-
-  .category-nav button{
-    padding:8px 11px;
-    font-size:12px;
-  }
-
-  .hero{
-    margin:14px 12px 16px;
-    min-height:275px;
-    padding:28px 20px 25px;
-    border-radius:24px;
-  }
-
-  .hero h1{
-    font-size:34px;
-    line-height:1.07;
-    letter-spacing:-.8px;
-  }
-
-  .hero p{
-    font-size:14px;
-    max-width:285px;
-    margin-bottom:19px;
-  }
-
-  .hero-buttons{
-    gap:8px;
-  }
-
-  .hero-btn{
-    min-height:45px;
-    padding:11px 15px;
-    font-size:13px;
-  }
-
-  .hero-art{
-    position:absolute;
-    right:8px;
-    bottom:17px;
-    font-size:62px;
-    min-width:auto;
-    opacity:.92;
-  }
-
-  .services{
-    margin:0 12px 24px;
-    padding:8px;
-    border-radius:18px;
-    gap:5px;
-  }
-
-  .service{
-    gap:8px;
-    padding:9px 5px;
-  }
-
-  .service-icon{
-    width:40px;
-    height:40px;
-    font-size:18px;
-    flex:0 0 40px;
-  }
-
-  .service b{
-    font-size:12px;
-  }
-
-  .service span{
-    font-size:10px;
-    line-height:1.25;
-  }
-
-  .container{
-    padding:0 12px;
-  }
-
-  .section-title{
-    margin:27px 0 14px;
-  }
-
-  .section-title h2{
-    font-size:20px;
-  }
-
-  .top-categories{
-    gap:9px;
-  }
-
-  .category-card{
-    padding:12px 4px 13px;
-    border-radius:16px;
-  }
-
-  .category-icon{
-    width:47px;
-    height:47px;
-    border-radius:14px;
-    font-size:27px;
-  }
-
-  .category-card b{
-    font-size:11px;
-  }
-
-  .filters{
-    gap:8px;
-    margin:19px 0 13px;
-  }
-
-  .filters select{
-    min-width:0;
-    flex:1;
-    width:50%;
-    padding:11px 9px;
-    font-size:12px;
-  }
-
-  .products{
-    gap:11px;
-  }
-
-  .product{
-    border-radius:17px;
-  }
-
-  .product-img{
-    height:205px;
-  }
-
-  .info{
-    padding:11px 10px 12px;
-  }
-
-  .info h3{
-    font-size:14px;
-  }
-
-  .price{
-    font-size:18px;
-  }
-
-  .add{
-    min-height:42px;
-    font-size:13px;
-  }
-
-  .deal{
-    padding:24px 18px;
-    border-radius:18px;
-  }
-
-  .deal h2{
-    font-size:20px;
-  }
-
-  .coming-card{
-    border-radius:18px;
-    padding:19px;
-  }
-
-  .coming-card h3{
-    font-size:19px;
-  }
-
-  .trust{
-    border-radius:18px;
-    padding:13px;
-  }
-
-  footer{
-    margin-top:34px;
-    padding:32px 15px;
-  }
-}
-
-/* Reduce motion for accessibility */
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    animation:none!important;
-    transition:none!important;
-    scroll-behavior:auto!important;
-  }
-}
-
-
-/* =========================================================
-   MRT PLACE — ORDER HISTORY PRO v2
-   UI upgrade only. Existing order/localStorage/RPC actions untouched.
-   ========================================================= */
-.order-history-modal{
-  width:min(760px,calc(100vw - 18px));
-  max-height:92vh;
-  padding:0!important;
-  overflow:hidden!important;
-  border:1px solid rgba(255,255,255,.8);
-  border-radius:30px!important;
-  background:#f5f8fd;
-  box-shadow:0 35px 100px rgba(2,12,27,.38);
-}
-.oh-head{
-  position:sticky;top:0;z-index:5;
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:17px 18px 15px;
-  background:rgba(255,255,255,.96);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid #e8edf5;
-}
-.oh-title-wrap{display:flex;align-items:center;gap:12px;min-width:0}
-.oh-title-icon{
-  width:50px;height:50px;flex:0 0 50px;display:grid;place-items:center;
-  border-radius:16px;color:#fff;font-size:25px;
-  background:linear-gradient(135deg,#0757e8,#2f8cff);
-  box-shadow:0 9px 22px rgba(20,99,255,.25);
-}
-.oh-title{margin:0;font-size:23px;line-height:1.12;color:#0b1730;letter-spacing:-.55px}
-.oh-subtitle{margin-top:5px;color:#718096;font-size:12px}
-.oh-actions{display:flex;align-items:center;gap:8px}
+.oh-brand-icon img{width:48px;height:48px;object-fit:contain}
+.oh-brand h2{font-size:24px;line-height:1.1;color:#111827;margin:0}
+.oh-brand p{font-size:12px;color:#64748b;margin-top:5px}
+.oh-top-actions{display:flex;align-items:center;gap:8px}
 .oh-clear{
-  border:1px solid #ffd8dc;background:#fff2f3;color:#b4232f;border-radius:13px;
-  padding:10px 12px;font-weight:800;cursor:pointer;font-size:12px;transition:.18s;
+  border:1px solid #ffd4d4;
+  background:#fff1f2;color:#b4232f;
+  border-radius:12px;padding:10px 13px;
+  font-weight:800;font-size:12px;cursor:pointer;
 }
-.oh-clear:hover{background:#ffe5e8;transform:translateY(-1px)}
 .oh-close{
-  width:42px;height:42px;border:1px solid #e5ebf3;border-radius:14px;background:#f5f7fa;color:#111827;
-  display:grid;place-items:center;font-size:24px;cursor:pointer;transition:.18s;
+  width:44px;height:44px;border:1px solid #e1e7ef;
+  background:#f8fafc;color:#111827;border-radius:50%;
+  font-size:27px;line-height:1;cursor:pointer;
 }
-.oh-close:hover{background:#eaf0f7;transform:rotate(4deg)}
-.oh-body{
-  padding:14px 14px 22px;overflow:auto;max-height:calc(92vh - 83px);
-  background:linear-gradient(180deg,#f6f9fe 0%,#eef3f9 100%);
+.oh-content{
+  flex:1 1 auto;overflow:auto;padding:18px 16px 35px;
+  -webkit-overflow-scrolling:touch;
 }
+.oh-loading,.oh-empty{
+  min-height:260px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  color:#64748b;text-align:center;
+}
+.oh-empty div{font-size:55px}.oh-empty strong{font-size:19px;color:#111827}.oh-empty span{font-size:13px}
 .oh-card{
-  position:relative;margin:0 0 14px;padding:0;overflow:hidden;
-  border:1px solid #dfe7f2;border-radius:22px;background:#fff;
-  box-shadow:0 9px 28px rgba(15,23,42,.065);
-  transition:.2s ease;
+  background:#fff;border:1px solid #e1e7ef;border-radius:18px;
+  margin-bottom:15px;overflow:hidden;
+  box-shadow:0 6px 20px rgba(15,23,42,.055);
 }
-.oh-card:hover{box-shadow:0 15px 34px rgba(15,23,42,.10);transform:translateY(-1px)}
-.oh-card:last-child{margin-bottom:0}
-.oh-card-top{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:17px 17px 13px;border-bottom:1px solid #edf1f6;
+.oh-store-row{
+  padding:15px 16px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;border-bottom:1px solid #edf1f6;
 }
-.oh-brand-row{display:flex;align-items:center;gap:10px}
-.oh-brand-logo{
-  width:36px;height:36px;border-radius:11px;object-fit:contain;background:#f5f8ff;
-  border:1px solid #e2eaf5;padding:3px;
+.oh-store{display:flex;align-items:center;gap:11px}
+.oh-store-logo{
+  width:48px;height:48px;border-radius:12px;
+  border:1px solid #e2e8f0;background:#fff;display:grid;place-items:center;overflow:hidden;
 }
-.oh-brand{font-size:16px;font-weight:900;color:#101828;letter-spacing:-.2px}
-.oh-verified{font-size:10px;color:#16794a;background:#e9f8f0;padding:4px 7px;border-radius:999px;font-weight:800}
-.oh-id{padding:7px 10px;border-radius:10px;background:#edf4ff;color:#0757e8;font-weight:800;font-size:10px;white-space:nowrap;border:1px solid #dce9ff}
-.oh-main{padding:15px 17px 17px}
-.oh-total-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
-.oh-total-label{font-size:11px;color:#7a8798;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
-.oh-total{margin-top:3px;font-size:27px;line-height:1;font-weight:950;color:#0b1730;letter-spacing:-.6px}
-.oh-live-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eaf9f0;color:#14804a;font-size:11px;font-weight:900}
-.oh-live-dot{width:7px;height:7px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.10)}
-.oh-items{margin-top:15px;padding:12px 13px;border:1px solid #e8edf4;border-radius:15px;background:#f8fafc;color:#475569;font-size:12px;line-height:1.65}
-.oh-items-title{display:block;margin-bottom:5px;color:#18243a;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px}
-.oh-status-label{margin-top:18px;margin-bottom:10px;font-size:11px;font-weight:900;color:#718096;text-transform:uppercase;letter-spacing:.8px}
-.oh-timeline{display:grid;gap:0;padding:2px 0}
-.oh-step{display:grid;grid-template-columns:38px 1fr;column-gap:10px;min-height:48px;position:relative}
-.oh-step:not(:last-child) .oh-step-line{position:absolute;left:17px;top:33px;width:3px;height:29px;border-radius:5px;background:#e3e9f1}
-.oh-step.done:not(:last-child) .oh-step-line{background:linear-gradient(180deg,#19a35a,#75d19b)}
-.oh-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;z-index:1;border:2px solid #fff}
-.oh-step.done .oh-dot{background:#18a558;color:#fff;box-shadow:0 5px 12px rgba(24,165,88,.22)}
-.oh-step.pending .oh-dot{background:#eef2f7;color:#8a97a8;border:1px solid #e0e7ef}
-.oh-step-text{padding-top:8px;font-size:13px;font-weight:800;color:#66758a}
-.oh-step.done .oh-step-text{color:#152238}
-.oh-step:first-child .oh-step-text{font-size:14px}
-.oh-updated{margin-top:10px;padding-top:11px;border-top:1px dashed #e0e7ef;color:#7b8798;font-size:10px}
+.oh-store-logo img{width:43px;height:43px;object-fit:contain}
+.oh-store-name{font-size:17px;font-weight:900;color:#111827}
+.oh-verified{
+  display:inline-block;margin-top:4px;padding:3px 7px;
+  background:#e8f8ef;color:#16834a;border-radius:999px;
+  font-size:10px;font-weight:800;
+}
+.oh-order-id{text-align:right}
+.oh-order-id span{display:block;color:#94a3b8;font-size:9px;font-weight:800;letter-spacing:.7px}
+.oh-order-id strong{
+  display:inline-block;margin-top:4px;padding:7px 9px;
+  background:#edf4ff;color:#1459c7;border-radius:9px;font-size:11px;
+}
+.oh-summary{
+  padding:17px 16px;display:flex;align-items:center;
+  justify-content:space-between;gap:12px;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+}
+.oh-label{display:block;color:#7a8798;font-size:11px;font-weight:900;letter-spacing:.7px}
+.oh-total{display:block;color:#111827;font-size:27px;line-height:1.1;margin-top:5px}
+.oh-status{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 11px;border-radius:999px;
+  font-size:12px;font-weight:900;white-space:nowrap;
+}
+.oh-status.active{background:#e9f8ef;color:#16834a}
+.oh-status.delivered{background:#e8f8ef;color:#0b7a45}
+.oh-status.bad{background:#fff0f2;color:#bd1f36}
+.oh-status-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.oh-section{padding:0 16px 16px}
+.oh-section-title{
+  display:flex;justify-content:space-between;align-items:center;
+  color:#536174;font-size:11px;font-weight:900;letter-spacing:.65px;
+  margin-bottom:11px;
+}
+.oh-section-title span{
+  color:#1463ff;background:#edf4ff;border-radius:999px;
+  padding:4px 7px;font-size:9px;letter-spacing:0;
+}
+.oh-items{border:1px solid #e7edf4;border-radius:14px;overflow:hidden}
+.oh-item{
+  min-height:82px;padding:10px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid #edf1f6;
+}
+.oh-item:last-child{border-bottom:0}
+.oh-item-img{
+  width:62px;height:62px;flex:0 0 62px;border-radius:10px;
+  background:#f3f6fa;display:grid;place-items:center;overflow:hidden;
+}
+.oh-item-img img{width:100%;height:100%;object-fit:cover}
+.oh-item-img.fallback{font-size:26px}
+.oh-item-info{min-width:0;flex:1}
+.oh-item-info strong{
+  display:block;color:#172033;font-size:13px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.oh-item-info span{display:block;color:#64748b;font-size:11px;margin-top:3px}
+.oh-item-info small{display:inline-block;color:#64748b;font-size:10px;margin:4px 6px 0 0}
+.oh-item-price{font-size:14px;font-weight:900;color:#111827;white-space:nowrap}
+.oh-timeline{
+  padding:4px 3px 3px;
+  border:1px solid #e7edf4;border-radius:14px;background:#fbfdff;
+}
+.oh-step{
+  min-height:47px;display:flex;align-items:center;gap:11px;
+  color:#8793a3;padding-left:11px;
+}
+.oh-step.done{color:#182235}
+.oh-step.current strong{color:#1463ff}
+.oh-step-dot{
+  width:31px;height:31px;flex:0 0 31px;border-radius:50%;
+  background:#eef2f6;color:#7b8796;display:grid;place-items:center;
+  font-size:12px;font-weight:900;border:1px solid #e0e6ed;
+}
+.oh-step.done .oh-step-dot{
+  background:#19a35b;color:#fff;border-color:#19a35b;
+  box-shadow:0 3px 9px rgba(25,163,91,.20);
+}
+.oh-step.current .oh-step-dot{
+  box-shadow:0 0 0 4px rgba(20,99,255,.10);
+}
+.oh-step-text strong{display:block;font-size:13px}
+.oh-step-text span{display:block;color:#1463ff;font-size:10px;margin-top:2px}
+.oh-line{
+  height:15px;width:2px;margin-left:26px;
+  background:#e2e8f0;
+}
+.oh-line.filled{background:#19a35b}
+.oh-cancelled{
+  padding:13px 14px;border-radius:12px;
+  background:#fff0f2;color:#bd1f36;font-weight:900;
+}
+.oh-updated{
+  margin:0 16px;padding:12px 0;
+  border-top:1px dashed #dfe6ef;
+  color:#7a8798;font-size:11px;
+}
+.oh-footer-actions{
+  padding:0 16px 16px;display:flex;justify-content:flex-end
+}
 .oh-delete{
-  margin-top:12px;border:1px solid #ffd5d8;background:#fff3f4;color:#b4232f;border-radius:11px;
-  padding:9px 11px;font-weight:800;cursor:pointer;font-size:11px;transition:.18s;
+  border:1px solid #ffd5d5;background:#fff3f3;color:#b4232f;
+  border-radius:10px;padding:9px 12px;font-weight:800;
+  font-size:11px;cursor:pointer;
 }
-.oh-delete:hover{background:#ffe6e8}
-.oh-error{margin-bottom:14px;padding:17px;border:1px solid #fecaca;background:#fff7f7;border-radius:17px;color:#b4232f}
-.oh-error:last-child{margin-bottom:0}
-.oh-empty{padding:55px 18px;text-align:center;background:#fff;border:1px solid #e1e8f1;border-radius:20px}
-.oh-empty-icon{width:65px;height:65px;display:grid;place-items:center;margin:0 auto 12px;border-radius:20px;background:#edf4ff;font-size:30px}
-.oh-empty-title{font-size:18px;font-weight:900;color:#0f172a}
-.oh-empty-text{margin-top:6px;color:#718096;font-size:12px}
+.oh-error{padding:18px}.oh-error-title{font-weight:900;color:#b4232f}.oh-error p{font-size:12px;color:#64748b;margin:8px 0}.oh-order-code{font-weight:900;margin:8px 0}.oh-total-line{display:flex;justify-content:space-between;margin:10px 0;font-size:13px}
 @media(max-width:650px){
- .order-history-modal{width:calc(100vw - 12px);max-height:93vh;border-radius:25px!important}
- .oh-head{padding:13px 12px 12px;gap:7px}
- .oh-title-icon{width:44px;height:44px;flex-basis:44px;border-radius:14px;font-size:22px}
- .oh-title{font-size:19px}.oh-subtitle{font-size:10px}
- .oh-clear{padding:9px 9px;font-size:10px}.oh-close{width:39px;height:39px;font-size:22px;border-radius:13px}
- .oh-body{padding:9px 8px 17px;max-height:calc(93vh - 70px)}
- .oh-card{border-radius:19px}.oh-card-top{padding:14px 13px 11px}.oh-main{padding:13px}
- .oh-brand{font-size:14px}.oh-brand-logo{width:32px;height:32px}.oh-verified{font-size:8px;padding:3px 5px}
- .oh-id{font-size:9px;padding:6px 7px}.oh-total{font-size:24px}.oh-items{font-size:11px;padding:10px 11px}
- .oh-live-badge{font-size:9px;padding:6px 8px}.oh-step-text{font-size:12px}.oh-dot{width:34px;height:34px}
- .oh-step{grid-template-columns:36px 1fr;min-height:46px}.oh-step:not(:last-child) .oh-step-line{left:16px}
+  #trackingPagePopup .order-history-pro{width:100%}
+  .oh-topbar{min-height:82px;padding:12px 12px}
+  .oh-brand-icon{width:50px;height:50px;border-radius:14px}
+  .oh-brand-icon img{width:42px;height:42px}
+  .oh-brand h2{font-size:21px}
+  .oh-brand p{font-size:10px}
+  .oh-clear{padding:9px 9px;font-size:10px}
+  .oh-close{width:40px;height:40px;font-size:24px}
+  .oh-top-actions{gap:5px}
+  .oh-content{padding:12px 10px 28px}
+  .oh-card{border-radius:16px}
+  .oh-store-row{padding:13px 12px}
+  .oh-store-logo{width:44px;height:44px}.oh-store-logo img{width:39px;height:39px}
+  .oh-store-name{font-size:15px}
+  .oh-order-id strong{font-size:9px;padding:6px 7px}
+  .oh-summary{padding:15px 12px}
+  .oh-total{font-size:24px}
+  .oh-status{font-size:10px;padding:8px 9px}
+  .oh-section{padding:0 12px 14px}
+  .oh-item-img{width:58px;height:58px;flex-basis:58px}
+  .oh-item-info strong{font-size:12px}
+  .oh-item-price{font-size:13px}
+  .oh-footer-actions{padding:0 12px 13px}
+  .oh-delete{width:100%;padding:10px}
 }
 
 </style>
@@ -3687,99 +3085,210 @@ async function sendWhatsAppOrder(){
  if(!name||!phone||!pin||!address){alert("Please fill all customer details.");return;} if(!/^[0-9]{10}$/.test(phone)){alert("Please enter valid 10 digit mobile number.");return;} if(!/^[0-9]{6}$/.test(pin)){alert("Please enter valid 6 digit pincode.");return;} if(!customerLocation){alert("Please share your current location first.");return;} if(!cart.length){alert("Your cart is empty.");return;}
  const grouped={};cart.forEach(item=>{const p=products.find(x=>String(x.id)===String(item.id));if(!p)return;const sid=p.seller_id||"unassigned";if(!grouped[sid])grouped[sid]={items:[],total:0};const row={id:p.id,name:p.name,price:Number(p.price||0),quantity:Number(item.quantity||1),size:item.size||"",colour:item.colour||""};grouped[sid].items.push(row);grouped[sid].total+=row.price*row.quantity;});
  const mapLink="https://maps.google.com/?q="+customerLocation.latitude+","+customerLocation.longitude,saved=[],messages=[];
- for(const sid of Object.keys(grouped)){const g=grouped[sid],id=crypto.randomUUID(),code="MRT-"+Math.random().toString(36).slice(2,8).toUpperCase();const payload={id,tracking_code:code,seller_id:sid==="unassigned"?null:sid,customer_name:name,customer_phone:phone,customer_pincode:pin,customer_address:address,customer_lat:Number(customerLocation.latitude),customer_lng:Number(customerLocation.longitude),delivery_radius_km:Number(distance),items:g.items,total_amount:g.total,status:"received"};const r=await db.from("orders").insert([payload]);if(r.error){alert("❌ Order save nahi hua: "+r.error.message);return;}saved.push({id,tracking_code:code,status:"received"});messages.push(`MRT PLACE 🛍️\n\nNEW ORDER\nOrder ID: ${code}\n\nCustomer: ${name}\nMobile: ${phone}\nPincode: ${pin}\nAddress: ${address}\nDelivery Radius: ${distance} KM\n\nORDER ITEMS\n${g.items.map(i=>`${i.name} × ${i.quantity}${i.size?" | Size: "+i.size:""}${i.colour?" | Colour: "+i.colour:""} = ₹${i.price*i.quantity}`).join("\n")}\n\nTOTAL: ₹${g.total}\n\nCUSTOMER LOCATION:\n${mapLink}`);}
+ for(const sid of Object.keys(grouped)){const g=grouped[sid],id=crypto.randomUUID(),code="MRT-"+Math.random().toString(36).slice(2,8).toUpperCase();const payload={id,tracking_code:code,seller_id:sid==="unassigned"?null:sid,customer_name:name,customer_phone:phone,customer_pincode:pin,customer_address:address,customer_lat:Number(customerLocation.latitude),customer_lng:Number(customerLocation.longitude),delivery_radius_km:Number(distance),items:g.items,total_amount:g.total,status:"received"};const r=await db.from("orders").insert([payload]);if(r.error){alert("❌ Order save nahi hua: "+r.error.message);return;}saved.push({id,tracking_code:code,status:"received",total_amount:g.total,items:g.items});messages.push(`MRT PLACE 🛍️\n\nNEW ORDER\nOrder ID: ${code}\n\nCustomer: ${name}\nMobile: ${phone}\nPincode: ${pin}\nAddress: ${address}\nDelivery Radius: ${distance} KM\n\nORDER ITEMS\n${g.items.map(i=>`${i.name} × ${i.quantity}${i.size?" | Size: "+i.size:""}${i.colour?" | Colour: "+i.colour:""} = ₹${i.price*i.quantity}`).join("\n")}\n\nTOTAL: ₹${g.total}\n\nCUSTOMER LOCATION:\n${mapLink}`);}
  localStorage.setItem("mrt_orders",JSON.stringify(saved));if(saved[0])localStorage.setItem("mrt_last_order",JSON.stringify(saved[0]));
  window.open("https://wa.me/"+OWNER_SETTINGS.whatsappNumber+"?text="+encodeURIComponent(messages.join("\n\n====================\n\n")),"_blank");document.getElementById("trackingResult").style.display="block";document.getElementById("trackingResult").innerHTML="<b>✅ Order Placed</b><br>Tracking ID(s):<br>"+saved.map(o=>"<b>"+escapeHtml(o.tracking_code)+"</b>").join("<br>")+"<br><small>Orders में tracking देख सकते हैं.</small>";cart=[];updateCartCount();
 }
 async function trackLastOrder(){
   let saved=[];
-  try{ saved=JSON.parse(localStorage.getItem("mrt_orders")||"[]"); }catch(_){ }
+  try{ saved=JSON.parse(localStorage.getItem("mrt_orders")||"[]"); }catch(_){}
   if(!Array.isArray(saved)) saved=[];
   if(!saved.length){
     const x=localStorage.getItem("mrt_last_order");
     if(x)try{saved=[JSON.parse(x)]}catch(_){}
   }
-  if(!saved.length){alert("Abhi koi order history available nahi hai.");return;}
+  if(!saved.length){
+    alert("Abhi koi order history available nahi hai.");
+    return;
+  }
 
   let ov=document.getElementById("trackingPagePopup");
-  if(!ov){ov=document.createElement("div");ov.id="trackingPagePopup";ov.className="overlay";document.body.appendChild(ov);}
+  if(!ov){
+    ov=document.createElement("div");
+    ov.id="trackingPagePopup";
+    ov.className="overlay";
+    document.body.appendChild(ov);
+  }
+
   ov.style.display="block";
   document.body.style.overflow="hidden";
 
   ov.innerHTML=`
-    <div class="modal order-history-modal">
-      <div class="oh-head">
-        <div class="oh-title-wrap">
-          <div class="oh-title-icon">📦</div>
+    <div class="order-history-pro">
+      <div class="oh-topbar">
+        <div class="oh-brand">
+          <div class="oh-brand-icon"><img src="logo.png" alt="MRT PLACE"></div>
           <div>
-            <h2 class="oh-title">My Orders</h2>
-            <div class="oh-subtitle">Track every order in real time</div>
+            <h2>My Orders</h2>
+            <p>Track, manage & view your orders</p>
           </div>
         </div>
-        <div class="oh-actions">
+        <div class="oh-top-actions">
           <button type="button" class="oh-clear" onclick="clearOrderHistory()">🗑️ Clear History</button>
-          <button type="button" class="oh-close" onclick="closeTrackingPage()" aria-label="Close">×</button>
+          <button type="button" class="oh-close" onclick="closeTrackingPage()">×</button>
         </div>
       </div>
-      <div id="trackingPageBody" class="oh-body"><div class="oh-empty"><div class="oh-empty-icon">⏳</div><div class="oh-empty-title">Checking your latest orders…</div></div></div>
+      <div class="oh-content" id="trackingPageBody">
+        <div class="oh-loading">Loading your orders...</div>
+      </div>
     </div>`;
 
-  const labels={received:"Order Placed",confirmed:"Confirmed",preparing:"Preparing",out_for_delivery:"Out for Delivery",delivered:"Delivered",cancelled:"Cancelled"};
+  const labels={
+    received:"Order Placed",
+    confirmed:"Confirmed",
+    preparing:"Preparing",
+    out_for_delivery:"Out for Delivery",
+    delivered:"Delivered",
+    cancelled:"Cancelled"
+  };
   const steps=["received","confirmed","preparing","out_for_delivery","delivered"];
-  const icons=["🧾","✓","📦","🚚","🏠"];
-  let html="";
+  const icons=["✓","✓","📦","🚚","🏠"];
+
+  let htmlOut="";
 
   for(const s of saved){
-    const r=await db.rpc("track_order",{p_order_id:s.id,p_tracking_code:s.tracking_code});
+    const r=await db.rpc("track_order",{
+      p_order_id:s.id,
+      p_tracking_code:s.tracking_code
+    });
     const d=Array.isArray(r.data)?r.data[0]:r.data;
 
     if(r.error||!d){
-      html+=`<div class="oh-error"><b>❌ ${escapeHtml(s.tracking_code||"Order")}</b><br><small>${escapeHtml(r.error?.message||"Order नहीं मिला.")}</small><button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Delete</button></div>`;
+      const fallbackTotal=Number(s.total_amount||0);
+      const fallbackItems=Array.isArray(s.items)?s.items:[];
+      htmlOut+=`
+        <section class="oh-card oh-error">
+          <div class="oh-error-title">⚠️ Order could not be refreshed</div>
+          <div class="oh-order-code">${escapeHtml(s.tracking_code||"Order")}</div>
+          ${fallbackTotal>0?`<div class="oh-total-line">Order Total <strong>₹${fallbackTotal.toLocaleString("en-IN")}</strong></div>`:""}
+          <p>${escapeHtml(r.error?.message||"Order details नहीं मिले.")}</p>
+          ${fallbackItems.length?renderLocalOrderItems(fallbackItems):""}
+          <button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Remove from History</button>
+        </section>`;
       continue;
     }
 
-    const ci=steps.indexOf(d.status);
-    let timeline=d.status==="cancelled"
-      ? `<div class="oh-error" style="margin-top:6px">❌ Order Cancelled</div>`
-      : `<div class="oh-timeline">${steps.map((st,i)=>{
-          const done=ci>=i;
-          return `<div class="oh-step ${done?"done":"pending"}">
-            <div class="oh-dot">${done?icons[i]:i+1}</div>
-            ${i<steps.length-1?`<div class="oh-step-line"></div>`:""}
-            <div class="oh-step-text">${labels[st]}</div>
-          </div>`;
-        }).join("")}</div>`;
+    // IMPORTANT: Use the saved checkout amount/items when the RPC does not expose them.
+    const totalCandidates=[d.total_amount,d.total,d.amount,s.total_amount];
+    let total=0;
+    for(const v of totalCandidates){
+      const n=Number(v);
+      if(Number.isFinite(n) && n>0){ total=n; break; }
+    }
 
-    const items=Array.isArray(d.items)
-      ? d.items.map(i=>`${escapeHtml(i.name||"Product")} × ${Number(i.quantity||1)}${i.size?" • Size: "+escapeHtml(i.size):""}${i.colour?" • "+escapeHtml(i.colour):""}`).join("<br>")
-      : "";
+    const items=Array.isArray(d.items)&&d.items.length
+      ? d.items
+      : (Array.isArray(s.items)?s.items:[]);
 
-    const updated=d.updated_at?new Date(d.updated_at).toLocaleString():"—";
-    const currentLabel=labels[d.status]||"Order Status";
-    const isLive=d.status!=="cancelled" && d.status!=="delivered";
-    html+=`<div class="oh-card">
-      <div class="oh-card-top">
-        <div class="oh-brand-row">
-          <img class="oh-brand-logo" src="logo.png" alt="MRT PLACE" onerror="this.style.display='none'">
-          <div><div class="oh-brand">MRT PLACE</div><span class="oh-verified">✓ Verified Store</span></div>
+    const status=String(d.status||s.status||"received");
+    const ci=steps.indexOf(status);
+    const updated=d.updated_at||d.created_at||s.updated_at;
+
+    const progress=status==="cancelled"
+      ? `<div class="oh-cancelled">✕ Order Cancelled</div>`
+      : `<div class="oh-timeline">
+          ${steps.map((st,i)=>{
+            const done=ci>=i;
+            const current=ci===i;
+            return `
+              <div class="oh-step ${done?"done":""} ${current?"current":""}">
+                <div class="oh-step-dot">${done?icons[i]:String(i+1)}</div>
+                <div class="oh-step-text">
+                  <strong>${labels[st]}</strong>
+                  ${current?`<span>Current status</span>`:""}
+                </div>
+              </div>
+              ${i<steps.length-1?`<div class="oh-line ${ci>i?"filled":""}"></div>`:""}
+            `;
+          }).join("")}
+        </div>`;
+
+    htmlOut+=`
+      <section class="oh-card">
+        <div class="oh-store-row">
+          <div class="oh-store">
+            <div class="oh-store-logo"><img src="logo.png" alt="MRT PLACE"></div>
+            <div>
+              <div class="oh-store-name">MRT PLACE</div>
+              <div class="oh-verified">✓ Verified Store</div>
+            </div>
+          </div>
+          <div class="oh-order-id">
+            <span>ORDER ID</span>
+            <strong>${escapeHtml(d.tracking_code||s.tracking_code||"MRT-ORDER")}</strong>
+          </div>
         </div>
-        <div class="oh-id">${escapeHtml(d.tracking_code||s.tracking_code||"MRT-ORDER")}</div>
-      </div>
-      <div class="oh-main">
-        <div class="oh-total-row">
-          <div><div class="oh-total-label">Order total</div><div class="oh-total">₹${Number(d.total_amount||0)}</div></div>
-          <div class="oh-live-badge"><span class="oh-live-dot"></span>${escapeHtml(currentLabel)}</div>
+
+        <div class="oh-summary">
+          <div>
+            <span class="oh-label">ORDER TOTAL</span>
+            <strong class="oh-total">${total>0?"₹"+total.toLocaleString("en-IN"):"Amount unavailable"}</strong>
+          </div>
+          <div class="oh-status ${status==="cancelled"?"bad":status==="delivered"?"delivered":"active"}">
+            <span class="oh-status-dot"></span>
+            ${escapeHtml(labels[status]||status)}
+          </div>
         </div>
-        ${items?`<div class="oh-items"><span class="oh-items-title">Order items</span>${items}</div>`:""}
-        <div class="oh-status-label">Order progress</div>
-        ${timeline}
-        <div class="oh-updated">🕒 Last updated: ${escapeHtml(updated)}</div>
-        <button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Remove from History</button>
-      </div>
-    </div>`;
+
+        ${items.length?`
+          <div class="oh-section">
+            <div class="oh-section-title">🛍️ ITEMS IN THIS ORDER <span>${items.length} item${items.length===1?"":"s"}</span></div>
+            <div class="oh-items">
+              ${items.map(i=>{
+                const pid=i.id;
+                const p=products.find(x=>String(x.id)===String(pid));
+                const img=(p && (p.image_url || (Array.isArray(p.image_urls)&&p.image_urls[0]))) || i.image_url || "";
+                const name=escapeHtml(i.name||p?.name||"Product");
+                const qty=Math.max(1,Number(i.quantity||1));
+                const unit=Number(i.price||p?.price||0);
+                const line=unit*qty;
+                return `
+                  <div class="oh-item">
+                    <div class="oh-item-img">
+                      ${img?`<img src="${escapeHtml(img)}" alt="${name}" onerror="this.style.display='none';this.parentElement.classList.add('fallback')">`:`<span>🛍️</span>`}
+                    </div>
+                    <div class="oh-item-info">
+                      <strong>${name}</strong>
+                      <span>${escapeHtml(i.category||p?.category||"Product")}</span>
+                      ${i.size?`<small>Size: ${escapeHtml(i.size)}</small>`:""}
+                      ${i.colour?`<small>Colour: ${escapeHtml(i.colour)}</small>`:""}
+                      <small>Qty: ${qty}</small>
+                    </div>
+                    <div class="oh-item-price">₹${line.toLocaleString("en-IN")}</div>
+                  </div>`;
+              }).join("")}
+            </div>
+          </div>`:""}
+
+        <div class="oh-section">
+          <div class="oh-section-title">📍 ORDER PROGRESS</div>
+          ${progress}
+        </div>
+
+        ${updated?`<div class="oh-updated">🕒 Last updated · ${new Date(updated).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}</div>`:""}
+
+        <div class="oh-footer-actions">
+          <button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Remove from History</button>
+        </div>
+      </section>`;
   }
 
-  document.getElementById("trackingPageBody").innerHTML=html||`<div class="oh-empty"><div class="oh-empty-icon">📭</div><div class="oh-empty-title">No orders yet</div><div class="oh-empty-text">Your order history will appear here after you place an order.</div></div>`;
+  document.getElementById("trackingPageBody").innerHTML=
+    htmlOut || `<div class="oh-empty"><div>📭</div><strong>No orders yet</strong><span>Your placed orders will appear here.</span></div>`;
+}
+
+function renderLocalOrderItems(items){
+  return `<div class="oh-items">${items.map(i=>{
+    const p=products.find(x=>String(x.id)===String(i.id));
+    const img=(p && (p.image_url || (Array.isArray(p.image_urls)&&p.image_urls[0]))) || i.image_url || "";
+    const qty=Math.max(1,Number(i.quantity||1));
+    const unit=Number(i.price||p?.price||0);
+    return `<div class="oh-item">
+      <div class="oh-item-img">${img?`<img src="${escapeHtml(img)}" alt="">`:`<span>🛍️</span>`}</div>
+      <div class="oh-item-info"><strong>${escapeHtml(i.name||p?.name||"Product")}</strong><span>Qty: ${qty}</span></div>
+      <div class="oh-item-price">₹${(unit*qty).toLocaleString("en-IN")}</div>
+    </div>`;
+  }).join("")}</div>`;
 }
 
 window.deleteOrderFromHistory=function(orderId){
