@@ -1889,115 +1889,20 @@ footer{
 
 
 /* =========================================================
-   MRT PLACE — ORDER HISTORY PRO v2
-   UI upgrade only. Existing order/localStorage/RPC actions untouched.
+   MRT PLACE — ORDER HISTORY FULL SCREEN PRO v3
    ========================================================= */
-.order-history-modal{
-  width:min(760px,calc(100vw - 18px));
-  max-height:92vh;
-  padding:0!important;
-  overflow:hidden!important;
-  border:1px solid rgba(255,255,255,.8);
-  border-radius:30px!important;
-  background:#f5f8fd;
-  box-shadow:0 35px 100px rgba(2,12,27,.38);
-}
-.oh-head{
-  position:sticky;top:0;z-index:5;
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:17px 18px 15px;
-  background:rgba(255,255,255,.96);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid #e8edf5;
-}
-.oh-title-wrap{display:flex;align-items:center;gap:12px;min-width:0}
-.oh-title-icon{
-  width:50px;height:50px;flex:0 0 50px;display:grid;place-items:center;
-  border-radius:16px;color:#fff;font-size:25px;
-  background:linear-gradient(135deg,#0757e8,#2f8cff);
-  box-shadow:0 9px 22px rgba(20,99,255,.25);
-}
-.oh-title{margin:0;font-size:23px;line-height:1.12;color:#0b1730;letter-spacing:-.55px}
-.oh-subtitle{margin-top:5px;color:#718096;font-size:12px}
-.oh-actions{display:flex;align-items:center;gap:8px}
-.oh-clear{
-  border:1px solid #ffd8dc;background:#fff2f3;color:#b4232f;border-radius:13px;
-  padding:10px 12px;font-weight:800;cursor:pointer;font-size:12px;transition:.18s;
-}
-.oh-clear:hover{background:#ffe5e8;transform:translateY(-1px)}
-.oh-close{
-  width:42px;height:42px;border:1px solid #e5ebf3;border-radius:14px;background:#f5f7fa;color:#111827;
-  display:grid;place-items:center;font-size:24px;cursor:pointer;transition:.18s;
-}
-.oh-close:hover{background:#eaf0f7;transform:rotate(4deg)}
-.oh-body{
-  padding:14px 14px 22px;overflow:auto;max-height:calc(92vh - 83px);
-  background:linear-gradient(180deg,#f6f9fe 0%,#eef3f9 100%);
-}
-.oh-card{
-  position:relative;margin:0 0 14px;padding:0;overflow:hidden;
-  border:1px solid #dfe7f2;border-radius:22px;background:#fff;
-  box-shadow:0 9px 28px rgba(15,23,42,.065);
-  transition:.2s ease;
-}
-.oh-card:hover{box-shadow:0 15px 34px rgba(15,23,42,.10);transform:translateY(-1px)}
-.oh-card:last-child{margin-bottom:0}
-.oh-card-top{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:17px 17px 13px;border-bottom:1px solid #edf1f6;
-}
-.oh-brand-row{display:flex;align-items:center;gap:10px}
-.oh-brand-logo{
-  width:36px;height:36px;border-radius:11px;object-fit:contain;background:#f5f8ff;
-  border:1px solid #e2eaf5;padding:3px;
-}
-.oh-brand{font-size:16px;font-weight:900;color:#101828;letter-spacing:-.2px}
-.oh-verified{font-size:10px;color:#16794a;background:#e9f8f0;padding:4px 7px;border-radius:999px;font-weight:800}
-.oh-id{padding:7px 10px;border-radius:10px;background:#edf4ff;color:#0757e8;font-weight:800;font-size:10px;white-space:nowrap;border:1px solid #dce9ff}
-.oh-main{padding:15px 17px 17px}
-.oh-total-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
-.oh-total-label{font-size:11px;color:#7a8798;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
-.oh-total{margin-top:3px;font-size:27px;line-height:1;font-weight:950;color:#0b1730;letter-spacing:-.6px}
-.oh-live-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eaf9f0;color:#14804a;font-size:11px;font-weight:900}
-.oh-live-dot{width:7px;height:7px;border-radius:50%;background:#16a34a;box-shadow:0 0 0 4px rgba(22,163,74,.10)}
-.oh-items{margin-top:15px;padding:12px 13px;border:1px solid #e8edf4;border-radius:15px;background:#f8fafc;color:#475569;font-size:12px;line-height:1.65}
-.oh-items-title{display:block;margin-bottom:5px;color:#18243a;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px}
-.oh-status-label{margin-top:18px;margin-bottom:10px;font-size:11px;font-weight:900;color:#718096;text-transform:uppercase;letter-spacing:.8px}
-.oh-timeline{display:grid;gap:0;padding:2px 0}
-.oh-step{display:grid;grid-template-columns:38px 1fr;column-gap:10px;min-height:48px;position:relative}
-.oh-step:not(:last-child) .oh-step-line{position:absolute;left:17px;top:33px;width:3px;height:29px;border-radius:5px;background:#e3e9f1}
-.oh-step.done:not(:last-child) .oh-step-line{background:linear-gradient(180deg,#19a35a,#75d19b)}
-.oh-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;z-index:1;border:2px solid #fff}
-.oh-step.done .oh-dot{background:#18a558;color:#fff;box-shadow:0 5px 12px rgba(24,165,88,.22)}
-.oh-step.pending .oh-dot{background:#eef2f7;color:#8a97a8;border:1px solid #e0e7ef}
-.oh-step-text{padding-top:8px;font-size:13px;font-weight:800;color:#66758a}
-.oh-step.done .oh-step-text{color:#152238}
-.oh-step:first-child .oh-step-text{font-size:14px}
-.oh-updated{margin-top:10px;padding-top:11px;border-top:1px dashed #e0e7ef;color:#7b8798;font-size:10px}
-.oh-delete{
-  margin-top:12px;border:1px solid #ffd5d8;background:#fff3f4;color:#b4232f;border-radius:11px;
-  padding:9px 11px;font-weight:800;cursor:pointer;font-size:11px;transition:.18s;
-}
-.oh-delete:hover{background:#ffe6e8}
-.oh-error{margin-bottom:14px;padding:17px;border:1px solid #fecaca;background:#fff7f7;border-radius:17px;color:#b4232f}
-.oh-error:last-child{margin-bottom:0}
-.oh-empty{padding:55px 18px;text-align:center;background:#fff;border:1px solid #e1e8f1;border-radius:20px}
-.oh-empty-icon{width:65px;height:65px;display:grid;place-items:center;margin:0 auto 12px;border-radius:20px;background:#edf4ff;font-size:30px}
-.oh-empty-title{font-size:18px;font-weight:900;color:#0f172a}
-.oh-empty-text{margin-top:6px;color:#718096;font-size:12px}
-@media(max-width:650px){
- .order-history-modal{width:calc(100vw - 12px);max-height:93vh;border-radius:25px!important}
- .oh-head{padding:13px 12px 12px;gap:7px}
- .oh-title-icon{width:44px;height:44px;flex-basis:44px;border-radius:14px;font-size:22px}
- .oh-title{font-size:19px}.oh-subtitle{font-size:10px}
- .oh-clear{padding:9px 9px;font-size:10px}.oh-close{width:39px;height:39px;font-size:22px;border-radius:13px}
- .oh-body{padding:9px 8px 17px;max-height:calc(93vh - 70px)}
- .oh-card{border-radius:19px}.oh-card-top{padding:14px 13px 11px}.oh-main{padding:13px}
- .oh-brand{font-size:14px}.oh-brand-logo{width:32px;height:32px}.oh-verified{font-size:8px;padding:3px 5px}
- .oh-id{font-size:9px;padding:6px 7px}.oh-total{font-size:24px}.oh-items{font-size:11px;padding:10px 11px}
- .oh-live-badge{font-size:9px;padding:6px 8px}.oh-step-text{font-size:12px}.oh-dot{width:34px;height:34px}
- .oh-step{grid-template-columns:36px 1fr;min-height:46px}.oh-step:not(:last-child) .oh-step-line{left:16px}
-}
+#trackingPagePopup{position:fixed!important;inset:0!important;padding:0!important;background:rgba(5,12,25,.72)!important;z-index:99999!important;overflow:hidden!important}
+#trackingPagePopup .order-history-modal{width:100%!important;max-width:none!important;height:100dvh!important;max-height:100dvh!important;min-height:100dvh!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;overflow:hidden!important;background:#f4f7fb;box-shadow:none!important;display:flex;flex-direction:column}
+.oh-head{height:82px;flex:0 0 82px;position:relative!important;top:auto!important;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 20px;background:rgba(255,255,255,.98);border-bottom:1px solid #e4eaf2;box-shadow:0 2px 12px rgba(15,23,42,.06)}
+.oh-title-wrap{display:flex;align-items:center;gap:13px;min-width:0}.oh-title-icon{width:52px;height:52px;flex:0 0 52px;display:grid;place-items:center;border-radius:16px;color:#fff;font-size:26px;background:linear-gradient(135deg,#0757e8,#3d91ff);box-shadow:0 8px 22px rgba(20,99,255,.22)}
+.oh-title{margin:0;font-size:24px;line-height:1.1;color:#0b1730;letter-spacing:-.5px}.oh-subtitle{margin-top:5px;color:#718096;font-size:12px}.oh-actions{display:flex;align-items:center;gap:8px}
+.oh-clear{border:1px solid #ffd8dc;background:#fff2f3;color:#b4232f;border-radius:13px;padding:10px 12px;font-weight:800;cursor:pointer;font-size:12px}.oh-close{width:42px;height:42px;border:1px solid #e5ebf3;border-radius:14px;background:#f5f7fa;color:#111827;display:grid;place-items:center;font-size:24px;cursor:pointer}
+.oh-body{flex:1;min-height:0;padding:18px 18px 28px;overflow:auto;background:linear-gradient(180deg,#f6f9fe 0%,#eef3f9 100%)}.oh-card{position:relative;width:min(980px,100%);margin:0 auto 16px;padding:0;overflow:hidden;border:1px solid #dfe7f2;border-radius:22px;background:#fff;box-shadow:0 9px 28px rgba(15,23,42,.065)}
+.oh-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 17px 13px;border-bottom:1px solid #edf1f6}.oh-brand-row{display:flex;align-items:center;gap:10px}.oh-brand-logo{width:36px;height:36px;border-radius:11px;object-fit:contain;background:#f5f8ff;border:1px solid #e2eaf5;padding:3px}.oh-brand{font-size:16px;font-weight:900;color:#101828}.oh-verified{font-size:10px;color:#16794a;background:#e9f8f0;padding:4px 7px;border-radius:999px;font-weight:800}.oh-id{padding:7px 10px;border-radius:10px;background:#edf4ff;color:#0757e8;font-weight:800;font-size:10px;white-space:nowrap;border:1px solid #dce9ff}
+.oh-main{padding:15px 17px 17px}.oh-total-row{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}.oh-total-label{font-size:11px;color:#7a8798;font-weight:700;text-transform:uppercase;letter-spacing:.6px}.oh-total{margin-top:3px;font-size:27px;line-height:1;font-weight:950;color:#0b1730}.oh-live-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#eaf9f0;color:#14804a;font-size:11px;font-weight:900}.oh-live-dot{width:7px;height:7px;border-radius:50%;background:#16a34a}
+.oh-items{margin-top:15px;border:1px solid #e8edf4;border-radius:15px;overflow:hidden;background:#f8fafc}.oh-items-title{display:block;padding:11px 13px 8px;color:#18243a;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.6px}.oh-item{min-height:82px;padding:10px 13px;display:flex;align-items:center;gap:11px;background:#fff;border-top:1px solid #edf1f6}.oh-item-img{width:68px;height:68px;flex:0 0 68px;border-radius:12px;background:#f3f6fa;display:grid;place-items:center;overflow:hidden}.oh-item-img img{width:100%;height:100%;object-fit:cover}.oh-item-info{min-width:0;flex:1}.oh-item-info strong{display:block;color:#172033;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.oh-item-info span{display:block;color:#64748b;font-size:11px;margin-top:3px}.oh-item-info small{display:inline-block;color:#64748b;font-size:10px;margin:4px 6px 0 0}.oh-item-price{font-size:14px;font-weight:900;color:#111827;white-space:nowrap}.oh-status-label{margin-top:18px;margin-bottom:10px;font-size:11px;font-weight:900;color:#718096;text-transform:uppercase;letter-spacing:.8px}
+.oh-timeline{display:grid;gap:0;padding:2px 0}.oh-step{display:grid;grid-template-columns:38px 1fr;column-gap:10px;min-height:48px;position:relative}.oh-step:not(:last-child) .oh-step-line{position:absolute;left:17px;top:33px;width:3px;height:29px;border-radius:5px;background:#e3e9f1}.oh-step.done:not(:last-child) .oh-step-line{background:linear-gradient(180deg,#19a35a,#75d19b)}.oh-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;z-index:1;border:2px solid #fff}.oh-step.done .oh-dot{background:#18a558;color:#fff}.oh-step.pending .oh-dot{background:#eef2f7;color:#8a97a8;border:1px solid #e0e7ef}.oh-step-text{padding-top:8px;font-size:13px;font-weight:800;color:#66758a}.oh-step.done .oh-step-text{color:#152238}.oh-updated{margin-top:10px;padding-top:11px;border-top:1px dashed #e0e7ef;color:#7b8798;font-size:10px}.oh-delete{margin-top:12px;border:1px solid #ffd5d8;background:#fff3f4;color:#b4232f;border-radius:11px;padding:9px 11px;font-weight:800;cursor:pointer;font-size:11px}.oh-error{width:min(980px,100%);margin:0 auto 14px;padding:17px;border:1px solid #fecaca;background:#fff7f7;border-radius:17px;color:#b4232f}.oh-empty{width:min(980px,100%);margin:0 auto;padding:55px 18px;text-align:center;background:#fff;border:1px solid #e1e8f1;border-radius:20px}.oh-empty-icon{width:65px;height:65px;display:grid;place-items:center;margin:0 auto 12px;border-radius:20px;background:#edf4ff;font-size:30px}.oh-empty-title{font-size:18px;font-weight:900;color:#0f172a}.oh-empty-text{margin-top:6px;color:#718096;font-size:12px}
+@media(max-width:650px){.oh-head{height:70px;flex-basis:70px;padding:11px 10px;gap:7px}.oh-title-icon{width:43px;height:43px;flex-basis:43px;border-radius:13px;font-size:21px}.oh-title{font-size:18px}.oh-subtitle{font-size:9px}.oh-clear{padding:8px 8px;font-size:9px}.oh-close{width:38px;height:38px;font-size:21px}.oh-body{padding:9px 8px 18px}.oh-card{border-radius:18px}.oh-card-top{padding:13px}.oh-main{padding:13px}.oh-total{font-size:24px}.oh-item-img{width:58px;height:58px;flex-basis:58px}.oh-item{min-height:72px;padding:8px 10px;gap:9px}.oh-item-price{font-size:13px}.oh-item-info strong{font-size:12px}.oh-item-info span{font-size:10px}.oh-step{grid-template-columns:36px 1fr;min-height:46px}.oh-step:not(:last-child) .oh-step-line{left:16px}.oh-dot{width:34px;height:34px}.oh-step-text{font-size:12px}}
 
 </style>
 </head>
@@ -3685,103 +3590,46 @@ function getLocation(){
 async function sendWhatsAppOrder(){
  const name=document.getElementById("customerName").value.trim(),phone=document.getElementById("customerPhone").value.trim(),pin=document.getElementById("customerPin").value.trim(),address=document.getElementById("customerAddress").value.trim(),distance=document.getElementById("customerDistance").value;
  if(!name||!phone||!pin||!address){alert("Please fill all customer details.");return;} if(!/^[0-9]{10}$/.test(phone)){alert("Please enter valid 10 digit mobile number.");return;} if(!/^[0-9]{6}$/.test(pin)){alert("Please enter valid 6 digit pincode.");return;} if(!customerLocation){alert("Please share your current location first.");return;} if(!cart.length){alert("Your cart is empty.");return;}
- const grouped={};cart.forEach(item=>{const p=products.find(x=>String(x.id)===String(item.id));if(!p)return;const sid=p.seller_id||"unassigned";if(!grouped[sid])grouped[sid]={items:[],total:0};const row={id:p.id,name:p.name,price:Number(p.price||0),quantity:Number(item.quantity||1),size:item.size||"",colour:item.colour||""};grouped[sid].items.push(row);grouped[sid].total+=row.price*row.quantity;});
+ const grouped={};cart.forEach(item=>{const p=products.find(x=>String(x.id)===String(item.id));if(!p)return;const sid=p.seller_id||"unassigned";if(!grouped[sid])grouped[sid]={items:[],total:0};const row={id:p.id,name:p.name,price:Number(p.price||0),quantity:Number(item.quantity||1),size:item.size||"",colour:item.colour||"",image_url:p.image_url||"",image_urls:Array.isArray(p.image_urls)?p.image_urls:[]};grouped[sid].items.push(row);grouped[sid].total+=row.price*row.quantity;});
  const mapLink="https://maps.google.com/?q="+customerLocation.latitude+","+customerLocation.longitude,saved=[],messages=[];
- for(const sid of Object.keys(grouped)){const g=grouped[sid],id=crypto.randomUUID(),code="MRT-"+Math.random().toString(36).slice(2,8).toUpperCase();const payload={id,tracking_code:code,seller_id:sid==="unassigned"?null:sid,customer_name:name,customer_phone:phone,customer_pincode:pin,customer_address:address,customer_lat:Number(customerLocation.latitude),customer_lng:Number(customerLocation.longitude),delivery_radius_km:Number(distance),items:g.items,total_amount:g.total,status:"received"};const r=await db.from("orders").insert([payload]);if(r.error){alert("❌ Order save nahi hua: "+r.error.message);return;}saved.push({id,tracking_code:code,status:"received"});messages.push(`MRT PLACE 🛍️\n\nNEW ORDER\nOrder ID: ${code}\n\nCustomer: ${name}\nMobile: ${phone}\nPincode: ${pin}\nAddress: ${address}\nDelivery Radius: ${distance} KM\n\nORDER ITEMS\n${g.items.map(i=>`${i.name} × ${i.quantity}${i.size?" | Size: "+i.size:""}${i.colour?" | Colour: "+i.colour:""} = ₹${i.price*i.quantity}`).join("\n")}\n\nTOTAL: ₹${g.total}\n\nCUSTOMER LOCATION:\n${mapLink}`);}
+ for(const sid of Object.keys(grouped)){const g=grouped[sid],id=crypto.randomUUID(),code="MRT-"+Math.random().toString(36).slice(2,8).toUpperCase();const payload={id,tracking_code:code,seller_id:sid==="unassigned"?null:sid,customer_name:name,customer_phone:phone,customer_pincode:pin,customer_address:address,customer_lat:Number(customerLocation.latitude),customer_lng:Number(customerLocation.longitude),delivery_radius_km:Number(distance),items:g.items,total_amount:g.total,status:"received"};const r=await db.from("orders").insert([payload]);if(r.error){alert("❌ Order save nahi hua: "+r.error.message);return;}saved.push({id,tracking_code:code,status:"received",total_amount:g.total,items:g.items});messages.push(`MRT PLACE 🛍️\n\nNEW ORDER\nOrder ID: ${code}\n\nCustomer: ${name}\nMobile: ${phone}\nPincode: ${pin}\nAddress: ${address}\nDelivery Radius: ${distance} KM\n\nORDER ITEMS\n${g.items.map(i=>`${i.name} × ${i.quantity}${i.size?" | Size: "+i.size:""}${i.colour?" | Colour: "+i.colour:""} = ₹${i.price*i.quantity}`).join("\n")}\n\nTOTAL: ₹${g.total}\n\nCUSTOMER LOCATION:\n${mapLink}`);}
  localStorage.setItem("mrt_orders",JSON.stringify(saved));if(saved[0])localStorage.setItem("mrt_last_order",JSON.stringify(saved[0]));
  window.open("https://wa.me/"+OWNER_SETTINGS.whatsappNumber+"?text="+encodeURIComponent(messages.join("\n\n====================\n\n")),"_blank");document.getElementById("trackingResult").style.display="block";document.getElementById("trackingResult").innerHTML="<b>✅ Order Placed</b><br>Tracking ID(s):<br>"+saved.map(o=>"<b>"+escapeHtml(o.tracking_code)+"</b>").join("<br>")+"<br><small>Orders में tracking देख सकते हैं.</small>";cart=[];updateCartCount();
 }
 async function trackLastOrder(){
   let saved=[];
-  try{ saved=JSON.parse(localStorage.getItem("mrt_orders")||"[]"); }catch(_){ }
-  if(!Array.isArray(saved)) saved=[];
-  if(!saved.length){
-    const x=localStorage.getItem("mrt_last_order");
-    if(x)try{saved=[JSON.parse(x)]}catch(_){}
-  }
+  try{saved=JSON.parse(localStorage.getItem("mrt_orders")||"[]");}catch(_){saved=[];}
+  if(!Array.isArray(saved))saved=[];
+  if(!saved.length){const x=localStorage.getItem("mrt_last_order");if(x)try{saved=[JSON.parse(x)];}catch(_){} }
   if(!saved.length){alert("Abhi koi order history available nahi hai.");return;}
-
   let ov=document.getElementById("trackingPagePopup");
   if(!ov){ov=document.createElement("div");ov.id="trackingPagePopup";ov.className="overlay";document.body.appendChild(ov);}
-  ov.style.display="block";
-  document.body.style.overflow="hidden";
-
-  ov.innerHTML=`
-    <div class="modal order-history-modal">
-      <div class="oh-head">
-        <div class="oh-title-wrap">
-          <div class="oh-title-icon">📦</div>
-          <div>
-            <h2 class="oh-title">My Orders</h2>
-            <div class="oh-subtitle">Track every order in real time</div>
-          </div>
-        </div>
-        <div class="oh-actions">
-          <button type="button" class="oh-clear" onclick="clearOrderHistory()">🗑️ Clear History</button>
-          <button type="button" class="oh-close" onclick="closeTrackingPage()" aria-label="Close">×</button>
-        </div>
-      </div>
-      <div id="trackingPageBody" class="oh-body"><div class="oh-empty"><div class="oh-empty-icon">⏳</div><div class="oh-empty-title">Checking your latest orders…</div></div></div>
-    </div>`;
-
+  ov.style.display="block";document.body.style.overflow="hidden";
+  ov.innerHTML=`<div class="modal order-history-modal"><div class="oh-head"><div class="oh-title-wrap"><div class="oh-title-icon">📦</div><div><h2 class="oh-title">My Orders</h2><div class="oh-subtitle">Track every order in real time</div></div></div><div class="oh-actions"><button type="button" class="oh-clear" onclick="clearOrderHistory()">🗑️ Clear History</button><button type="button" class="oh-close" onclick="closeTrackingPage()" aria-label="Close">×</button></div></div><div id="trackingPageBody" class="oh-body"><div class="oh-empty"><div class="oh-empty-icon">⏳</div><div class="oh-empty-title">Checking your latest orders…</div></div></div></div>`;
   const labels={received:"Order Placed",confirmed:"Confirmed",preparing:"Preparing",out_for_delivery:"Out for Delivery",delivered:"Delivered",cancelled:"Cancelled"};
-  const steps=["received","confirmed","preparing","out_for_delivery","delivered"];
-  const icons=["🧾","✓","📦","🚚","🏠"];
+  const steps=["received","confirmed","preparing","out_for_delivery","delivered"],icons=["🧾","✓","📦","🚚","🏠"];
   let html="";
-
   for(const s of saved){
-    const r=await db.rpc("track_order",{p_order_id:s.id,p_tracking_code:s.tracking_code});
-    const d=Array.isArray(r.data)?r.data[0]:r.data;
-
-    if(r.error||!d){
-      html+=`<div class="oh-error"><b>❌ ${escapeHtml(s.tracking_code||"Order")}</b><br><small>${escapeHtml(r.error?.message||"Order नहीं मिला.")}</small><button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Delete</button></div>`;
-      continue;
-    }
-
-    const ci=steps.indexOf(d.status);
-    let timeline=d.status==="cancelled"
-      ? `<div class="oh-error" style="margin-top:6px">❌ Order Cancelled</div>`
-      : `<div class="oh-timeline">${steps.map((st,i)=>{
-          const done=ci>=i;
-          return `<div class="oh-step ${done?"done":"pending"}">
-            <div class="oh-dot">${done?icons[i]:i+1}</div>
-            ${i<steps.length-1?`<div class="oh-step-line"></div>`:""}
-            <div class="oh-step-text">${labels[st]}</div>
-          </div>`;
-        }).join("")}</div>`;
-
-    const items=Array.isArray(d.items)
-      ? d.items.map(i=>`${escapeHtml(i.name||"Product")} × ${Number(i.quantity||1)}${i.size?" • Size: "+escapeHtml(i.size):""}${i.colour?" • "+escapeHtml(i.colour):""}`).join("<br>")
-      : "";
-
-    const updated=d.updated_at?new Date(d.updated_at).toLocaleString():"—";
-    const currentLabel=labels[d.status]||"Order Status";
-    const isLive=d.status!=="cancelled" && d.status!=="delivered";
-    html+=`<div class="oh-card">
-      <div class="oh-card-top">
-        <div class="oh-brand-row">
-          <img class="oh-brand-logo" src="logo.png" alt="MRT PLACE" onerror="this.style.display='none'">
-          <div><div class="oh-brand">MRT PLACE</div><span class="oh-verified">✓ Verified Store</span></div>
-        </div>
-        <div class="oh-id">${escapeHtml(d.tracking_code||s.tracking_code||"MRT-ORDER")}</div>
-      </div>
-      <div class="oh-main">
-        <div class="oh-total-row">
-          <div><div class="oh-total-label">Order total</div><div class="oh-total">₹${Number(d.total_amount||0)}</div></div>
-          <div class="oh-live-badge"><span class="oh-live-dot"></span>${escapeHtml(currentLabel)}</div>
-        </div>
-        ${items?`<div class="oh-items"><span class="oh-items-title">Order items</span>${items}</div>`:""}
-        <div class="oh-status-label">Order progress</div>
-        ${timeline}
-        <div class="oh-updated">🕒 Last updated: ${escapeHtml(updated)}</div>
-        <button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Remove from History</button>
-      </div>
-    </div>`;
+    let orderRow=null,rpcData=null;
+    try{const q=await db.from("orders").select("id,tracking_code,items,total_amount,status,created_at,updated_at").eq("id",s.id).maybeSingle();if(!q.error)orderRow=q.data||null;}catch(_){}
+    try{const r=await db.rpc("track_order",{p_order_id:s.id,p_tracking_code:s.tracking_code});if(!r.error)rpcData=Array.isArray(r.data)?r.data[0]:r.data;}catch(_){}
+    const d=Object.assign({},s,orderRow||{},rpcData||{});
+    if(!d.id)d.id=s.id;
+    if(!d.tracking_code)d.tracking_code=s.tracking_code;
+    const rawItems=Array.isArray(d.items)?d.items:(Array.isArray(s.items)?s.items:[]);
+    const itemIds=rawItems.map(i=>i&&i.id).filter(Boolean);
+    let productMap={};
+    if(itemIds.length){try{const pr=await db.from("Product").select("id,image_url,image_urls,name,price").in("id",itemIds);if(!pr.error){(pr.data||[]).forEach(p=>{productMap[String(p.id)]=p;});}}catch(_){} }
+    const items=rawItems.map(i=>{const p=productMap[String(i.id)]||{};return Object.assign({},p,i,{image_url:i.image_url||p.image_url||"",image_urls:Array.isArray(i.image_urls)&&i.image_urls.length?i.image_urls:(Array.isArray(p.image_urls)?p.image_urls:[]),name:i.name||p.name||"Product",price:Number(i.price??p.price??0),quantity:Number(i.quantity||1)});});
+    let total=Number(d.total_amount);if(!Number.isFinite(total)||total<=0)total=items.reduce((sum,i)=>sum+Number(i.price||0)*Number(i.quantity||1),0);
+    const status=d.status||"received",ci=steps.indexOf(status);
+    const timeline=status==="cancelled"?`<div class="oh-error" style="margin-top:6px">❌ Order Cancelled</div>`:`<div class="oh-timeline">${steps.map((st,i)=>{const done=ci>=i;return `<div class="oh-step ${done?"done":"pending"}"><div class="oh-dot">${done?icons[i]:i+1}</div>${i<steps.length-1?`<div class="oh-step-line"></div>`:""}<div class="oh-step-text">${labels[st]}</div></div>`;}).join("")}</div>`;
+    const itemsHtml=items.length?`<div class="oh-items"><span class="oh-items-title">Order items</span>${items.map(i=>{const img=(i.image_url||((Array.isArray(i.image_urls)&&i.image_urls[0])||""));const line=Number(i.price||0)*Number(i.quantity||1);return `<div class="oh-item"><div class="oh-item-img">${img?`<img src="${escapeHtml(img)}" alt="" onerror="this.parentElement.innerHTML='🛍️'">`:`🛍️`}</div><div class="oh-item-info"><strong>${escapeHtml(i.name)}</strong><span>Qty: ${i.quantity}${i.size?` • Size: ${escapeHtml(i.size)}`:""}${i.colour?` • ${escapeHtml(i.colour)}`:""}</span><small>₹${Number(i.price||0)}</small></div><div class="oh-item-price">₹${line}</div></div>`;}).join("")}</div>`:`<div class="oh-items"><span class="oh-items-title">Order items</span><div class="oh-item" style="justify-content:center;color:#64748b">Product details unavailable.</div></div>`;
+    const updated=d.updated_at?new Date(d.updated_at).toLocaleString():d.created_at?new Date(d.created_at).toLocaleString():"—",currentLabel=labels[status]||"Order Status";
+    html+=`<div class="oh-card"><div class="oh-card-top"><div class="oh-brand-row"><img class="oh-brand-logo" src="logo.png" alt="MRT PLACE" onerror="this.style.display='none'"><div><div class="oh-brand">MRT PLACE</div><span class="oh-verified">✓ Verified Store</span></div></div><div class="oh-id">${escapeHtml(d.tracking_code||"MRT-ORDER")}</div></div><div class="oh-main"><div class="oh-total-row"><div><div class="oh-total-label">Order total</div><div class="oh-total">₹${total}</div></div><div class="oh-live-badge"><span class="oh-live-dot"></span>${escapeHtml(currentLabel)}</div></div>${itemsHtml}<div class="oh-status-label">Order progress</div>${timeline}<div class="oh-updated">🕒 Last updated: ${escapeHtml(updated)}</div><button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Remove from History</button></div></div>`;
   }
-
-  document.getElementById("trackingPageBody").innerHTML=html||`<div class="oh-empty"><div class="oh-empty-icon">📭</div><div class="oh-empty-title">No orders yet</div><div class="oh-empty-text">Your order history will appear here after you place an order.</div></div>`;
+  const body=document.getElementById("trackingPageBody");if(body)body.innerHTML=html||`<div class="oh-empty"><div class="oh-empty-icon">📭</div><div class="oh-empty-title">No orders yet</div><div class="oh-empty-text">Your order history will appear here after you place an order.</div></div>`;
 }
-
 window.deleteOrderFromHistory=function(orderId){
   if(!confirm("इस order को आपकी Order History से हटाना है? Database का order delete नहीं होगा.")) return;
   let saved=[];try{saved=JSON.parse(localStorage.getItem("mrt_orders")||"[]");}catch(_){}
@@ -3798,7 +3646,6 @@ window.clearOrderHistory=function(){
 };
 window.closeTrackingPage=function(){const o=document.getElementById("trackingPagePopup");if(o)o.style.display="none";document.body.style.overflow="";};
 /* =========================
-   ESCAPE HTML/* =========================
    ESCAPE HTML
 ========================= */
 
