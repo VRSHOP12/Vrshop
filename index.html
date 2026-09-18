@@ -1887,6 +1887,97 @@ footer{
   }
 }
 
+
+/* =========================================================
+   MRT PLACE — PROFESSIONAL ORDER HISTORY / TRACKING UI
+   UI only: order storage, RPC, delete and clear logic preserved
+   ========================================================= */
+.order-history-modal{
+  width:min(720px, calc(100vw - 24px));
+  max-height:88vh;
+  padding:0 !important;
+  overflow:hidden !important;
+  border:1px solid #e5ebf4;
+  border-radius:28px !important;
+  background:#fff;
+  box-shadow:0 28px 80px rgba(15,23,42,.25);
+}
+.oh-head{
+  position:sticky;top:0;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:20px 22px 17px;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid #edf1f6;
+}
+.oh-title-wrap{display:flex;align-items:center;gap:13px;min-width:0}
+.oh-title-icon{
+  width:48px;height:48px;display:grid;place-items:center;flex:0 0 48px;
+  border-radius:15px;background:linear-gradient(135deg,#eaf2ff,#f6f9ff);
+  font-size:24px;box-shadow:inset 0 0 0 1px #dce8fb;
+}
+.oh-title{margin:0;font-size:24px;line-height:1.15;color:#0f172a;letter-spacing:-.4px}
+.oh-subtitle{margin-top:4px;color:#64748b;font-size:13px}
+.oh-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.oh-clear{
+  border:1px solid #ffd5d8;background:#fff1f2;color:#b4232f;border-radius:12px;
+  padding:10px 12px;font-weight:800;cursor:pointer;font-size:12px;
+}
+.oh-close{
+  width:44px;height:44px;border:0;border-radius:50%;background:#f1f5f9;color:#0f172a;
+  display:grid;place-items:center;font-size:25px;cursor:pointer;
+}
+.oh-body{padding:18px 18px 22px;overflow:auto;max-height:calc(88vh - 86px);background:#f8faff}
+.oh-card{
+  position:relative;margin-bottom:14px;padding:18px;border:1px solid #dfe7f1;border-radius:21px;
+  background:#fff;box-shadow:0 7px 22px rgba(15,23,42,.055);
+}
+.oh-card:last-child{margin-bottom:0}
+.oh-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.oh-brand{font-size:17px;font-weight:900;color:#111827;letter-spacing:-.2px}
+.oh-id{padding:7px 10px;border-radius:10px;background:#edf4ff;color:#0757e8;font-weight:800;font-size:11px;white-space:nowrap}
+.oh-total{margin-top:13px;font-size:23px;font-weight:900;color:#0f172a}
+.oh-items{
+  margin-top:9px;padding:11px 12px;border-radius:13px;background:#f8fafc;color:#475569;
+  font-size:13px;line-height:1.55;
+}
+.oh-status-label{margin-top:17px;margin-bottom:8px;font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.7px}
+.oh-timeline{display:grid;gap:0}
+.oh-step{display:grid;grid-template-columns:36px 1fr;column-gap:10px;min-height:45px;position:relative}
+.oh-step:not(:last-child) .oh-step-line{position:absolute;left:17px;top:34px;width:2px;height:25px;background:#e2e8f0}
+.oh-step.done:not(:last-child) .oh-step-line{background:#22a05a}
+.oh-dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;z-index:1}
+.oh-step.done .oh-dot{background:#16a34a;color:#fff;box-shadow:0 4px 10px rgba(22,163,74,.18)}
+.oh-step.pending .oh-dot{background:#eef2f6;color:#64748b}
+.oh-step-text{padding-top:7px;font-size:14px;font-weight:800;color:#334155}
+.oh-step.done .oh-step-text{color:#0f172a}
+.oh-updated{margin-top:10px;color:#64748b;font-size:11px}
+.oh-delete{
+  margin-top:13px;border:1px solid #ffd5d8;background:#fff1f2;color:#b4232f;border-radius:11px;
+  padding:9px 12px;font-weight:800;cursor:pointer;font-size:12px;
+}
+.oh-error{padding:16px;border:1px solid #fecaca;background:#fff7f7;border-radius:16px;color:#b4232f}
+.oh-empty{padding:45px 18px;text-align:center}
+.oh-empty-icon{font-size:46px;margin-bottom:10px}
+.oh-empty-title{font-size:18px;font-weight:900;color:#0f172a}
+.oh-empty-text{margin-top:5px;color:#64748b;font-size:13px}
+@media(max-width:650px){
+  .order-history-modal{width:calc(100vw - 20px);max-height:90vh;border-radius:24px !important}
+  .oh-head{padding:16px 15px 14px}
+  .oh-title-icon{width:43px;height:43px;flex-basis:43px;font-size:21px;border-radius:13px}
+  .oh-title{font-size:20px}
+  .oh-subtitle{font-size:11px}
+  .oh-clear{padding:9px 10px;font-size:11px}
+  .oh-close{width:40px;height:40px;font-size:23px}
+  .oh-body{padding:12px 10px 16px}
+  .oh-card{padding:15px;border-radius:18px}
+  .oh-brand{font-size:15px}
+  .oh-id{font-size:10px;padding:6px 8px}
+  .oh-total{font-size:21px}
+  .oh-items{font-size:12px}
+  .oh-step-text{font-size:13px}
+}
+
 </style>
 </head>
 
@@ -3581,23 +3672,83 @@ async function sendWhatsAppOrder(){
 }
 async function trackLastOrder(){
   let saved=[];
-  try{ saved=JSON.parse(localStorage.getItem("mrt_orders")||"[]"); }catch(_){}
+  try{ saved=JSON.parse(localStorage.getItem("mrt_orders")||"[]"); }catch(_){ }
   if(!Array.isArray(saved)) saved=[];
-  if(!saved.length){const x=localStorage.getItem("mrt_last_order");if(x)try{saved=[JSON.parse(x)]}catch(_){} }
+  if(!saved.length){
+    const x=localStorage.getItem("mrt_last_order");
+    if(x)try{saved=[JSON.parse(x)]}catch(_){}
+  }
   if(!saved.length){alert("Abhi koi order history available nahi hai.");return;}
+
   let ov=document.getElementById("trackingPagePopup");
   if(!ov){ov=document.createElement("div");ov.id="trackingPagePopup";ov.className="overlay";document.body.appendChild(ov);}
-  ov.style.display="block";document.body.style.overflow="hidden";
-  ov.innerHTML=`<div class="modal" style="max-width:680px;padding:0;overflow:hidden"><div style="padding:18px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;gap:10px;align-items:flex-start"><div><h2>📦 My Orders</h2><div style="color:#64748b;font-size:13px">Live order status</div></div><div style="display:flex;gap:8px"><button type="button" onclick="clearOrderHistory()" style="border:0;background:#fee2e2;color:#b91c1c;border-radius:9px;padding:8px 10px;font-weight:800">🗑️ Clear History</button><button class="close" onclick="closeTrackingPage()">×</button></div></div><div id="trackingPageBody" style="padding:16px">⏳ Loading...</div></div>`;
-  const labels={received:"Order Placed",confirmed:"Confirmed",preparing:"Preparing",out_for_delivery:"Out for Delivery",delivered:"Delivered",cancelled:"Cancelled"},steps=["received","confirmed","preparing","out_for_delivery","delivered"],icons=["🧾","✅","📦","🚚","🏠"];let html="";
+  ov.style.display="block";
+  document.body.style.overflow="hidden";
+
+  ov.innerHTML=`
+    <div class="modal order-history-modal">
+      <div class="oh-head">
+        <div class="oh-title-wrap">
+          <div class="oh-title-icon">📦</div>
+          <div>
+            <h2 class="oh-title">My Orders</h2>
+            <div class="oh-subtitle">Track your orders & live status</div>
+          </div>
+        </div>
+        <div class="oh-actions">
+          <button type="button" class="oh-clear" onclick="clearOrderHistory()">🗑️ Clear History</button>
+          <button type="button" class="oh-close" onclick="closeTrackingPage()" aria-label="Close">×</button>
+        </div>
+      </div>
+      <div id="trackingPageBody" class="oh-body"><div class="oh-empty"><div class="oh-empty-icon">⏳</div><div class="oh-empty-title">Loading orders...</div></div></div>
+    </div>`;
+
+  const labels={received:"Order Placed",confirmed:"Confirmed",preparing:"Preparing",out_for_delivery:"Out for Delivery",delivered:"Delivered",cancelled:"Cancelled"};
+  const steps=["received","confirmed","preparing","out_for_delivery","delivered"];
+  const icons=["🧾","✓","📦","🚚","🏠"];
+  let html="";
+
   for(const s of saved){
-    const r=await db.rpc("track_order",{p_order_id:s.id,p_tracking_code:s.tracking_code}),d=Array.isArray(r.data)?r.data[0]:r.data;
-    if(r.error||!d){html+=`<div style="padding:14px;background:#fff7f7;border:1px solid #fecaca;border-radius:14px;margin-bottom:12px">❌ ${escapeHtml(s.tracking_code||"Order")}<br><small>${escapeHtml(r.error?.message||"Order नहीं मिला.")}</small><button type="button" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')" style="display:block;margin-top:10px;border:0;background:#fee2e2;color:#b91c1c;border-radius:9px;padding:8px 10px;font-weight:800">🗑️ Delete</button></div>`;continue;}
-    const ci=steps.indexOf(d.status);let timeline=d.status==="cancelled"?`<div style="padding:12px;background:#fff1f2;border-radius:12px;color:#be123c;font-weight:800">❌ Cancelled</div>`:steps.map((st,i)=>`<div style="display:flex;gap:10px;align-items:center;margin:10px 0"><div style="width:30px;height:30px;border-radius:50%;background:${ci>=i?"#16a34a":"#e5e7eb"};color:${ci>=i?"#fff":"#64748b"};display:grid;place-items:center">${ci>=i?"✓":i+1}</div><b>${icons[i]} ${labels[st]}</b></div>`).join("");
-    const items=Array.isArray(d.items)?d.items.map(i=>`${escapeHtml(i.name||"Product")} × ${Number(i.quantity||1)}${i.size?" • Size: "+escapeHtml(i.size):""}${i.colour?" • "+escapeHtml(i.colour):""}`).join("<br>"):"";
-    html+=`<div style="border:1px solid #dbe4f0;border-radius:16px;padding:16px;margin-bottom:14px"><div style="display:flex;justify-content:space-between;gap:10px"><b>MRT PLACE</b><span style="background:#eef5ff;padding:6px 9px;border-radius:8px;font-size:12px">${escapeHtml(d.tracking_code)}</span></div><div style="margin-top:12px;color:#475569">${items}</div><div style="margin-top:8px;font-size:18px;font-weight:800">₹${Number(d.total_amount||0)}</div><div style="margin-top:14px">${timeline}</div><small style="color:#64748b">Last updated: ${new Date(d.updated_at).toLocaleString()}</small><button type="button" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')" style="display:block;margin-top:12px;border:0;background:#fee2e2;color:#b91c1c;border-radius:10px;padding:9px 12px;font-weight:800">🗑️ Delete from History</button></div>`;
+    const r=await db.rpc("track_order",{p_order_id:s.id,p_tracking_code:s.tracking_code});
+    const d=Array.isArray(r.data)?r.data[0]:r.data;
+
+    if(r.error||!d){
+      html+=`<div class="oh-error"><b>❌ ${escapeHtml(s.tracking_code||"Order")}</b><br><small>${escapeHtml(r.error?.message||"Order नहीं मिला.")}</small><button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Delete</button></div>`;
+      continue;
+    }
+
+    const ci=steps.indexOf(d.status);
+    let timeline=d.status==="cancelled"
+      ? `<div class="oh-error" style="margin-top:6px">❌ Order Cancelled</div>`
+      : `<div class="oh-timeline">${steps.map((st,i)=>{
+          const done=ci>=i;
+          return `<div class="oh-step ${done?"done":"pending"}">
+            <div class="oh-dot">${done?icons[i]:i+1}</div>
+            ${i<steps.length-1?`<div class="oh-step-line"></div>`:""}
+            <div class="oh-step-text">${labels[st]}</div>
+          </div>`;
+        }).join("")}</div>`;
+
+    const items=Array.isArray(d.items)
+      ? d.items.map(i=>`${escapeHtml(i.name||"Product")} × ${Number(i.quantity||1)}${i.size?" • Size: "+escapeHtml(i.size):""}${i.colour?" • "+escapeHtml(i.colour):""}`).join("<br>")
+      : "";
+
+    const updated=d.updated_at?new Date(d.updated_at).toLocaleString():"—";
+    html+=`<div class="oh-card">
+      <div class="oh-card-top">
+        <div class="oh-brand">MRT PLACE</div>
+        <div class="oh-id">${escapeHtml(d.tracking_code||s.tracking_code||"MRT-ORDER")}</div>
+      </div>
+      <div class="oh-total">₹${Number(d.total_amount||0)}</div>
+      ${items?`<div class="oh-items">${items}</div>`:""}
+      <div class="oh-status-label">Live order status</div>
+      ${timeline}
+      <div class="oh-updated">Last updated: ${escapeHtml(updated)}</div>
+      <button type="button" class="oh-delete" onclick="deleteOrderFromHistory('${escapeHtml(String(s.id))}')">🗑️ Delete from History</button>
+    </div>`;
   }
-  document.getElementById("trackingPageBody").innerHTML=html||"📭 कोई order नहीं मिला.";
+
+  document.getElementById("trackingPageBody").innerHTML=html||`<div class="oh-empty"><div class="oh-empty-icon">📭</div><div class="oh-empty-title">No orders found</div><div class="oh-empty-text">Your order history is empty.</div></div>`;
 }
 
 window.deleteOrderFromHistory=function(orderId){
