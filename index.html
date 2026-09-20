@@ -1904,6 +1904,99 @@ footer{
 .oh-timeline{display:grid;gap:0;padding:2px 0}.oh-step{display:grid;grid-template-columns:38px 1fr;column-gap:10px;min-height:48px;position:relative}.oh-step:not(:last-child) .oh-step-line{position:absolute;left:17px;top:33px;width:3px;height:29px;border-radius:5px;background:#e3e9f1}.oh-step.done:not(:last-child) .oh-step-line{background:linear-gradient(180deg,#19a35a,#75d19b)}.oh-dot{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;z-index:1;border:2px solid #fff}.oh-step.done .oh-dot{background:#18a558;color:#fff}.oh-step.pending .oh-dot{background:#eef2f7;color:#8a97a8;border:1px solid #e0e7ef}.oh-step-text{padding-top:8px;font-size:13px;font-weight:800;color:#66758a}.oh-step.done .oh-step-text{color:#152238}.oh-updated{margin-top:10px;padding-top:11px;border-top:1px dashed #e0e7ef;color:#7b8798;font-size:10px}.oh-delete{margin-top:12px;border:1px solid #ffd5d8;background:#fff3f4;color:#b4232f;border-radius:11px;padding:9px 11px;font-weight:800;cursor:pointer;font-size:11px}.oh-error{width:min(980px,100%);margin:0 auto 14px;padding:17px;border:1px solid #fecaca;background:#fff7f7;border-radius:17px;color:#b4232f}.oh-empty{width:min(980px,100%);margin:0 auto;padding:55px 18px;text-align:center;background:#fff;border:1px solid #e1e8f1;border-radius:20px}.oh-empty-icon{width:65px;height:65px;display:grid;place-items:center;margin:0 auto 12px;border-radius:20px;background:#edf4ff;font-size:30px}.oh-empty-title{font-size:18px;font-weight:900;color:#0f172a}.oh-empty-text{margin-top:6px;color:#718096;font-size:12px}
 @media(max-width:650px){.oh-head{height:70px;flex-basis:70px;padding:11px 10px;gap:7px}.oh-title-icon{width:43px;height:43px;flex-basis:43px;border-radius:13px;font-size:21px}.oh-title{font-size:18px}.oh-subtitle{font-size:9px}.oh-clear{padding:8px 8px;font-size:9px}.oh-close{width:38px;height:38px;font-size:21px}.oh-body{padding:9px 8px 18px}.oh-card{border-radius:18px}.oh-card-top{padding:13px}.oh-main{padding:13px}.oh-total{font-size:24px}.oh-item-img{width:58px;height:58px;flex-basis:58px}.oh-item{min-height:72px;padding:8px 10px;gap:9px}.oh-item-price{font-size:13px}.oh-item-info strong{font-size:12px}.oh-item-info span{font-size:10px}.oh-step{grid-template-columns:36px 1fr;min-height:46px}.oh-step:not(:last-child) .oh-step-line{left:16px}.oh-dot{width:34px;height:34px}.oh-step-text{font-size:12px}}
 
+/* MRT PLACE — compact marketplace product cards */
+@media (min-width:651px){
+  .products{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+  }
+  .product-img{
+    height:210px !important;
+    min-height:0 !important;
+  }
+  .info{
+    padding:10px 11px 11px !important;
+  }
+  .info h3{
+    font-size:15px !important;
+    line-height:1.25 !important;
+    margin-bottom:4px !important;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .category{
+    font-size:11px !important;
+  }
+  .price{
+    font-size:19px !important;
+    margin-top:6px !important;
+  }
+  .old{
+    font-size:11px !important;
+  }
+  .add{
+    padding:9px !important;
+    margin-top:8px !important;
+    border-radius:8px !important;
+    font-size:14px !important;
+  }
+}
+
+@media (max-width:650px){
+  .products{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:9px !important;
+  }
+  .product{
+    border-radius:13px !important;
+  }
+  .product-img{
+    height:155px !important;
+    min-height:0 !important;
+    max-height:155px !important;
+  }
+  .product-img img{
+    width:100% !important;
+    height:100% !important;
+    object-fit:cover !important;
+  }
+  .info{
+    padding:8px !important;
+  }
+  .info h3{
+    font-size:13px !important;
+    line-height:1.2 !important;
+    margin-bottom:3px !important;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+    min-height:31px;
+  }
+  .category{
+    font-size:10px !important;
+  }
+  .price{
+    font-size:17px !important;
+    margin-top:5px !important;
+    white-space:nowrap;
+  }
+  .old{
+    font-size:10px !important;
+    margin-left:3px !important;
+  }
+  .add{
+    padding:8px 5px !important;
+    margin-top:7px !important;
+    border-radius:8px !important;
+    font-size:12px !important;
+    line-height:1.1 !important;
+  }
+}
+
+
 </style>
 </head>
 
