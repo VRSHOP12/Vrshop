@@ -3853,7 +3853,12 @@ async function sendWhatsAppOrder(){
  }
 
  const mapLink="https://maps.google.com/?q="+customerLocation.latitude+","+customerLocation.longitude;
- const saved=[],messages=[];
+ let saved=[];
+ try{
+   const previousOrders=JSON.parse(localStorage.getItem("mrt_orders")||"[]");
+   if(Array.isArray(previousOrders)) saved=previousOrders;
+ }catch(_){ saved=[]; }
+ const messages=[];
 
  try{
    const results=await Promise.all(Object.keys(grouped).map(async sid=>{
@@ -3885,7 +3890,7 @@ async function sendWhatsAppOrder(){
 
    results.forEach(x=>{saved.push(x.saved);messages.push(x.message);});
    localStorage.setItem("mrt_orders",JSON.stringify(saved));
-   if(saved[0])localStorage.setItem("mrt_last_order",JSON.stringify(saved[0]));
+   if(saved.length)localStorage.setItem("mrt_last_order",JSON.stringify(saved[saved.length-1]));
 
    const waNumber=String(OWNER_SETTINGS.whatsappNumber||"").replace(/[^\d]/g,"");
    if(!waNumber)throw new Error("WhatsApp number is not configured.");
