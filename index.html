@@ -2011,6 +2011,87 @@ footer{
 }
 
 
+
+/* =========================================================
+   MRT PLACE — HOMEPAGE ANIMATION ONLY
+   Existing layout, HTML and JavaScript are unchanged.
+   ========================================================= */
+
+@keyframes mrtHomeFadeUp{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes mrtHomeFadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+
+@keyframes mrtHomeGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}
+  50%{box-shadow:0 0 0 10px rgba(255,255,255,.06);}
+}
+
+/* Hero entrance */
+.hero-content{
+  animation:mrtHomeFadeUp .7s ease-out both;
+}
+
+.hero-art{
+  animation:mrtFloat 4s ease-in-out infinite, mrtHomeFadeIn .9s ease-out both;
+}
+
+/* Home sections entrance */
+.services,
+.section-title,
+.top-categories,
+.filters,
+.products,
+.deal,
+.coming-grid,
+.trust{
+  animation:mrtHomeFadeUp .7s ease-out both;
+}
+
+.services{animation-delay:.08s;}
+.section-title{animation-delay:.14s;}
+.top-categories{animation-delay:.20s;}
+.filters{animation-delay:.26s;}
+.products{animation-delay:.32s;}
+.deal{animation-delay:.38s;}
+.coming-grid{animation-delay:.44s;}
+.trust{animation-delay:.50s;}
+
+/* Smooth category/card interaction */
+.category-card,
+.product,
+.service,
+.coming-card{
+  will-change:transform;
+}
+
+/* Hero buttons */
+.hero-btn.primary{
+  animation:mrtHomeGlow 2.8s ease-in-out infinite;
+}
+
+/* Respect reduced-motion accessibility preference */
+@media (prefers-reduced-motion: reduce){
+  .hero-content,
+  .hero-art,
+  .services,
+  .section-title,
+  .top-categories,
+  .filters,
+  .products,
+  .deal,
+  .coming-grid,
+  .trust,
+  .hero-btn.primary{
+    animation:none !important;
+  }
+}
+
 </style>
 </head>
 
