@@ -429,6 +429,16 @@ button:disabled{
 
 <main id="adminContent" class="container">
 
+<section class="card" id="sellerApprovalCard">
+  <div class="top-row">
+    <h2 style="margin:0">🛡️ Seller Approval Requests</h2>
+    <button type="button" onclick="loadSellerApprovals()" style="background:#2563eb;color:white">🔄 Refresh</button>
+  </div>
+  <p style="color:#64748b;font-size:13px;margin:0 0 12px">Seller approval के बाद ही Seller Panel इस्तेमाल कर पाएगा।</p>
+  <div id="sellerApprovalList"><div class="empty">Loading seller requests...</div></div>
+</section>
+
+
 <section class="card">
 
 <h2 id="formTitle">
@@ -1092,6 +1102,7 @@ async function handleSignedIn(session){
   ).style.display = "block";
 
   await showProducts();
+  await loadSellerApprovals();
 
 }
 
@@ -1155,6 +1166,51 @@ async function requireAdminSession(){
 
 }
 
+
+/* =========================
+   SELLER APPROVAL QUEUE
+========================= */
+async function loadSellerApprovals(){
+  if(!(await requireAdminSession())) return;
+  const box=document.getElementById("sellerApprovalList");
+  box.innerHTML='<div class="empty">⏳ Loading seller requests...</div>';
+  const {data,error}=await db.from("seller_profiles")
+    .select("user_id,owner_name,shop_name,created_at,approval_status")
+    .order("created_at",{ascending:false});
+  if(error){
+    box.innerHTML='<div class="empty">❌ Requests load नहीं हुए: '+escapeApprovalHtml(error.message)+'</div>';
+    return;
+  }
+  const rows=data||[];
+  if(!rows.length){box.innerHTML='<div class="empty">अभी कोई seller registration नहीं है।</div>';return;}
+  box.innerHTML=rows.map(r=>{
+    const status=String(r.approval_status||"pending").toLowerCase();
+    const date=r.created_at?new Date(r.created_at).toLocaleString():"—";
+    const actions=status==="pending"
+      ? `<button type="button" style="background:#16a34a;color:#fff" onclick="setSellerApproval('${String(r.user_id).replace(/[^a-zA-Z0-9-]/g,"")}','approved')">✅ Approve</button><button type="button" style="background:#dc2626;color:#fff" onclick="setSellerApproval('${String(r.user_id).replace(/[^a-zA-Z0-9-]/g,"")}','rejected')">❌ Reject</button>`
+      : `<button type="button" style="background:#e5e7eb" onclick="setSellerApproval('${String(r.user_id).replace(/[^a-zA-Z0-9-]/g,"")}','pending')">↩ Set Pending</button>`;
+    return `<div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:10px 0;display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap">
+      <div><b>${escapeApprovalHtml(r.shop_name||"Unnamed Shop")}</b><div>${escapeApprovalHtml(r.owner_name||"")}</div><small style="color:#64748b">ID: ${escapeApprovalHtml(r.user_id)} · Registered: ${escapeApprovalHtml(date)}</small><div style="margin-top:5px;font-weight:700;color:${status==="approved"?"#15803d":status==="rejected"?"#dc2626":"#b45309"}">Status: ${escapeApprovalHtml(status.toUpperCase())}</div></div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">${actions}</div>
+    </div>`;
+  }).join("");
+}
+function escapeApprovalHtml(value){
+  return String(value??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+async function setSellerApproval(userId,status){
+  if(!(await requireAdminSession()))return;
+  if(!["approved","rejected","pending"].includes(status))return;
+  const promptText=status==="approved"?"Approve this seller?":status==="rejected"?"Reject this seller?":"Set this seller back to pending?";
+  if(!confirm(promptText))return;
+  const update={approval_status:status};
+  if(status==="approved") update.approved_at=new Date().toISOString();
+  else update.approved_at=null;
+  const {error}=await db.from("seller_profiles").update(update).eq("user_id",userId);
+  if(error){alert("Seller status update नहीं हुआ: "+error.message);return;}
+  alert("Seller status: "+status.toUpperCase());
+  await loadSellerApprovals();
+}
 
 /* =========================
    SAVE PRODUCT

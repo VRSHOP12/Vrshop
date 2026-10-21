@@ -297,7 +297,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #d5dbe5;border-ra
       return { data: null, error: new Error("Seller profile नहीं मिली. पहले Create Account से registration करें.") };
     }
 
-    const profileResult = await createSellerProfile(currentUser.id, ownerName, shopName);
+    const profileResult = await createSellerProfile(currentUser.id, ownerName, shopName, currentUser.email);
     if (profileResult.error) return profileResult;
 
     return await VRSHOP_DB
@@ -361,7 +361,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #d5dbe5;border-ra
         }
 
         if (result.data.session) {
-          const profile = await createSellerProfile(result.data.user.id, name, shop);
+          const profile = await createSellerProfile(result.data.user.id, name, shop, result.data.user.email);
           if (profile.error) {
             setMessage("⚠️ Account बन गया, लेकिन seller profile save नहीं हुई: " + profile.error.message);
             return;

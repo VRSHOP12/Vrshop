@@ -2959,12 +2959,12 @@ function haversineKm(lat1, lon1, lat2, lon2){
 }
 
 async function loadSellerLocations(){
-  const r=await db.from("seller_profiles").select("user_id,latitude,longitude,is_active");
+  const r=await db.from("mrt_public_seller_status").select("user_id,latitude,longitude,is_active,approval_status");
   if(r.error){ console.warn("Seller location load:",r.error.message); sellerLocations={}; return false; }
   sellerLocations={};
   (r.data||[]).forEach(x=>{
     const lat=Number(x.latitude),lng=Number(x.longitude);
-    if(Number.isFinite(lat)&&Number.isFinite(lng)&&x.is_active!==false) sellerLocations[String(x.user_id)]={latitude:lat,longitude:lng};
+    if(Number.isFinite(lat)&&Number.isFinite(lng)&&x.is_active!==false&&String(x.approval_status||"pending").toLowerCase()==="approved") sellerLocations[String(x.user_id)]={latitude:lat,longitude:lng};
   });
   return true;
 }
@@ -3088,6 +3088,20 @@ async function loadProductsFromSupabase(){
 
     });
 
+
+  // Hide products belonging to sellers who have not been approved by MRT PLACE Admin.
+  const approvalResult = await db.from("mrt_public_seller_status").select("user_id,approval_status");
+  if (!approvalResult.error) {
+    const approvedSellerIds = new Set((approvalResult.data || [])
+      .filter(row => String(row.approval_status || "pending").toLowerCase() === "approved")
+      .map(row => String(row.user_id)));
+    products = products.filter(product =>
+      !product.seller_id || approvedSellerIds.has(String(product.seller_id))
+    );
+  } else {
+    console.warn("Seller approval status could not be checked; seller-owned products are hidden for safety.");
+    products = products.filter(product => !product.seller_id);
+  }
 
   if(nearbyMode) await loadSellerLocations();
   showProducts();
