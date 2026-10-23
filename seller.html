@@ -415,8 +415,23 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #d5dbe5;border-ra
     }
 
     seller = profile.data;
+
+    // Seller access is granted only after explicit Admin approval.
+    const approvalStatus = String(seller.approval_status || "pending").toLowerCase();
+    if (approvalStatus !== "approved") {
+      $("app").style.display = "none";
+      $("loginPage").style.display = "grid";
+      if (approvalStatus === "rejected") {
+        setMessage("❌ आपका Seller account Admin द्वारा reject किया गया है। MRT PLACE Admin से संपर्क करें।");
+      } else {
+        setMessage("⏳ आपका Seller account बन गया है, लेकिन Admin approval pending है। Approval मिलने के बाद दोबारा Login करें।", "#b45309");
+      }
+      return;
+    }
+
     $("loginPage").style.display = "none";
     $("app").style.display = "block";
+    setMessage("");
     fillShop();
     await loadProducts();
     await loadOrders();
