@@ -421,6 +421,14 @@ button:disabled{
 
     </button>
 
+    <button
+      id="forgotPasswordButton"
+      type="button"
+      onclick="adminForgotPassword()"
+      style="background:#eef2ff;color:#1d4ed8;margin-top:10px">
+      Forgot Password? / पासवर्ड भूल गए?
+    </button>
+
     <div id="loginMessage"></div>
 
   </div>
@@ -1025,6 +1033,43 @@ async function adminLogin(){
   );
 
 }
+
+
+/* =========================
+   ADMIN PASSWORD RESET
+========================= */
+
+async function adminForgotPassword(){
+  const email = document.getElementById("adminEmail").value.trim();
+  const message = document.getElementById("loginMessage");
+  const button = document.getElementById("forgotPasswordButton");
+
+  message.style.color = "#dc2626";
+  if(!email){
+    message.textContent = "पहले Admin Email डालें, फिर Forgot Password दबाएँ।";
+    document.getElementById("adminEmail").focus();
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "⏳ Reset email भेज रहे हैं...";
+  try{
+    const redirectTo = "https://vrshop12.github.io/Vrshop/admin.html";
+    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo });
+    if(error) throw error;
+    message.style.color = "#15803d";
+    message.textContent = "अगर इस email पर account है, तो password reset email भेज दी गई है। Gmail Inbox/Spam जाँचें। Reset link खोलने के बाद नया password सेट करने के लिए Supabase recovery flow चाहिए; यदि link सीधे Admin page खोले, तो मुझे बताएं।";
+  }catch(error){
+    console.error("Password reset error:", error);
+    message.style.color = "#dc2626";
+    message.textContent = "❌ Reset email नहीं भेज सकी: " + (error.message || "कृपया बाद में कोशिश करें।");
+  }finally{
+    button.disabled = false;
+    button.textContent = "Forgot Password? / पासवर्ड भूल गए?";
+  }
+}
+
+window.adminForgotPassword = adminForgotPassword;
 
 
 /* =========================
