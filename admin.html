@@ -421,25 +421,7 @@ button:disabled{
 
     </button>
 
-    <button
-      id="forgotPasswordButton"
-      type="button"
-      onclick="adminForgotPassword()"
-      style="background:#eef2ff;color:#1d4ed8;margin-top:10px">
-      Forgot Password? / पासवर्ड भूल गए?
-    </button>
-
     <div id="loginMessage"></div>
-
-    <div id="passwordRecoveryBox" style="display:none;margin-top:16px;padding:16px;border:1px solid #c7d2fe;border-radius:14px;background:#f8faff;text-align:left">
-      <h3 style="margin:0 0 12px;color:#1d4ed8">🔐 नया Admin Password बनाएँ</h3>
-      <label for="newAdminPassword" style="display:block;font-weight:700;margin:10px 0 6px">नया Password</label>
-      <input id="newAdminPassword" type="password" autocomplete="new-password" minlength="8" placeholder="कम से कम 8 characters" style="width:100%;box-sizing:border-box;padding:13px;border:1px solid #cbd5e1;border-radius:10px">
-      <label for="confirmAdminPassword" style="display:block;font-weight:700;margin:10px 0 6px">Password दोबारा डालें</label>
-      <input id="confirmAdminPassword" type="password" autocomplete="new-password" minlength="8" placeholder="नया Password फिर डालें" style="width:100%;box-sizing:border-box;padding:13px;border:1px solid #cbd5e1;border-radius:10px">
-      <button id="saveNewPasswordButton" type="button" onclick="adminSaveNewPassword()" style="width:100%;margin-top:12px;background:#15803d;color:white">✅ नया Password Save करें</button>
-      <p style="font-size:12px;color:#64748b;margin-bottom:0">Reset link खोलने के बाद ही यह विकल्प इस्तेमाल करें।</p>
-    </div>
 
   </div>
 
@@ -707,19 +689,8 @@ const SUPABASE_KEY =
 const db =
 window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_KEY,
-  { auth: { flowType: "implicit", detectSessionInUrl: true, persistSession: true, autoRefreshToken: true } }
+  SUPABASE_KEY
 );
-
-// Capture the recovery marker before Supabase processes the URL hash.
-let passwordRecoveryMode = /(?:^|[&#])type=recovery(?:&|$)/i.test(window.location.hash || "");
-
-db.auth.onAuthStateChange(function(event) {
-  if (event === "PASSWORD_RECOVERY") {
-    passwordRecoveryMode = true;
-    showPasswordRecovery();
-  }
-});
 
 
 /* =========================
@@ -727,7 +698,7 @@ db.auth.onAuthStateChange(function(event) {
 ========================= */
 
 const ADMIN_UID =
-"a8e19c3d-016e-438e-810e-fd96f03b0493";
+"f919ef83-2911-4e45-ae71-43f0dcfa507a";
 
 
 /* =========================
@@ -1057,108 +1028,10 @@ async function adminLogin(){
 
 
 /* =========================
-   ADMIN PASSWORD RESET
-========================= */
-
-async function adminForgotPassword(){
-  const email = document.getElementById("adminEmail").value.trim();
-  const message = document.getElementById("loginMessage");
-  const button = document.getElementById("forgotPasswordButton");
-
-  message.style.color = "#dc2626";
-  if(!email){
-    message.textContent = "पहले Admin Email डालें, फिर Forgot Password दबाएँ।";
-    document.getElementById("adminEmail").focus();
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "⏳ Reset email भेज रहे हैं...";
-  try{
-    const redirectTo = "https://vrshop12.github.io/Vrshop/admin.html";
-    const { error } = await db.auth.resetPasswordForEmail(email, { redirectTo });
-    if(error) throw error;
-    message.style.color = "#15803d";
-    message.textContent = "अगर इस email पर account है, तो password reset email भेज दी गई है। Gmail Inbox/Spam जाँचें। अब Gmail में Reset password link खोलें। उसी Admin page पर नया password बनाने का form दिखाई देगा।";
-  }catch(error){
-    console.error("Password reset error:", error);
-    message.style.color = "#dc2626";
-    message.textContent = "❌ Reset email नहीं भेज सकी: " + (error.message || "कृपया बाद में कोशिश करें।");
-  }finally{
-    button.disabled = false;
-    button.textContent = "Forgot Password? / पासवर्ड भूल गए?";
-  }
-}
-
-window.adminForgotPassword = adminForgotPassword;
-
-
-/* =========================
-   PASSWORD RECOVERY FLOW
-========================= */
-
-function showPasswordRecovery(){
-  const box = document.getElementById("passwordRecoveryBox");
-  if(box) box.style.display = "block";
-  const loginButton = document.getElementById("loginButton");
-  const forgotButton = document.getElementById("forgotPasswordButton");
-  if(loginButton) loginButton.style.display = "none";
-  if(forgotButton) forgotButton.style.display = "none";
-  const message = document.getElementById("loginMessage");
-  if(message){ message.style.color = "#1d4ed8"; message.textContent = "Reset link सही है। अब नया password बनाकर Save करें।"; }
-  document.getElementById("adminLogin").style.display = "flex";
-  document.getElementById("adminContent").style.display = "none";
-}
-
-async function adminSaveNewPassword(){
-  const password = document.getElementById("newAdminPassword").value;
-  const confirm = document.getElementById("confirmAdminPassword").value;
-  const message = document.getElementById("loginMessage");
-  const button = document.getElementById("saveNewPasswordButton");
-  message.style.color = "#dc2626";
-  if(!password || password.length < 8){ message.textContent = "Password कम से कम 8 characters का रखें।"; return; }
-  if(password !== confirm){ message.textContent = "दोनों password एक जैसे नहीं हैं।"; return; }
-  button.disabled = true; button.textContent = "⏳ Password save हो रहा है...";
-  try{
-    const { data: sessionData, error: sessionError } = await db.auth.getSession();
-    if(sessionError) throw sessionError;
-    if(!sessionData.session){ throw new Error("Reset session नहीं मिली। Gmail में reset link दोबारा खोलें; link expire भी हो सकता है।"); }
-    if(sessionData.session.user.id !== ADMIN_UID){
-      await db.auth.signOut();
-      throw new Error("यह authorized Admin account का reset link नहीं है।");
-    }
-    const { error } = await db.auth.updateUser({ password });
-    if(error) throw error;
-    passwordRecoveryMode = false;
-    await db.auth.signOut();
-    document.getElementById("newAdminPassword").value = "";
-    document.getElementById("confirmAdminPassword").value = "";
-    document.getElementById("passwordRecoveryBox").style.display = "none";
-    document.getElementById("loginButton").style.display = "block";
-    document.getElementById("forgotPasswordButton").style.display = "block";
-    document.getElementById("adminEmail").value = "vikromroy770@gmail.com";
-    message.style.color = "#15803d";
-    message.textContent = "✅ Password बदल गया! अब नए password से Admin Login करें।";
-    if(window.history && window.history.replaceState) window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-  }catch(error){
-    console.error("Save new admin password error:", error);
-    message.style.color = "#dc2626";
-    message.textContent = "❌ " + (error.message || "Password update नहीं हो पाया। Reset link दोबारा खोलें।");
-  }finally{ button.disabled = false; button.textContent = "✅ नया Password Save करें"; }
-}
-
-window.adminSaveNewPassword = adminSaveNewPassword;
-
-/* =========================
    CHECK SESSION
 ========================= */
 
 async function checkAdminLogin(){
-
-  if(passwordRecoveryMode){
-    showPasswordRecovery();
-    return;
-  }
 
   const {data,error} =
     await db.auth.getSession();
